@@ -1,0 +1,19 @@
+Package: eisa
+Title: Exon-Intron Split Anaalysis (EISA)
+Version: 0.1
+Authors@R: c(person("Michael", "Stadler", email = "michael.stadler@fmi.ch", role = c("aut", "cre")),
+             person("Dimos", "Gaidatzis", email = "dimosthenis.gaidatzis@fmi.ch", role = "aut"),
+             person("Lukas", "Burger", email = "lukas.burger@fmi.ch", role = "aut"))
+Description: Exon-intron split analysis (EISA) uses ordinary RNA-seq data to measure
+    changes in mature RNA and pre-mRNA reads across different experimental conditions
+    to quantify transcriptional and post-transcriptional regulation of gene expression.
+    For details see Gaidatzis et al., Nat Biotechnol 2015. doi: 10.1038/nbt.3269.
+Depends: R (>= 3.5.0)
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 6.1.1
+Suggests: knitr, rmarkdown, testthat, BiocStyle, QuasR, Rbowtie, edgeR
+VignetteBuilder: knitr
+Imports: GenomicRanges, GenomicFeatures, S4Vectors, IRanges, AnnotationDbi
