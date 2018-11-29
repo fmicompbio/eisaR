@@ -103,7 +103,8 @@ We next align the reads to a mini-genome (fasta file `extdata/hg19sub.fa`) using
 sampleFile <- "extdata/samples_chip_single.txt"
 genomeFile <- "extdata/hg19sub.fa"
 
-proj <- qAlign("extdata/samples_rna_single.txt", "extdata/hg19sub.fa", splicedAlignment = TRUE)
+proj <- qAlign("extdata/samples_rna_single.txt", "extdata/hg19sub.fa",
+               splicedAlignment = TRUE)
 alignmentStats(proj)
 ```
 
@@ -130,8 +131,12 @@ we will use count tables from a real RNA-seq experiment that are provided in the
 `eisaR` package. The counts correspond to the rawdata used in Figure 3a of [@eisa]
 and are also available online from the [supplementary material](https://fmicompbio.github.io/projects/EISA/EISA.html):  
 ```{r loadcounts}
-cntEx <- readRDS(system.file("extdata", "Fig3abc_GSE33252_rawcounts_exonic.rds", package = "eisaR"))
-cntIn <- readRDS(system.file("extdata", "Fig3abc_GSE33252_rawcounts_intronic.rds", package = "eisaR"))
+cntEx <- readRDS(system.file("extdata",
+                             "Fig3abc_GSE33252_rawcounts_exonic.rds",
+                             package = "eisaR"))
+cntIn <- readRDS(system.file("extdata",
+                             "Fig3abc_GSE33252_rawcounts_intronic.rds",
+                             package = "eisaR"))
 ```
 
 # Run EISA conveniently{#convenient}
@@ -151,6 +156,25 @@ cond <- factor(c("ES","ES","TN","TN"))
 res <- runEISA(Rex, Rin, cond)
 ```
 
+## Two alternative implementations of EISA
+Using the argument `method`, you can choose between two alternative implementations
+of EISA. `method="published"` will use an implementation that corresponds to the
+algorithm described in [@eisa]. `method="new"` will use more of the functionality
+provided by `edgeR` (e.g. for normalization and effect size calculation), summarized
+in the table below:  
+
+| Aspect:           | `method="published"`                    | `method="new"`                  |
+|-------------------|-----------------------------------------|---------------------------------|
+| normalization     | linear scaling to the mean library size | `edgeR::calcNormFactors`        |
+| gene selection    | log2(x + 8) > 5                         | cpm > 2.0 in at least 2 samples |
+| effect size       | log2((x + 8)/(y + 8))                   | `edgeR::predFC`                 |
+| model fit         | `edgeR::glmFit`                         | `edgeR::glmQLFit`               |
+| significance test | `edgeR::glmLRT`                         | `edgeR::glmQLFTest`             |
+
+While both methods yield highly similar results, `method="new"` is often less
+stringent when selecting quantifyable genes, but more stringent wenn calling
+significant changes (especially with low numbers of replicates).
+
 # Visualize EISA results{#plot}
 We can now visualize the results by plotting intronic changes versus exonic
 changes (genes with signficant interactions, which are likely to be post-transcriptionally
@@ -163,16 +187,14 @@ plotEISA(res, contrast = "cond")
 # Run EISA step-by-step{#stepwise}
 As an alternative to `runEISA` (section \@ref(convenient)) and `plotEISA`
 (section \@ref(plot)) described above, you can also analyse the data step-by-step
-exactly as described in [@eisa]. This may be preferrable to understand each
+as described in [@eisa]. This may be preferrable to understand each
 individual step and be able to access intermediate results.
 
-The results obtained in this way are essentially the same to what you get with
+The results obtained in this way are identical to what you get with
 `runEISA(..., method = "published")`, so if you are happy with `runEISA` you can
 skip the rest of the vignette.
 
-## Calculate and compare exonic and intronic changes across conditions  
-
-### Normalization
+## Normalization
 Normalization is performed separately on exonic and intronic counts, assuming
 that varying exon over intron ratios between samples are of technical origin.
 ```{r normalization}
@@ -202,7 +224,7 @@ quantGenes <- rownames(Rex)[ rowMeans(NLex) > 5.0 & rowMeans(NLin) > 5.0 ]
 length(quantGenes)
 ```
 
-### Calculate $\Delta I$, $\Delta E$ and $\Delta E - \Delta I$
+## Calculate $\Delta I$, $\Delta E$ and $\Delta E - \Delta I$
 The count tables were obtained from a total RNA-seq experiments in mouse
 embryonic stem (MmES) cells and derived terminal neurons (MmTN), with two replicates
 for each condition.
@@ -221,28 +243,35 @@ cor(Dex.Din[quantGenes,1], Dex.Din[quantGenes,2])
 Both exonic and intronic changes are correlated across replicates, and so are the
 differences, indicating a reproducible signal for post-transcriptional regulation.
 
-### Statistical analysis
+## Statistical analysis
 Finally, we use the replicate measurement in the `r Biocpkg("edgeR")` framework to
 calculate the significance of the changes:  
 ```{r sig}
+# create DGEList object with exonic and intronic counts
 library(edgeR)
-smpls   <- c("MmES_RNA_total_a","MmES_RNA_total_b","MmTN_RNA_total_a","MmTN_RNA_total_b")
-fRegion <- factor(rep(c("ex","in"), each = length(smpls)), levels = c("in", "ex"))
-fCell   <- factor(rep(sub("_.+$","", smpls), 2))
+cnt <- data.frame(Ex = Rex, In = Rin)
+y <- DGEList(counts = cnt, genes = data.frame(ENTREZID = rownames(cnt)))
 
-cnt <- data.frame(Ex = Rex[quantGenes, smpls], In = Rin[quantGenes, smpls])
-y <- DGEList(counts = cnt)
+# select quantifyable genes and normalize
+y <- y[quantGenes, ]
 y <- calcNormFactors(y)
 
 # design matrix with interaction term
-design <- model.matrix(~ fRegion * fCell)
+region <- factor(c("ex","ex","ex","ex","in","in","in","in"), levels = c("in", "ex"))
+cond <- rep(factor(c("ES","ES","TN","TN")), 2)
+design <- model.matrix(~ region * cond)
 rownames(design) <- colnames(cnt)
+design
+
+# estimate model parameters
 y <- estimateDisp(y, design)
 fit <- glmFit(y, design)
 
 # calculate likelihood-ratio between full and reduced models
 lrt <- glmLRT(fit)
-tt <- topTags(lrt, n = nrow(y), sort.by = "none") # final table with significance level for each gene 
+
+# create results table
+tt <- topTags(lrt, n = nrow(y), sort.by = "none")
 head(tt$table[order(tt$table$FDR, decreasing = FALSE), ])
 ```
 
