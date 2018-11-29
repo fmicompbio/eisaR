@@ -44,7 +44,7 @@ overlap other genes
 }
 }
 \examples{
-txdb <- AnnotationDbi::loadDb(system.file("extdata", "hg19sub.sqlite", package = "eisa"))
+txdb <- AnnotationDbi::loadDb(system.file("extdata", "hg19sub.sqlite", package = "eisaR"))
 regL <- getRegionsFromTxDb(txdb)
 lengths(regL)
 

@@ -1,5 +1,5 @@
 ---
-title: "Introduction to using Exon-Intron Split Analysis (EISA)"
+title: "Using eisaR for Exon-Intron Split Analysis (EISA)"
 author: "Michael Stadler"
 date: "`r Sys.Date()`"
 bibliography: refs.bib
@@ -7,7 +7,7 @@ output:
   BiocStyle::html_document:
     toc_float: true
 vignette: >
-  %\VignetteIndexEntry{Introduction to using Exon-Intron Split Analysis (EISA)}
+  %\VignetteIndexEntry{Using eisaR for Exon-Intron Split Analysis (EISA)}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -26,7 +26,7 @@ changes in mature RNA and pre-mRNA reads across different experimental condition
 We have shown that this allows quantification of transcriptional and post-transcriptional
 regulation of gene expression. 
 
-The `eisa` package contains convenience functions to facilitate the steps in an
+The `eisaR` package contains convenience functions to facilitate the steps in an
 exon-intron split analysis, which consists of:  
 1. preparing the annotation (exonic and gene body coordinate ranges)  
 2. quantify RNA-seq alignments in exons and introns  
@@ -38,23 +38,23 @@ the `r Biocpkg("QuasR")`. It is also possible to obtain count tables for exons a
 introns using some other pipeline or approach, and directly start with step 3.
 
 # Preparing the annotation
-As mentioned, `eisa` uses gene annotations from Bioconductor.
+As mentioned, `eisaR` uses gene annotations from Bioconductor.
 They are provided in the for of `TxDb` packages, e.g. `r Biocpkg("TxDb.Mmusculus.UCSC.mm10.knownGene")`.
 You can see available annotations using:
 If you would like to use an alternative source of gene annotations, you might
-still be able to use `eisa` by first converting your annotations into a `TxDb`
+still be able to use `eisaR` by first converting your annotations into a `TxDb`
 (see `makeTxDb` in the `r Biocpkg("GenomicFeatures")` package).
 
-For this example, `eisa` contains a small `TxDb` to illustrate how regions are extracted.
+For this example, `eisaR` contains a small `TxDb` to illustrate how regions are extracted.
 We will load it from a file. Alternatively, the object would be loaded using `library(...)`,
 for example using `library(TxDb.Mmusculus.UCSC.mm10.knownGene)`.
 
 ```{r annotation}
 # load library
-library(eisa)
+library(eisaR)
 
 # get TxDb object
-txdbFile <- system.file("extdata", "hg19sub.sqlite", package = "eisa")
+txdbFile <- system.file("extdata", "hg19sub.sqlite", package = "eisaR")
 txdb <- AnnotationDbi::loadDb(txdbFile)
 
 # extract filtered exonic and gene body regions
@@ -110,11 +110,11 @@ head(cntEx)
 # Calculate and compare exonic and intronic changes across conditions  
 ## Load count tables
 The above example only contains very few genes. For the rest of the vignette,
-we will therefore work with larger count tables provided in the `eisa` package.
+we will therefore work with larger count tables provided in the `eisaR` package.
 The counts correspond to the rawdata used in Figure 3a of [@eisa]:  
 ```{r loadcounts}
-cntEx <- readRDS(system.file("extdata", "Fig3abc_GSE33252_rawcounts_exonic.rds", package = "eisa"))
-cntIn <- readRDS(system.file("extdata", "Fig3abc_GSE33252_rawcounts_intronic.rds", package = "eisa"))
+cntEx <- readRDS(system.file("extdata", "Fig3abc_GSE33252_rawcounts_exonic.rds", package = "eisaR"))
+cntIn <- readRDS(system.file("extdata", "Fig3abc_GSE33252_rawcounts_intronic.rds", package = "eisaR"))
 ```
 
 ## Normalization

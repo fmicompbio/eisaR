@@ -1,4 +1,4 @@
 library(testthat)
-library(eisa)
+library(eisaR)
 
-test_check("eisa")
+test_check("eisaR")

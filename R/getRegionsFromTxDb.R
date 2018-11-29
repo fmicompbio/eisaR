@@ -36,7 +36,7 @@
 #'   and how to create the, e.g. from \code{.gtf} files.
 #'
 #' @examples
-#' txdb <- AnnotationDbi::loadDb(system.file("extdata", "hg19sub.sqlite", package = "eisa"))
+#' txdb <- AnnotationDbi::loadDb(system.file("extdata", "hg19sub.sqlite", package = "eisaR"))
 #' regL <- getRegionsFromTxDb(txdb)
 #' lengths(regL)
 #'
