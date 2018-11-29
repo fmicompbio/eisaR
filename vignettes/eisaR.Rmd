@@ -37,7 +37,7 @@ For the steps 1. and 2. above, this vignette makes use of Bioconductor annotatio
 the `r Biocpkg("QuasR")`. It is also possible to obtain count tables for exons and
 introns using some other pipeline or approach, and directly start with step 3.
 
-# Preparing the annotation
+# Preparing the annotation{#annotation}
 As mentioned, `eisaR` uses gene annotations from Bioconductor.
 They are provided in the for of `TxDb` packages, e.g. `r Biocpkg("TxDb.Mmusculus.UCSC.mm10.knownGene")`.
 You can see available annotations using:
@@ -49,27 +49,39 @@ For this example, `eisaR` contains a small `TxDb` to illustrate how regions are 
 We will load it from a file. Alternatively, the object would be loaded using `library(...)`,
 for example using `library(TxDb.Mmusculus.UCSC.mm10.knownGene)`.
 
-```{r annotation}
+```{r annotation, message=FALSE}
 # load library
 library(eisaR)
 
 # get TxDb object
 txdbFile <- system.file("extdata", "hg19sub.sqlite", package = "eisaR")
 txdb <- AnnotationDbi::loadDb(txdbFile)
+```
 
+Exon and gene body regions are then extracted from the `TxDb`:  
+```{r regions}
 # extract filtered exonic and gene body regions
-regL1 <- getRegionsFromTxDb(txdb = txdb, strandedData = TRUE)
-regL2 <- getRegionsFromTxDb(txdb = txdb, strandedData = FALSE)
+regS <- getRegionsFromTxDb(txdb = txdb, strandedData = TRUE)
+regU <- getRegionsFromTxDb(txdb = txdb, strandedData = FALSE)
 
-lengths(regL1)
-lengths(regL2)
+lengths(regS)
+lengths(regU)
 
-regL1$exons
+regS$exons
 ```
 
 As you can see, the filtering procedure removes slightly more genes for unstranded data
 (`strandedData = FALSE`), as overlapping genes cannot be discriminated even if
 they reside on opposite strands.
+
+You can also export the obtained regions into files. This may be useful if
+you plan to align and/or quantify reads outside of R. For example, you can use
+`r Biocpkg("rtracklayer")` to export the regions in `regS` into `.gtf` files:  
+```{r exportregions}
+library(rtracklayer)
+export(regS$exons, "hg19sub_exons_stranded.gtf")
+export(regS$genebodies, "hg19sub_genebodies_stranded.gtf")
+```
 
 # Quantify RNA-seq alignments in exons and introns
 For this example we will use the `r Biocpkg("QuasR")` package for indexing and
@@ -77,7 +89,7 @@ alignment of short reads, and a small RNA-seq dataset that is contained in that
 package. As mentioned, it is also possible to align or also quantify your reads
 using an alternative aligner/counter, and skip over these steps.
 
-## Align reads
+## Align reads{#align}
 Let's first copy the sample data from the `r Biocpkg("QuasR")` package to the
 current working directory, all contained in a folder named `extdata`:  
 ```{r extdata}
@@ -95,29 +107,74 @@ proj <- qAlign("extdata/samples_rna_single.txt", "extdata/hg19sub.fa", splicedAl
 alignmentStats(proj)
 ```
 
-## Count alignments in exons and gene bodies
+## Count alignments in exons and gene bodies{#count}
 Alignments in exons and gene bodies can now be counted using `qCount` and the
-`regL2` that we have generated earlier (assuming that the data is unstranded).
+`regU` that we have generated earlier (assuming that the data is unstranded).
 Intronic counts can then be obtained from the difference between gene bodies and
 exons:  
 ```{r count}
-cntEx <- qCount(proj, regL2$exons, orientation = "any")
-cntGb <- qCount(proj, regL2$genebodies, orientation = "any")
+cntEx <- qCount(proj, regU$exons, orientation = "any")
+cntGb <- qCount(proj, regU$genebodies, orientation = "any")
 cntIn <- cntGb - cntEx
 head(cntEx)
+head(cntIn)
 ```
 
-# Calculate and compare exonic and intronic changes across conditions  
-## Load count tables
+As mentioned, both alignments and counts can also be obtained using alternative
+approaches. It is required that the two resulting exon and intron count tables
+have identical structure (genes in rows, samples in columns). 
+
+## Load full count tables
 The above example only contains very few genes. For the rest of the vignette,
-we will therefore work with larger count tables provided in the `eisaR` package.
-The counts correspond to the rawdata used in Figure 3a of [@eisa]:  
+we will use count tables from a real RNA-seq experiment that are provided in the
+`eisaR` package. The counts correspond to the rawdata used in Figure 3a of [@eisa]
+and are also available online from the [supplementary material](https://fmicompbio.github.io/projects/EISA/EISA.html):  
 ```{r loadcounts}
 cntEx <- readRDS(system.file("extdata", "Fig3abc_GSE33252_rawcounts_exonic.rds", package = "eisaR"))
 cntIn <- readRDS(system.file("extdata", "Fig3abc_GSE33252_rawcounts_intronic.rds", package = "eisaR"))
 ```
 
-## Normalization
+# Run EISA conveniently{#convenient}
+All the further steps in exon-intron split analysis can now be performed using
+a single function `runEISA`. If you prefer to perform the analysis step-by-step,
+you can skip now to section \@ref(stepwise).
+
+```{r runEISA}
+# remove "width" column
+Rex <- cntEx[,colnames(cntEx) != "width"]
+Rin <- cntIn[,colnames(cntIn) != "width"]
+
+# create condition factor (contrast will be TN - ES)
+cond <- factor(c("ES","ES","TN","TN"))
+
+# run EISA (remove "width" column)
+res <- runEISA(Rex, Rin, cond)
+```
+
+# Visualize EISA results{#plot}
+We can now visualize the results by plotting intronic changes versus exonic
+changes (genes with signficant interactions, which are likely to be post-transcriptionally
+regulated, are color coded):  
+```{r plotEISA}
+plotEISA(res, contrast = "ExIn")
+plotEISA(res, contrast = "cond")
+```
+
+# Run EISA step-by-step{#stepwise}
+As an alternative to `runEISA` (section \@ref(convenient)) and `plotEISA`
+(section \@ref(plot)) described above, you can also analyse the data step-by-step
+exactly as described in [@eisa]. This may be preferrable to understand each
+individual step and be able to access intermediate results.
+
+The results obtained in this way are essentially the same to what you get with
+`runEISA(..., method = "published")`, so if you are happy with `runEISA` you can
+skip the rest of the vignette.
+
+## Calculate and compare exonic and intronic changes across conditions  
+
+### Normalization
+Normalization is performed separately on exonic and intronic counts, assuming
+that varying exon over intron ratios between samples are of technical origin.
 ```{r normalization}
 # remove column "width"
 Rex <- cntEx[,colnames(cntEx) != "width"]
@@ -145,7 +202,7 @@ quantGenes <- rownames(Rex)[ rowMeans(NLex) > 5.0 & rowMeans(NLin) > 5.0 ]
 length(quantGenes)
 ```
 
-## Calculate $\Delta I$, $\Delta E$ and $\Delta E - \Delta I$
+### Calculate $\Delta I$, $\Delta E$ and $\Delta E - \Delta I$
 The count tables were obtained from a total RNA-seq experiments in mouse
 embryonic stem (MmES) cells and derived terminal neurons (MmTN), with two replicates
 for each condition.
@@ -164,7 +221,7 @@ cor(Dex.Din[quantGenes,1], Dex.Din[quantGenes,2])
 Both exonic and intronic changes are correlated across replicates, and so are the
 differences, indicating a reproducible signal for post-transcriptional regulation.
 
-## Statistical analysis
+### Statistical analysis
 Finally, we use the replicate measurement in the `r Biocpkg("edgeR")` framework to
 calculate the significance of the changes:  
 ```{r sig}
@@ -176,23 +233,26 @@ fCell   <- factor(rep(sub("_.+$","", smpls), 2))
 cnt <- data.frame(Ex = Rex[quantGenes, smpls], In = Rin[quantGenes, smpls])
 y <- DGEList(counts = cnt)
 y <- calcNormFactors(y)
-design <- model.matrix(~ fRegion * fCell) # design matrix with interaction term
+
+# design matrix with interaction term
+design <- model.matrix(~ fRegion * fCell)
 rownames(design) <- colnames(cnt)
-y <- estimateDisp(y, design) # estimate dispersion
-fit <- glmQLFit(y, design) # fit generalized linear model
-lrt <- glmQLFTest(fit) # calculate likelihood-ratio between full and reduced models
+y <- estimateDisp(y, design)
+fit <- glmFit(y, design)
+
+# calculate likelihood-ratio between full and reduced models
+lrt <- glmLRT(fit)
 tt <- topTags(lrt, n = nrow(y), sort.by = "none") # final table with significance level for each gene 
 head(tt$table[order(tt$table$FDR, decreasing = FALSE), ])
 ```
 
-# Visualize the results
+## Visualize the results
 Finally, we visualize the results by plotting intronic changes versus exonic
 changes (genes with signficant interactions, which are likely to be post-transcriptionally
 regulated, are color coded):  
 ```{r plot}
 sig     <- tt$table$FDR < 0.05
 sum(sig)
-sig.eg  <- as.character(tt$table$ENTREZID[sig])
 sig.dir <- sign(tt$table$logFC[sig])
 cols <- ifelse(sig, ifelse(tt$table$logFC > 0, "#E41A1CFF", "#4DAF4AFF"), "#22222244")
 
@@ -210,15 +270,15 @@ text(x = par("usr")[2] - 3 * par("cxy")[1], y = par("usr")[4], adj = c(1,1),
 # Delta I vs. Delta E
 plot(rowMeans(Din)[quantGenes], rowMeans(Dex)[quantGenes], pch = 20, col = cols,
      xlab = expression(paste(Delta,"intron (log2 TN/ES)")),
-     ylab = expression(paste(Delta,"exon (log2 TN/ES")))
+     ylab = expression(paste(Delta,"exon (log2 TN/ES)")))
 legend(x = "bottomright", bty = "n", pch = 20, col = c("#E41A1CFF","#4DAF4AFF"),
-       legend = sprintf("%s (%d)", c("stabilized","degraded"), c(sum(sig.dir == -1), sum(sig.dir == 1))))
+       legend = sprintf("%s (%d)", c("Up","Down"), c(sum(sig.dir == 1), sum(sig.dir == -1))))
 ```
 
 # Session information
 The output in this vignette was produced under:
-```{r sessionInfo, results='asis', echo=FALSE}
-toLatex(sessionInfo())
+```{r sessionInfo}
+sessionInfo()
 ```
 
 # References
