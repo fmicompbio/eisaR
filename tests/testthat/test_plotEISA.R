@@ -8,6 +8,7 @@ test_that("plotEISA() runs", {
     pdf(file = tf)
 
     expect_null(plotEISA(res1))
+    expect_null(plotEISA(res1, contrast = "none"))
 
     dev.off()
     unlink(tf)
