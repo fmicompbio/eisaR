@@ -1,0 +1,32 @@
+citHeader("Please use the first reference below to cite the eisaR software itself, or the second reference to cite the EISA paper.")
+
+citEntry(entry="Manual",
+	 title="eisaR: Exon-Intron Split Anaalysis (EISA) in R",
+	 author=personList(as.person("Dimos Gaidatzis"),
+			   as.person("Lukas Burger"),
+			   as.person("Michael B Stadler")),
+	 year=2018,
+	 note="R package version 0.2",
+	 textVersion="Gaidatzis D, Burger L and Stadler MB. eisaR: Exon-Intron Split Anaalysis (EISA) in R. R package version
+  0.2."
+)
+
+citEntry(entry="article",
+	 title="Analysis of intronic and exonic reads in RNA-seq data characterizes transcriptional and post-transcriptional regulation",
+	 author=personList(as.person("Dimos Gaidatzis"),
+			   as.person("Lukas Burger"),
+			   as.person("Michael B Stadler")),
+	 journal="Nature Biotechnology",
+         volume="33",
+         number="7",
+         pages="722--729",
+	 year=2015,
+	 note="PMID:26098447",
+         doi="10.1038/nbt.3269",
+	 textVersion="Gaidatzis D, Burger L, Florescu M and Stadler MB. Analysis of intronic and exonic reads in RNA-seq data characterizes transcriptional and post-transcriptional regulation. Nature Biotechnology 33(7):722-729 (2015)."
+)
+
+citFooter("This free open-source software implements academic
+research by the authors and co-workers. If you use it,
+please support the project by citing the appropriate
+journal articles.")
