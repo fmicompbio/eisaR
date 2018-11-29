@@ -1,0 +1,178 @@
+#' @title Run Exon-Intron Split Analaysis.
+#'
+#' @description Starting from count tables with exonic and intronic counts
+#'   for two conditions, perform all the steps in EISA (normalization, identify
+#'   quantifyable genes, calculate contrasts and their significance).
+#'
+#' @author Michael Stadler
+#'
+#' @param cntEx Gene by sample \code{matrix} with exonic counts.
+#' @param cntIn Gene by sample \code{matrix} with intronic counts. Must have the
+#'   same structure as \code{cntEx} (same number and order of rows and columns).
+#' @param cond \code{numeric}, \code{character} or \code{factor} with two levels
+#'   that groups the samples (columns of \code{cntEx} and \code{cntIn} into two
+#'   conditions. The contrast will be defined as secondLevel - firstLevel.
+#' @param method One of \code{"published"} or \code{"new"}. If \code{"published"}
+#'   (the default), sample normalization, gene filtering and calculation of
+#'   contrasts is performed as described in Gaidatzis et al. 2015, and the
+#'   statistical analysis is based on \code{\link[edgeR]{glmFit}} and \code{\link[edgeR]{glmLRT}}.
+#'   If \code{method="new"}, normalization will be performed using TMM as
+#'   implemented in \code{\link[edgeR]{calcNormFactors}}, the contrast are
+#'   calculated using \code{\link[edgeR]{predFC}}, and the statistical analysis
+#'   will use the quasi-likelyhood framework implemented in \code{\link[edgeR]{glmQLFit}}
+#'   and \code{\link[edgeR]{glmQLFTest}}. The latter is often less stringent when
+#'   selecting quantifyable genes, but more stringent wenn calling significant
+#'   changes (especially with low numbers of replicates).
+#' @param ... additional arguments passed to the \code{\link[edgeR]{DGEList}} constructor,
+#'   such as \code{lib.size} or \code{genes}.
+#'
+#' @return a \code{list} with elements \describe{
+#'   \item{fracIn}{fraction intronic counts in each sample}
+#'   \item{quantGenes}{names of quantifyable genes indluded in the analysis (from rownames of \code{cntEx})}
+#'   \item{contrastName}{contrast name}
+#'   \item{contrasts}{contrast matrix for quantifyable genes, with averge log2
+#'     fold-changes in exons (\code{Dex}), in introns (\code{Din}), and averge
+#'     difference between log2 fold-changes in exons and introns (\code{Dex.Din})}
+#'   \item{DGEList}{\code{\link[edgeR]{DGEList}} object used in model fitting}
+#'   \item{tab.cond}{statistical results for differential expression between conditions,
+#'     based on both exonic and intronic counts}
+#'   \item{tab.ExIn}{statisical results for differential changes between exonic and
+#'     intronic contrast, an indication for post-transcriptional regulation.}
+#'   \item{method}{the method that was used to run EISA}
+#' }
+#'
+#' @references Analysis of intronic and exonic reads in RNA-seq data characterizes
+#'   transcriptional and post-transcriptional regulation.
+#'   Dimos Gaidatzis, Lukas Burger, Maria Florescu and Michael B. Stadler
+#'   Nature Biotechnology, 2015 Jul;33(7):722-9. doi: 10.1038/nbt.3269.
+#'
+#' @seealso \code{\link[edgeR]{DGEList}} for \code{DGEList} object construction,
+#'   \code{\link[edgeR]{calcNormFactors}} for normalization,
+#'   \code{\link[edgeR]{glmFit}} for statisical analysis under \code{method = "published"}
+#'   and \code{\link[edgeR]{glmQLFit}} statistical analysis under \code{method = "new"}.
+#'
+#' @examples
+#' cntEx <- readRDS(system.file("extdata", "Fig3abc_GSE33252_rawcounts_exonic.rds",
+#'                              package = "eisaR"))[,-1]
+#' cntIn <- readRDS(system.file("extdata", "Fig3abc_GSE33252_rawcounts_intronic.rds",
+#'                              package = "eisaR"))[,-1]
+#' cond <- factor(c("ES","ES","TN","TN"))
+#' res <- runEISA(cntEx, cntIn, cond)
+#' plotEISA(res)
+#'
+#' @import edgeR
+#' @importFrom stats model.matrix
+#'
+#' @export
+runEISA <- function(cntEx, cntIn, cond, method = c("published", "new"), ...) {
+    # check arguments
+    # ... count matrices
+    if (is.data.frame(cntEx))
+        cntEx <- as.matrix(cntEx)
+    stopifnot(is.matrix(cntEx))
+    if (is.data.frame(cntIn))
+        cntIn <- as.matrix(cntIn)
+    stopifnot(is.matrix(cntIn))
+    # ... consistency between cntEx and cntIn
+    stopifnot(all(dim(cntEx) == dim(cntIn)))
+    if (is.null(rownames(cntEx)))
+        rownames(cntEx) <- as.character(seq.int(nrow(cntEx)))
+    if (is.null(colnames(cntEx)))
+        colnames(cntEx) <- as.character(seq.int(ncol(cntEx)))
+    if (is.null(rownames(cntIn)))
+        rownames(cntIn) <- as.character(seq.int(nrow(cntIn)))
+    if (is.null(colnames(cntIn)))
+        colnames(cntIn) <- as.character(seq.int(ncol(cntIn)))
+    stopifnot(identical(dimnames(cntEx), dimnames(cntIn)))
+    # ... conditions
+    if (is.numeric(cond) || is.character(cond))
+        cond <- factor(cond, levels = unique(cond))
+    stopifnot(is.factor(cond))
+    stopifnot(nlevels(cond) == 2L)
+    stopifnot(length(cond) == ncol(cntEx))
+    if (any(table(cond) < 2))
+        stop("at least two replicates are needed for each condition")
+
+    # method
+    method <- match.arg(method)
+
+    # fraction intronic
+    fracIn <- colSums(cntIn) / (colSums(cntEx) + colSums(cntIn))
+
+    # create DGEList
+    cnt <- data.frame(Ex = cntEx, In = cntIn)
+    y <- edgeR::DGEList(counts = cnt, ...)
+    y <- edgeR::calcNormFactors(y)
+
+    # identify quantifyable genes
+    message("filtering quantifyable genes...", appendLF = FALSE)
+    if (method == "published") {
+        # scale counts to the mean library size separately for exons and introns
+        Nex <- t(t(cntEx) / colSums(cntEx) * mean(colSums(cntEx)))
+        Nin <- t(t(cntIn) / colSums(cntIn) * mean(colSums(cntIn)))
+
+        # log transform (add a pseudocount of 8)
+        NLex <- log2(Nex + 8)
+        NLin <- log2(Nin + 8)
+
+        # Identify quantifyable genes
+        quantGenes <- rownames(cntEx)[ rowMeans(NLex) > 5.0 & rowMeans(NLin) > 5.0 ]
+
+    } else if (method == "new") {
+        # Identify quantifyable genes (at least 1.0 reads per million in at least two samples)
+        quantGenes <- rownames(cntEx)[ rowSums(edgeR::cpm(y) > 2.0) >= 2 ]
+    }
+    message("keeping ",length(quantGenes)," from ",nrow(y)," (",
+            round(length(quantGenes) * 100 / nrow(y), 1), "%)")
+    y <- y[quantGenes,]
+    y <- edgeR::calcNormFactors(y)
+
+    # statistical analysis
+    message("fitting statistical model...", appendLF = FALSE)
+    cond2 <- rep(cond, 2L)
+    region <- factor(rep(c("ex","in"), each = ncol(cntEx)), levels = c("in", "ex"))
+    design <- model.matrix(~ region * cond2) # design matrix with interaction term
+    rownames(design) <- colnames(cnt)
+    y <- edgeR::estimateDisp(y, design)
+    if (method == "published") {
+        # use glmFit / glmLRT for method = "published"
+        fit <- edgeR::glmFit(y, design)
+        tst.cond <- edgeR::glmLRT(fit, coef = 3L)
+        tst.ExIn <- edgeR::glmLRT(fit, coef = 4L)
+    } else if (method == "new") {
+        # use glmQLFit / glmQLFTest for method = "new"
+        fit <- edgeR::glmQLFit(y, design)
+        tst.cond <- edgeR::glmQLFTest(fit, coef = 3L)
+        tst.ExIn <- edgeR::glmQLFTest(fit, coef = 4L)
+    }
+    tt.cond <- edgeR::topTags(tst.cond, n = nrow(y), sort.by = "none")
+    tt.ExIn <- edgeR::topTags(tst.ExIn, n = nrow(y), sort.by = "none")
+    message("done")
+
+    # calculate contrasts
+    message("calculating contrasts...", appendLF = FALSE)
+    contrastName <- paste(levels(cond)[2], "-", levels(cond)[1])
+    if (method == "published") {
+        i1 <- which(cond == levels(cond)[1])
+        i2 <- which(cond == levels(cond)[2])
+        Dex <- rowMeans(NLex[quantGenes,i2]) - rowMeans(NLex[quantGenes,i1])
+        Din <- rowMeans(NLin[quantGenes,i2]) - rowMeans(NLin[quantGenes,i1])
+        Dex.Din <- Dex - Din
+
+    } else if (method == "new") {
+        lfc <- edgeR::predFC(y, design)
+        rownames(lfc) <- rownames(y)
+        Dex <- rowSums(lfc[, c(3,4)])
+        Din <- lfc[, 3]
+        Dex.Din <- lfc[, 4]
+    }
+    message("done")
+
+    ## return results
+    return(list(fracIn = fracIn, quantGenes = quantGenes,
+                contrastName = contrastName,
+                contrasts = cbind(Dex = Dex, Din = Din, Dex.Din = Dex.Din),
+                DGEList = y, tab.cond = tt.cond$table, tab.ExIn = tt.ExIn$table,
+                method = method))
+}
+

@@ -15,6 +15,6 @@ Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
-Suggests: knitr, rmarkdown, testthat, BiocStyle, QuasR, Rbowtie, edgeR
+Suggests: knitr, rmarkdown, testthat, BiocStyle, QuasR, Rbowtie, rtracklayer
 VignetteBuilder: knitr
-Imports: GenomicRanges, GenomicFeatures, S4Vectors, IRanges, AnnotationDbi
+Imports: GenomicRanges, GenomicFeatures, S4Vectors, IRanges, AnnotationDbi, edgeR
