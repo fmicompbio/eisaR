@@ -42,11 +42,12 @@ plotEISA <- function(x, contrast = c("ExIn", "cond", "none"),
     # identify gene to highlight
     if (contrast == "none") {
         sig <- rep(FALSE, nrow(x$contrasts))
+        sig.dir <- numeric(0)
     } else {
         sig <- abs(sigtab$logFC) >= minLfc & sigtab$FDR <= maxFDR
+        sig.dir <- sign(sigtab$logFC[sig])
         message("identified ",sum(sig)," genes to highlight")
     }
-    sig.dir <- sign(sigtab$logFC[sig])
 
     # set graphical parameters (user-defined colors take precedence)
     dotsL <- list(...)
@@ -63,8 +64,10 @@ plotEISA <- function(x, contrast = c("ExIn", "cond", "none"),
 
     # Delta I vs. Delta E
     do.call(plot, dotsL)
-    legend(x = "bottomright", bty = "n", pch = 20, col = genecolors[1:2],
-           legend = sprintf("%s (%d)", c("Up","Down"), c(sum(sig.dir == 1), sum(sig.dir == -1))))
+    if (contrast != "none") {
+        legend(x = "bottomright", bty = "n", pch = 20, col = genecolors[1:2],
+               legend = sprintf("%s (%d)", c("Up","Down"), c(sum(sig.dir == 1), sum(sig.dir == -1))))
+    }
 
     return(invisible(NULL))
 }
