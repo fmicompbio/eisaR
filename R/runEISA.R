@@ -23,6 +23,10 @@
 #'   and \code{\link[edgeR]{glmQLFTest}}. The latter is often less stringent when
 #'   selecting quantifyable genes, but more stringent wenn calling significant
 #'   changes (especially with low numbers of replicates).
+#' @param pscnt \code{numeric(1)} with pseudocount to add to read counts (default: 8).
+#'   It is added to scaled read counts for \code{method="published"}, or used in
+#'   \code{cpm(..., prior.count = pscnt)} and \code{predFC(..., prior.count = pscnt)}
+#'   for \code{method="new"}.
 #' @param ... additional arguments passed to the \code{\link[edgeR]{DGEList}} constructor,
 #'   such as \code{lib.size} or \code{genes}.
 #'
@@ -39,6 +43,7 @@
 #'   \item{tab.ExIn}{statisical results for differential changes between exonic and
 #'     intronic contrast, an indication for post-transcriptional regulation.}
 #'   \item{method}{the method that was used to run EISA}
+#'   \item{pscnt}{the pseudocount that was used to run EISA}
 #' }
 #'
 #' @references Analysis of intronic and exonic reads in RNA-seq data characterizes
@@ -64,7 +69,7 @@
 #' @importFrom stats model.matrix
 #'
 #' @export
-runEISA <- function(cntEx, cntIn, cond, method = c("published", "new"), ...) {
+runEISA <- function(cntEx, cntIn, cond, method = c("published", "new"), pscnt = 8, ...) {
     # check arguments
     # ... count matrices
     if (is.data.frame(cntEx))
@@ -92,9 +97,10 @@ runEISA <- function(cntEx, cntIn, cond, method = c("published", "new"), ...) {
     stopifnot(length(cond) == ncol(cntEx))
     if (any(table(cond) < 2))
         stop("at least two replicates are needed for each condition")
-
-    # method
+    # ... method
     method <- match.arg(method)
+    # ... pscnt
+    stopifnot(is.numeric(pscnt) && length(pscnt) == 1)
 
     # fraction intronic
     fracIn <- colSums(cntIn) / (colSums(cntEx) + colSums(cntIn))
@@ -111,16 +117,18 @@ runEISA <- function(cntEx, cntIn, cond, method = c("published", "new"), ...) {
         Nex <- t(t(cntEx) / colSums(cntEx) * mean(colSums(cntEx)))
         Nin <- t(t(cntIn) / colSums(cntIn) * mean(colSums(cntIn)))
 
-        # log transform (add a pseudocount of 8)
-        NLex <- log2(Nex + 8)
-        NLin <- log2(Nin + 8)
+        # log transform (add pseudocount)
+        if (pscnt != 8)
+            warning("Using a 'pscnt' different from 8 deviates from method='published'")
+        NLex <- log2(Nex + pscnt)
+        NLin <- log2(Nin + pscnt)
 
         # Identify quantifyable genes
         quantGenes <- rownames(cntEx)[ rowMeans(NLex) > 5.0 & rowMeans(NLin) > 5.0 ]
 
     } else if (method == "new") {
         # Identify quantifyable genes (at least 1.0 reads per million in at least two samples)
-        quantGenes <- rownames(cntEx)[ rowSums(edgeR::cpm(y) > 2.0) >= 2 ]
+        quantGenes <- rownames(cntEx)[ rowSums(edgeR::cpm(y, prior.count = pscnt) > 5.0) >= 2 ]
     }
     message("keeping ",length(quantGenes)," from ",nrow(y)," (",
             round(length(quantGenes) * 100 / nrow(y), 1), "%)")
@@ -160,7 +168,7 @@ runEISA <- function(cntEx, cntIn, cond, method = c("published", "new"), ...) {
         Dex.Din <- Dex - Din
 
     } else if (method == "new") {
-        lfc <- edgeR::predFC(y, design)
+        lfc <- edgeR::predFC(y, design, prior.count = pscnt)
         rownames(lfc) <- rownames(y)
         Dex <- rowSums(lfc[, c(3,4)])
         Din <- lfc[, 3]
@@ -173,6 +181,6 @@ runEISA <- function(cntEx, cntIn, cond, method = c("published", "new"), ...) {
                 contrastName = contrastName,
                 contrasts = cbind(Dex = Dex, Din = Din, Dex.Din = Dex.Din),
                 DGEList = y, tab.cond = tt.cond$table, tab.ExIn = tt.ExIn$table,
-                method = method))
+                method = method, pscnt = pscnt))
 }
 

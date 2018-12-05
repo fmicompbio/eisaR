@@ -4,7 +4,8 @@
 \alias{runEISA}
 \title{Run Exon-Intron Split Analaysis.}
 \usage{
-runEISA(cntEx, cntIn, cond, method = c("published", "new"), ...)
+runEISA(cntEx, cntIn, cond, method = c("published", "new"), pscnt = 8,
+  ...)
 }
 \arguments{
 \item{cntEx}{Gene by sample \code{matrix} with exonic counts.}
@@ -28,6 +29,11 @@ and \code{\link[edgeR]{glmQLFTest}}. The latter is often less stringent when
 selecting quantifyable genes, but more stringent wenn calling significant
 changes (especially with low numbers of replicates).}
 
+\item{pscnt}{\code{numeric(1)} with pseudocount to add to read counts (default: 8).
+It is added to scaled read counts for \code{method="published"}, or used in
+\code{cpm(..., prior.count = pscnt)} and \code{predFC(..., prior.count = pscnt)}
+for \code{method="new"}.}
+
 \item{...}{additional arguments passed to the \code{\link[edgeR]{DGEList}} constructor,
 such as \code{lib.size} or \code{genes}.}
 }
@@ -45,6 +51,7 @@ based on both exonic and intronic counts}
 \item{tab.ExIn}{statisical results for differential changes between exonic and
 intronic contrast, an indication for post-transcriptional regulation.}
 \item{method}{the method that was used to run EISA}
+\item{pscnt}{the pseudocount that was used to run EISA}
 }
 }
 \description{
