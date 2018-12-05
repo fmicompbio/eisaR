@@ -166,7 +166,7 @@ in the table below:
 | Aspect:           | `method="published"`                    | `method="new"`                  |
 |-------------------|-----------------------------------------|---------------------------------|
 | normalization     | linear scaling to the mean library size | `edgeR::calcNormFactors`        |
-| gene selection    | log2(x + 8) > 5                         | cpm > 2.0 in at least 2 samples |
+| gene selection    | log2(x + 8) > 5                         | cpm > 5 in at least 2 samples   |
 | effect size       | log2((x + 8)/(y + 8))                   | `edgeR::predFC`                 |
 | model fit         | `edgeR::glmFit`                         | `edgeR::glmQLFit`               |
 | significance test | `edgeR::glmLRT`                         | `edgeR::glmQLFTest`             |
@@ -174,6 +174,27 @@ in the table below:
 While both methods yield highly similar results, `method="new"` is often less
 stringent when selecting quantifyable genes, but more stringent wenn calling
 significant changes (especially with low numbers of replicates).
+
+Here is an illustration of how the results differ between the two:  
+```{r compare}
+res1 <- runEISA(Rex, Rin, cond, method = "published")
+res2 <- runEISA(Rex, Rin, cond, method = "new")
+
+# number of quantifyable genes
+length(res1$quantGenes)
+length(res2$quantGenes)
+
+# number of genes with significant post-transcriptional regulation
+sum(res1$tab.ExIn$FDR < 0.05)
+sum(res2$tab.ExIn$FDR < 0.05)
+
+# comparison of deltas
+ids <- intersect(res1$quantGenes, res2$quantGenes)
+cor(res1$contrasts[ids,"Dex"], res2$contrasts[ids,"Dex"])
+cor(res1$contrasts[ids,"Din"], res2$contrasts[ids,"Din"])
+cor(res1$contrasts[ids,"Dex.Din"], res2$contrasts[ids,"Dex.Din"])
+plot(res1$contrasts[ids,"Dex.Din"], res2$contrasts[ids,"Dex.Din"])
+```
 
 # Visualize EISA results{#plot}
 We can now visualize the results by plotting intronic changes versus exonic
