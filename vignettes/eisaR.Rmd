@@ -29,17 +29,17 @@ regulation of gene expression.
 The `eisaR` package contains convenience functions to facilitate the steps in an
 exon-intron split analysis, which consists of:  
 1. preparing the annotation (exonic and gene body coordinate ranges)  
-2. quantify RNA-seq alignments in exons and introns  
-3. calculate and compare exonic and intronic changes across conditions  
-4. visualize the results  
+2. quantifying RNA-seq alignments in exons and introns  
+3. calculating and comparing exonic and intronic changes across conditions  
+4. visualizing the results  
 
 For the steps 1. and 2. above, this vignette makes use of Bioconductor annotation and
-the `r Biocpkg("QuasR")`. It is also possible to obtain count tables for exons and
+the `r Biocpkg("QuasR")` package. It is also possible to obtain count tables for exons and
 introns using some other pipeline or approach, and directly start with step 3.
 
 # Preparing the annotation{#annotation}
 As mentioned, `eisaR` uses gene annotations from Bioconductor.
-They are provided in the for of `TxDb` packages, e.g. `r Biocpkg("TxDb.Mmusculus.UCSC.mm10.knownGene")`.
+They are provided in the form of `TxDb` objects, e.g. via packages such as `r Biocpkg("TxDb.Mmusculus.UCSC.mm10.knownGene")`.
 You can see available annotations using:
 If you would like to use an alternative source of gene annotations, you might
 still be able to use `eisaR` by first converting your annotations into a `TxDb`
@@ -50,7 +50,7 @@ We will load it from a file. Alternatively, the object would be loaded using `li
 for example using `library(TxDb.Mmusculus.UCSC.mm10.knownGene)`.
 
 ```{r annotation, message=FALSE}
-# load library
+# load package
 library(eisaR)
 
 # get TxDb object
@@ -59,6 +59,7 @@ txdb <- AnnotationDbi::loadDb(txdbFile)
 ```
 
 Exon and gene body regions are then extracted from the `TxDb`:  
+
 ```{r regions}
 # extract filtered exonic and gene body regions
 regS <- getRegionsFromTxDb(txdb = txdb, strandedData = TRUE)
@@ -76,7 +77,8 @@ they reside on opposite strands.
 
 You can also export the obtained regions into files. This may be useful if
 you plan to align and/or quantify reads outside of R. For example, you can use
-`r Biocpkg("rtracklayer")` to export the regions in `regS` into `.gtf` files:  
+`r Biocpkg("rtracklayer")` to export the regions in `regS` into `.gtf` files: 
+
 ```{r exportregions}
 library(rtracklayer)
 export(regS$exons, "hg19sub_exons_stranded.gtf")
@@ -92,6 +94,7 @@ using an alternative aligner/counter, and skip over these steps.
 ## Align reads{#align}
 Let's first copy the sample data from the `r Biocpkg("QuasR")` package to the
 current working directory, all contained in a folder named `extdata`:  
+
 ```{r extdata}
 library(QuasR)
 file.copy(system.file(package = "QuasR", "extdata"), ".", recursive = TRUE)
@@ -99,6 +102,7 @@ file.copy(system.file(package = "QuasR", "extdata"), ".", recursive = TRUE)
 
 We next align the reads to a mini-genome (fasta file `extdata/hg19sub.fa`) using
 `qAlign`:  
+
 ```{r align}
 sampleFile <- "extdata/samples_chip_single.txt"
 genomeFile <- "extdata/hg19sub.fa"
@@ -113,6 +117,7 @@ Alignments in exons and gene bodies can now be counted using `qCount` and the
 `regU` that we have generated earlier (assuming that the data is unstranded).
 Intronic counts can then be obtained from the difference between gene bodies and
 exons:  
+
 ```{r count}
 cntEx <- qCount(proj, regU$exons, orientation = "any")
 cntGb <- qCount(proj, regU$genebodies, orientation = "any")
@@ -123,13 +128,15 @@ head(cntIn)
 
 As mentioned, both alignments and counts can also be obtained using alternative
 approaches. It is required that the two resulting exon and intron count tables
-have identical structure (genes in rows, samples in columns). 
+have identical structure (genes in rows, samples in columns, the same order of
+rows and columns in both tables).
 
 ## Load full count tables
 The above example only contains very few genes. For the rest of the vignette,
 we will use count tables from a real RNA-seq experiment that are provided in the
 `eisaR` package. The counts correspond to the rawdata used in Figure 3a of [@eisa]
-and are also available online from the [supplementary material](https://fmicompbio.github.io/projects/EISA/EISA.html):  
+and are also available online from the [supplementary material](https://fmicompbio.github.io/projects/EISA/EISA.html): 
+
 ```{r loadcounts}
 cntEx <- readRDS(system.file("extdata",
                              "Fig3abc_GSE33252_rawcounts_exonic.rds",
@@ -146,13 +153,13 @@ you can skip now to section \@ref(stepwise).
 
 ```{r runEISA}
 # remove "width" column
-Rex <- cntEx[,colnames(cntEx) != "width"]
-Rin <- cntIn[,colnames(cntIn) != "width"]
+Rex <- cntEx[, colnames(cntEx) != "width"]
+Rin <- cntIn[, colnames(cntIn) != "width"]
 
 # create condition factor (contrast will be TN - ES)
-cond <- factor(c("ES","ES","TN","TN"))
+cond <- factor(c("ES", "ES", "TN", "TN"))
 
-# run EISA (remove "width" column)
+# run EISA
 res <- runEISA(Rex, Rin, cond)
 ```
 
@@ -172,10 +179,11 @@ in the table below:
 | significance test | `edgeR::glmLRT`                         | `edgeR::glmQLFTest`             |
 
 While both methods yield highly similar results, `method="new"` is often less
-stringent when selecting quantifyable genes, but more stringent wenn calling
+stringent when selecting quantifyable genes, but more stringent when calling
 significant changes (especially with low numbers of replicates).
 
 Here is an illustration of how the results differ between the two:  
+
 ```{r compare}
 res1 <- runEISA(Rex, Rin, cond, method = "published")
 res2 <- runEISA(Rex, Rin, cond, method = "new")
@@ -250,8 +258,9 @@ The count tables were obtained from a total RNA-seq experiments in mouse
 embryonic stem (MmES) cells and derived terminal neurons (MmTN), with two replicates
 for each condition.
 
-We will now calcluate the changes between neurons and ES cells in introns ($\Delta I$),
+We will now calculate the changes between neurons and ES cells in introns ($\Delta I$),
 in exons ($\Delta E$), and the difference between the two ($\Delta E - \Delta I$):  
+
 ```{r dIdE}
 Dex <- NLex[,c("MmTN_RNA_total_a","MmTN_RNA_total_b")] - NLex[,c("MmES_RNA_total_a","MmES_RNA_total_b")]
 Din <- NLin[,c("MmTN_RNA_total_a","MmTN_RNA_total_b")] - NLin[,c("MmES_RNA_total_a","MmES_RNA_total_b")]
@@ -327,6 +336,7 @@ legend(x = "bottomright", bty = "n", pch = 20, col = c("#E41A1CFF","#4DAF4AFF"),
 
 # Session information
 The output in this vignette was produced under:
+
 ```{r sessionInfo}
 sessionInfo()
 ```
