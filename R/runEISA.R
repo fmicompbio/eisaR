@@ -1,7 +1,7 @@
 #' @title Run Exon-Intron Split Analaysis.
 #'
 #' @description Starting from count tables with exonic and intronic counts
-#'   for two conditions, perform all the steps in EISA (normalization, identify
+#'   for two conditions, perform all the steps in EISA (normalize, identify
 #'   quantifyable genes, calculate contrasts and their significance).
 #'
 #' @author Michael Stadler
@@ -19,7 +19,7 @@
 #'   If \code{method="new"}, normalization will be performed using TMM as
 #'   implemented in \code{\link[edgeR]{calcNormFactors}}, the contrast are
 #'   calculated using \code{\link[edgeR]{predFC}}, and the statistical analysis
-#'   will use the quasi-likelyhood framework implemented in \code{\link[edgeR]{glmQLFit}}
+#'   will use the quasi-likelihood framework implemented in \code{\link[edgeR]{glmQLFit}}
 #'   and \code{\link[edgeR]{glmQLFTest}}. The latter is often less stringent when
 #'   selecting quantifyable genes, but more stringent wenn calling significant
 #'   changes (especially with low numbers of replicates).
@@ -32,10 +32,10 @@
 #'
 #' @return a \code{list} with elements \describe{
 #'   \item{fracIn}{fraction intronic counts in each sample}
-#'   \item{quantGenes}{names of quantifyable genes indluded in the analysis (from rownames of \code{cntEx})}
+#'   \item{quantGenes}{names of quantifyable genes included in the analysis (from rownames of \code{cntEx})}
 #'   \item{contrastName}{contrast name}
-#'   \item{contrasts}{contrast matrix for quantifyable genes, with averge log2
-#'     fold-changes in exons (\code{Dex}), in introns (\code{Din}), and averge
+#'   \item{contrasts}{contrast matrix for quantifyable genes, with average log2
+#'     fold-changes in exons (\code{Dex}), in introns (\code{Din}), and average
 #'     difference between log2 fold-changes in exons and introns (\code{Dex.Din})}
 #'   \item{DGEList}{\code{\link[edgeR]{DGEList}} object used in model fitting}
 #'   \item{tab.cond}{statistical results for differential expression between conditions,
@@ -127,18 +127,18 @@ runEISA <- function(cntEx, cntIn, cond, method = c("published", "new"), pscnt = 
         quantGenes <- rownames(cntEx)[ rowMeans(NLex) > 5.0 & rowMeans(NLin) > 5.0 ]
 
     } else if (method == "new") {
-        # Identify quantifyable genes (at least 1.0 reads per million in at least two samples)
+        # Identify quantifyable genes (at least 5.0 reads per million in at least two samples)
         quantGenes <- rownames(cntEx)[ rowSums(edgeR::cpm(y, prior.count = pscnt) > 5.0) >= 2 ]
     }
-    message("keeping ",length(quantGenes)," from ",nrow(y)," (",
+    message("keeping ", length(quantGenes), " from ", nrow(y), " (",
             round(length(quantGenes) * 100 / nrow(y), 1), "%)")
-    y <- y[quantGenes,]
+    y <- y[quantGenes, ]
     y <- edgeR::calcNormFactors(y)
 
     # statistical analysis
     message("fitting statistical model...", appendLF = FALSE)
     cond2 <- rep(cond, 2L)
-    region <- factor(rep(c("ex","in"), each = ncol(cntEx)), levels = c("in", "ex"))
+    region <- factor(rep(c("ex", "in"), each = ncol(cntEx)), levels = c("in", "ex"))
     design <- model.matrix(~ region * cond2) # design matrix with interaction term
     rownames(design) <- colnames(cnt)
     y <- edgeR::estimateDisp(y, design)
@@ -163,14 +163,13 @@ runEISA <- function(cntEx, cntIn, cond, method = c("published", "new"), pscnt = 
     if (method == "published") {
         i1 <- which(cond == levels(cond)[1])
         i2 <- which(cond == levels(cond)[2])
-        Dex <- rowMeans(NLex[quantGenes,i2]) - rowMeans(NLex[quantGenes,i1])
-        Din <- rowMeans(NLin[quantGenes,i2]) - rowMeans(NLin[quantGenes,i1])
+        Dex <- rowMeans(NLex[quantGenes, i2]) - rowMeans(NLex[quantGenes, i1])
+        Din <- rowMeans(NLin[quantGenes, i2]) - rowMeans(NLin[quantGenes, i1])
         Dex.Din <- Dex - Din
-
     } else if (method == "new") {
         lfc <- edgeR::predFC(y, design, prior.count = pscnt)
         rownames(lfc) <- rownames(y)
-        Dex <- rowSums(lfc[, c(3,4)])
+        Dex <- rowSums(lfc[, c(3, 4)])
         Din <- lfc[, 3]
         Dex.Din <- lfc[, 4]
     }
