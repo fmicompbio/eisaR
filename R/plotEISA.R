@@ -46,21 +46,21 @@ plotEISA <- function(x, contrast = c("ExIn", "cond", "none"),
     } else {
         sig <- abs(sigtab$logFC) >= minLfc & sigtab$FDR <= maxFDR
         sig.dir <- sign(sigtab$logFC[sig])
-        message("identified ",sum(sig)," genes to highlight")
+        message("identified ", sum(sig), " genes to highlight")
     }
 
     # set graphical parameters (user-defined colors take precedence)
     dotsL <- list(...)
-    dotsL$x <- x$contrasts[,"Din"]
-    dotsL$y <- x$contrasts[,"Dex"]
+    dotsL$x <- x$contrasts[, "Din"]
+    dotsL$y <- x$contrasts[, "Dex"]
     if (!"pch" %in% names(dotsL))
         dotsL$pch <- 20
     if (!"col" %in% names(dotsL))
         dotsL$col <- ifelse(sig, ifelse(sigtab$logFC > 0, genecolors[1], genecolors[2]), genecolors[3])
     if (!"xlab" %in% names(dotsL))
-        dotsL$xlab <- substitute(expression(paste(Delta,"intron (",cn,")")), list(cn = x$contrastName))
+        dotsL$xlab <- substitute(expression(paste(Delta, "intron (", cn, ")")), list(cn = x$contrastName))
     if (!"ylab" %in% names(dotsL))
-        dotsL$ylab <- substitute(expression(paste(Delta,"exon (",cn,")")), list(cn = x$contrastName))
+        dotsL$ylab <- substitute(expression(paste(Delta, "exon (", cn, ")")), list(cn = x$contrastName))
 
     # Delta I vs. Delta E
     do.call(plot, dotsL)
