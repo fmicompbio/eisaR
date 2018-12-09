@@ -56,6 +56,8 @@ getRegionsFromTxDb <- function(txdb, exonExt = 10L, strandedData = TRUE) {
     message("extracting exon coordinates")
     exL <- GenomicFeatures::exonsBy(txdb, by = "gene")
     suppressWarnings(exL <- exL + exonExt) # may contain out of chromosome regions
+    # remark: should GenomicRanges::trim now, but there is not trim,GRangesList method
+    #         will suppressWarnings below until I can use trim,GRanges
     exL <- GenomicRanges::reduce(exL) # fuse
 
     # identify genes with single exon
@@ -63,22 +65,18 @@ getRegionsFromTxDb <- function(txdb, exonExt = 10L, strandedData = TRUE) {
     severalExons <- nEx > 1
 
     # identify genes with exons on multiple chromosomes
-    nChr <- S4Vectors::elementNROWS(S4Vectors::runLength(GenomicRanges::seqnames(exL)))
+    suppressWarnings(nChr <- S4Vectors::elementNROWS(S4Vectors::runLength(GenomicRanges::seqnames(exL))))
     singleChr <- nChr == 1
 
     ## identify genes with exons on multiple strands
-    nStr <- S4Vectors::elementNROWS(S4Vectors::runLength(GenomicRanges::strand(exL)))
+    suppressWarnings(nStr <- S4Vectors::elementNROWS(S4Vectors::runLength(GenomicRanges::strand(exL))))
     singleStrand <- nStr == 1
 
     # get gene body
-    suppressWarnings(ex <- unlist(exL))  # may contain out of chromosome regions
-    gnid <- names(exL)
-    gbody <- GenomicRanges::GRanges(GenomicRanges::seqnames(ex)[match(gnid, names(ex))],
-                                    IRanges::IRanges(start = min(start(exL)), end = max(end(exL)), names = gnid),
-                                    strand = GenomicRanges::strand(ex)[match(gnid, names(ex))])
+    ex <- suppressWarnings(GenomicRanges::trim(unlist(exL)))
+    suppressWarnings(gbody <- unlist(range(exL))[unique(names(ex))])
 
     # trim out-of chromosome regions
-    ex <- GenomicRanges::trim(ex)
     gbody <- GenomicRanges::trim(gbody)
 
     ## identify overlapping genes
