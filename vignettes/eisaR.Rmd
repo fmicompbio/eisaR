@@ -40,7 +40,12 @@ introns using some other pipeline or approach, and directly start with step 3.
 # Preparing the annotation{#annotation}
 As mentioned, `eisaR` uses gene annotations from Bioconductor.
 They are provided in the form of `TxDb` objects, e.g. via packages such as `r Biocpkg("TxDb.Mmusculus.UCSC.mm10.knownGene")`.
-You can see available annotations using:
+You can see available annotations using the following code:  
+
+```{r availableOnline, eval=FALSE}
+pkgs <- BiocManager::available("TxDb")
+```
+
 If you would like to use an alternative source of gene annotations, you might
 still be able to use `eisaR` by first converting your annotations into a `TxDb`
 (see `makeTxDb` in the `r Biocpkg("GenomicFeatures")` package).
@@ -170,13 +175,13 @@ algorithm described in [@eisa]. `method="new"` will use more of the functionalit
 provided by `edgeR` (e.g. for normalization and effect size calculation), summarized
 in the table below:  
 
-| Aspect:           | `method="published"`                    | `method="new"`                  |
-|-------------------|-----------------------------------------|---------------------------------|
-| normalization     | linear scaling to the mean library size | `edgeR::calcNormFactors`        |
-| gene selection    | log2(x + 8) > 5                         | cpm > 5 in at least 2 samples   |
-| effect size       | log2((x + 8)/(y + 8))                   | `edgeR::predFC`                 |
-| model fit         | `edgeR::glmFit`                         | `edgeR::glmQLFit`               |
-| significance test | `edgeR::glmLRT`                         | `edgeR::glmQLFTest`             |
+| Aspect:           | `method="published"`                        | `method="new"`                                   |
+|-------------------|---------------------------------------------|--------------------------------------------------|
+| normalization     | linear scaling to the mean library size     | `edgeR::calcNormFactors`                         |
+| gene selection    | log2(x + 8) > 5 (in both exons and introns) | cpm > 5 in at least 2 samples (exons or introns) |
+| effect size       | log2((x + 8)/(y + 8))                       | `edgeR::predFC`                                  |
+| model fit         | `edgeR::glmFit`                             | `edgeR::glmQLFit`                                |
+| significance test | `edgeR::glmLRT`                             | `edgeR::glmQLFTest`                              |
 
 While both methods yield highly similar results, `method="new"` is often less
 stringent when selecting quantifyable genes, but more stringent when calling
@@ -189,15 +194,15 @@ res1 <- runEISA(Rex, Rin, cond, method = "published")
 res2 <- runEISA(Rex, Rin, cond, method = "new")
 
 # number of quantifyable genes
-length(res1$quantGenes)
-length(res2$quantGenes)
+nrow(res1$DGEList)
+nrow(res2$DGEList)
 
 # number of genes with significant post-transcriptional regulation
 sum(res1$tab.ExIn$FDR < 0.05)
 sum(res2$tab.ExIn$FDR < 0.05)
 
 # comparison of deltas
-ids <- intersect(res1$quantGenes, res2$quantGenes)
+ids <- intersect(rownames(res1$DGEList), rownames(res2$DGEList))
 cor(res1$contrasts[ids,"Dex"], res2$contrasts[ids,"Dex"])
 cor(res1$contrasts[ids,"Din"], res2$contrasts[ids,"Din"])
 cor(res1$contrasts[ids,"Dex.Din"], res2$contrasts[ids,"Dex.Din"])

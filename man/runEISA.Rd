@@ -24,7 +24,7 @@ statistical analysis is based on \code{\link[edgeR]{glmFit}} and \code{\link[edg
 If \code{method="new"}, normalization will be performed using TMM as
 implemented in \code{\link[edgeR]{calcNormFactors}}, the contrast are
 calculated using \code{\link[edgeR]{predFC}}, and the statistical analysis
-will use the quasi-likelyhood framework implemented in \code{\link[edgeR]{glmQLFit}}
+will use the quasi-likelihood framework implemented in \code{\link[edgeR]{glmQLFit}}
 and \code{\link[edgeR]{glmQLFTest}}. The latter is often less stringent when
 selecting quantifyable genes, but more stringent wenn calling significant
 changes (especially with low numbers of replicates).}
@@ -40,10 +40,9 @@ such as \code{lib.size} or \code{genes}.}
 \value{
 a \code{list} with elements \describe{
 \item{fracIn}{fraction intronic counts in each sample}
-\item{quantGenes}{names of quantifyable genes indluded in the analysis (from rownames of \code{cntEx})}
 \item{contrastName}{contrast name}
-\item{contrasts}{contrast matrix for quantifyable genes, with averge log2
-fold-changes in exons (\code{Dex}), in introns (\code{Din}), and averge
+\item{contrasts}{contrast matrix for quantifyable genes, with average log2
+fold-changes in exons (\code{Dex}), in introns (\code{Din}), and average
 difference between log2 fold-changes in exons and introns (\code{Dex.Din})}
 \item{DGEList}{\code{\link[edgeR]{DGEList}} object used in model fitting}
 \item{tab.cond}{statistical results for differential expression between conditions,
@@ -56,7 +55,7 @@ intronic contrast, an indication for post-transcriptional regulation.}
 }
 \description{
 Starting from count tables with exonic and intronic counts
-for two conditions, perform all the steps in EISA (normalization, identify
+for two conditions, perform all the steps in EISA (normalize, identify
 quantifyable genes, calculate contrasts and their significance).
 }
 \examples{

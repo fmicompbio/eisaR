@@ -4,7 +4,7 @@
 \name{eisaR-package}
 \alias{eisaR}
 \alias{eisaR-package}
-\title{eisaR: Exon-Intron Split Anaalysis (EISA) in R}
+\title{eisaR: Exon-Intron Split Analysis (EISA) in R}
 \description{
 Exon-intron split analysis (EISA) uses ordinary RNA-seq data to measure
     changes in mature RNA and pre-mRNA reads across different experimental conditions
@@ -19,6 +19,7 @@ Authors:
 \itemize{
   \item Dimos Gaidatzis \email{dimosthenis.gaidatzis@fmi.ch}
   \item Lukas Burger \email{lukas.burger@fmi.ch}
+  \item Charlotte Soneson \email{charlotte.soneson@fmi.ch}
 }
 
 }
