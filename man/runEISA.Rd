@@ -40,7 +40,6 @@ such as \code{lib.size} or \code{genes}.}
 \value{
 a \code{list} with elements \describe{
 \item{fracIn}{fraction intronic counts in each sample}
-\item{quantGenes}{names of quantifyable genes included in the analysis (from rownames of \code{cntEx})}
 \item{contrastName}{contrast name}
 \item{contrasts}{contrast matrix for quantifyable genes, with average log2
 fold-changes in exons (\code{Dex}), in introns (\code{Din}), and average

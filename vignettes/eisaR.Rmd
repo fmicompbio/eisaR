@@ -195,15 +195,15 @@ res1 <- runEISA(Rex, Rin, cond, method = "published")
 res2 <- runEISA(Rex, Rin, cond, method = "new")
 
 # number of quantifyable genes
-length(res1$quantGenes)
-length(res2$quantGenes)
+nrow(res1$DGEList)
+nrow(res2$DGEList)
 
 # number of genes with significant post-transcriptional regulation
 sum(res1$tab.ExIn$FDR < 0.05)
 sum(res2$tab.ExIn$FDR < 0.05)
 
 # comparison of deltas
-ids <- intersect(res1$quantGenes, res2$quantGenes)
+ids <- intersect(rownames(res1$DGEList), rownames(res2$DGEList))
 cor(res1$contrasts[ids,"Dex"], res2$contrasts[ids,"Dex"])
 cor(res1$contrasts[ids,"Din"], res2$contrasts[ids,"Din"])
 cor(res1$contrasts[ids,"Dex.Din"], res2$contrasts[ids,"Dex.Din"])

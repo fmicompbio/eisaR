@@ -19,6 +19,7 @@ Authors:
 \itemize{
   \item Dimos Gaidatzis \email{dimosthenis.gaidatzis@fmi.ch}
   \item Lukas Burger \email{lukas.burger@fmi.ch}
+  \item Charlotte Soneson \email{charlotte.soneson@fmi.ch}
 }
 
 }
