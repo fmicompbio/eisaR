@@ -6,9 +6,9 @@ citEntry(entry="Manual",
 			   as.person("Lukas Burger"),
 			   as.person("Michael B Stadler")),
 	 year=2018,
-	 note="R package version 0.2",
+	 note="R package version 0.5",
 	 textVersion="Gaidatzis D, Burger L and Stadler MB. eisaR: Exon-Intron Split Anaalysis (EISA) in R. R package version
-  0.2."
+  0.5."
 )
 
 citEntry(entry="article",
