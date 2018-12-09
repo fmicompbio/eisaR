@@ -32,7 +32,6 @@
 #'
 #' @return a \code{list} with elements \describe{
 #'   \item{fracIn}{fraction intronic counts in each sample}
-#'   \item{quantGenes}{names of quantifyable genes included in the analysis (from rownames of \code{cntEx})}
 #'   \item{contrastName}{contrast name}
 #'   \item{contrasts}{contrast matrix for quantifyable genes, with average log2
 #'     fold-changes in exons (\code{Dex}), in introns (\code{Din}), and average
@@ -145,12 +144,12 @@ runEISA <- function(cntEx, cntIn, cond, method = c("published", "new"), pscnt = 
     if (method == "published") {
         # use glmFit / glmLRT for method = "published"
         fit <- edgeR::glmFit(y, design)
-        tst.cond <- edgeR::glmLRT(fit, coef = 3L)
+        tst.cond <- edgeR::glmLRT(fit, contrast = c(0, 0, 1, 0.5))
         tst.ExIn <- edgeR::glmLRT(fit, coef = 4L)
     } else if (method == "new") {
         # use glmQLFit / glmQLFTest for method = "new"
         fit <- edgeR::glmQLFit(y, design)
-        tst.cond <- edgeR::glmQLFTest(fit, coef = 3L)
+        tst.cond <- edgeR::glmQLFTest(fit, contrast = c(0, 0, 1, 0.5))
         tst.ExIn <- edgeR::glmQLFTest(fit, coef = 4L)
     }
     tt.cond <- edgeR::topTags(tst.cond, n = nrow(y), sort.by = "none")
@@ -176,7 +175,7 @@ runEISA <- function(cntEx, cntIn, cond, method = c("published", "new"), pscnt = 
     message("done")
 
     ## return results
-    return(list(fracIn = fracIn, quantGenes = quantGenes,
+    return(list(fracIn = fracIn,
                 contrastName = contrastName,
                 contrasts = cbind(Dex = Dex, Din = Din, Dex.Din = Dex.Din),
                 DGEList = y, tab.cond = tt.cond$table, tab.ExIn = tt.ExIn$table,
