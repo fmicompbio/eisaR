@@ -1,6 +1,6 @@
 Package: eisaR
 Title: Exon-Intron Split Analysis (EISA) in R
-Version: 0.4
+Version: 0.5
 Authors@R: c(person("Michael", "Stadler", email = "michael.stadler@fmi.ch", role = c("aut", "cre")),
              person("Dimos", "Gaidatzis", email = "dimosthenis.gaidatzis@fmi.ch", role = "aut"),
              person("Lukas", "Burger", email = "lukas.burger@fmi.ch", role = "aut"))
@@ -12,7 +12,6 @@ Description: Exon-intron split analysis (EISA) uses ordinary RNA-seq data to mea
 Depends: R (>= 3.5.0)
 License: GPL-3
 Encoding: UTF-8
-LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
 Suggests: knitr, rmarkdown, testthat, BiocStyle, QuasR, Rbowtie, rtracklayer
