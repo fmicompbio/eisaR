@@ -1,4 +1,4 @@
-#' @title Run Exon-Intron Split Analaysis.
+#' @title Run Exon-Intron Split Analysis.
 #'
 #' @description Starting from count tables with exonic and intronic counts
 #'   for two conditions, perform all the steps in EISA (normalize, identify
@@ -6,28 +6,37 @@
 #'
 #' @author Michael Stadler
 #'
-#' @param cntEx Gene by sample \code{matrix} with exonic counts.
+#' @param cntEx Gene by sample \code{matrix} with exonic counts, OR a
+#'   \code{SummarizedExperiment} with two assays named \code{exon} and
+#'   \code{intron}, containing exonic and intronic counts, respectively. If
+#'   \code{cntEx} is a \code{SummarizedExperiment}, \code{cntIn} will be
+#'   disregarded.
 #' @param cntIn Gene by sample \code{matrix} with intronic counts. Must have the
-#'   same structure as \code{cntEx} (same number and order of rows and columns).
+#'   same structure as \code{cntEx} (same number and order of rows and columns)
+#'   if \code{cntEx} is a matrix. Will be disregarded if \code{cntEx} is a
+#'   \code{SummarizedExperiment}.
 #' @param cond \code{numeric}, \code{character} or \code{factor} with two levels
 #'   that groups the samples (columns of \code{cntEx} and \code{cntIn} into two
 #'   conditions. The contrast will be defined as secondLevel - firstLevel.
-#' @param method One of \code{"published"} or \code{"new"}. If \code{"published"}
-#'   (the default), sample normalization, gene filtering and calculation of
-#'   contrasts is performed as described in Gaidatzis et al. 2015, and the
-#'   statistical analysis is based on \code{\link[edgeR]{glmFit}} and \code{\link[edgeR]{glmLRT}}.
+#' @param method One of \code{"published"} or \code{"new"}. If
+#'   \code{"published"} (the default), sample normalization, gene filtering and
+#'   calculation of contrasts is performed as described in Gaidatzis et al.
+#'   2015, and the statistical analysis is based on \code{\link[edgeR]{glmFit}}
+#'   and \code{\link[edgeR]{glmLRT}}.
 #'   If \code{method="new"}, normalization will be performed using TMM as
 #'   implemented in \code{\link[edgeR]{calcNormFactors}}, the contrast are
 #'   calculated using \code{\link[edgeR]{predFC}}, and the statistical analysis
-#'   will use the quasi-likelihood framework implemented in \code{\link[edgeR]{glmQLFit}}
-#'   and \code{\link[edgeR]{glmQLFTest}}. The latter is often less stringent when
-#'   selecting quantifyable genes, but more stringent wenn calling significant
-#'   changes (especially with low numbers of replicates).
-#' @param pscnt \code{numeric(1)} with pseudocount to add to read counts (default: 8).
-#'   It is added to scaled read counts for \code{method="published"}, or used in
-#'   \code{cpm(..., prior.count = pscnt)} and \code{predFC(..., prior.count = pscnt)}
-#'   for \code{method="new"}.
-#' @param ... additional arguments passed to the \code{\link[edgeR]{DGEList}} constructor,
+#'   will use the quasi-likelihood framework implemented in
+#'   \code{\link[edgeR]{glmQLFit}} and \code{\link[edgeR]{glmQLFTest}}. The
+#'   latter is often less stringent when selecting quantifyable genes, but more
+#'   stringent wenn calling significant changes (especially with low numbers of
+#'   replicates).
+#' @param pscnt \code{numeric(1)} with pseudocount to add to read counts
+#'   (default: 8). It is added to scaled read counts for
+#'   \code{method="published"}, or used in \code{cpm(..., prior.count = pscnt)}
+#'   and \code{predFC(..., prior.count = pscnt)} for \code{method="new"}.
+#' @param ... additional arguments passed to the \code{\link[edgeR]{DGEList}}
+#'   constructor,
 #'   such as \code{lib.size} or \code{genes}.
 #'
 #' @return a \code{list} with elements \describe{
@@ -37,10 +46,10 @@
 #'     fold-changes in exons (\code{Dex}), in introns (\code{Din}), and average
 #'     difference between log2 fold-changes in exons and introns (\code{Dex.Din})}
 #'   \item{DGEList}{\code{\link[edgeR]{DGEList}} object used in model fitting}
-#'   \item{tab.cond}{statistical results for differential expression between conditions,
-#'     based on both exonic and intronic counts}
-#'   \item{tab.ExIn}{statisical results for differential changes between exonic and
-#'     intronic contrast, an indication for post-transcriptional regulation.}
+#'   \item{tab.cond}{statistical results for differential expression between
+#'   conditions, based on both exonic and intronic counts}
+#'   \item{tab.ExIn}{statisical results for differential changes between exonic
+#'   and intronic contrast, an indication for post-transcriptional regulation.}
 #'   \item{method}{the method that was used to run EISA}
 #'   \item{pscnt}{the pseudocount that was used to run EISA}
 #' }
@@ -66,11 +75,18 @@
 #'
 #' @import edgeR
 #' @importFrom stats model.matrix
+#' @importFrom methods is
+#' @importFrom SummarizedExperiment assay SummarizedExperiment
 #'
 #' @export
-runEISA <- function(cntEx, cntIn, cond, method = c("published", "new"), pscnt = 8, ...) {
+runEISA <- function(cntEx, cntIn, cond, method = c("published", "new"), 
+                    pscnt = 8, ...) {
     # check arguments
     # ... count matrices
+    if (is(cntEx, "SummarizedExperiment")) {
+        cntIn <- SummarizedExperiment::assay(cntEx, "intron")
+        cntEx <- SummarizedExperiment::assay(cntEx, "exon")
+    }
     if (is.data.frame(cntEx))
         cntEx <- as.matrix(cntEx)
     stopifnot(is.matrix(cntEx))
