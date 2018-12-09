@@ -43,8 +43,7 @@ They are provided in the form of `TxDb` objects, e.g. via packages such as `r Bi
 You can see available annotations using the following code:  
 
 ```{r availableOnline, eval=FALSE}
-pkgs <- BiocManager::available()
-grep("TxDb", pkgs, value = TRUE)
+pkgs <- BiocManager::available("TxDb")
 ```
 
 If you would like to use an alternative source of gene annotations, you might
