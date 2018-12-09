@@ -1,0 +1,13 @@
+language: r
+r: bioc-devel
+warnings_are_errors: false
+cache: packages
+r_build_args: "--no-manual --no-resave-data"
+r_check_args: "--no-build-vignettes --no-manual --timings"
+#notifications:
+#  slack:
+#    secure: ccIntAARkZreQn7ytwahnAZqhlmY3C65yseWzz+mqE25FoOdgaErOfirqg3vjzmwmgB/xXJXTYSngRnJfo1INGAxMz6fQzMnrhw0bhOFV/KkLL29x//pmpmriPBeEA8p1cMWXUFICXq2KMEKazZNlXCnY1UAZn/mWr61y7FufrjP0TY07hXE6FLLSijPbICgJ/KdbkwmSBZ7+BZwm2dgTF9MS9VvSJ0oW1Z02gMDe48KQLDiS4hYVWRAolE1m2KqAtKXEgQZmVkaGOlgw8zjWrEq/+F1b5mOrrivdZoYNGt1VanbunCTazI1BhYI9s/R5I/AsDx3K/FLqP1f0o6YsijezeDyE601vukmPtaJlTbVcm7TN3BMBrvqituCyC5joLs+rKe0ihCjQ8UDk22B5+PFo7UC+jXF0TVMjO/u+e9urC8DzToBDh16ozl8KSmsnAiLibwlltP4lNrOekmJV45yPbxWqC7wPJIBmx9Fg6Npawi+vON1auWUxFKtUb5tlu86uiLE23/hL5tckf3Ijt77U7o7t5QcISilEK2rhDyTprYIQoypLWgQp81bGSJGvNGLnB1FWnviTp1VpQ1b0rrQKuYcJUYhNsskKUaYfcQZlh9JQf1k8UDDdNsBx2ep8pheQ9Pda6Ax5bSeuh95Y2uvDp509tePJNqWNLm3Tr4=
+r_packages:
+    - covr
+after_success:
+    - Rscript -e 'library(covr); codecov()'
