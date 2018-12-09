@@ -40,7 +40,13 @@ introns using some other pipeline or approach, and directly start with step 3.
 # Preparing the annotation{#annotation}
 As mentioned, `eisaR` uses gene annotations from Bioconductor.
 They are provided in the form of `TxDb` objects, e.g. via packages such as `r Biocpkg("TxDb.Mmusculus.UCSC.mm10.knownGene")`.
-You can see available annotations using:
+You can see available annotations using the following code:  
+
+```{r availableOnline, eval=FALSE}
+pkgs <- BiocManager::available()
+grep("TxDb", pkgs, value = TRUE)
+```
+
 If you would like to use an alternative source of gene annotations, you might
 still be able to use `eisaR` by first converting your annotations into a `TxDb`
 (see `makeTxDb` in the `r Biocpkg("GenomicFeatures")` package).
