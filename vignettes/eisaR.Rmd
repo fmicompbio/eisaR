@@ -176,13 +176,13 @@ algorithm described in [@eisa]. `method="new"` will use more of the functionalit
 provided by `edgeR` (e.g. for normalization and effect size calculation), summarized
 in the table below:  
 
-| Aspect:           | `method="published"`                    | `method="new"`                  |
-|-------------------|-----------------------------------------|---------------------------------|
-| normalization     | linear scaling to the mean library size | `edgeR::calcNormFactors`        |
-| gene selection    | log2(x + 8) > 5                         | cpm > 5 in at least 2 samples   |
-| effect size       | log2((x + 8)/(y + 8))                   | `edgeR::predFC`                 |
-| model fit         | `edgeR::glmFit`                         | `edgeR::glmQLFit`               |
-| significance test | `edgeR::glmLRT`                         | `edgeR::glmQLFTest`             |
+| Aspect:           | `method="published"`                        | `method="new"`                                   |
+|-------------------|---------------------------------------------|--------------------------------------------------|
+| normalization     | linear scaling to the mean library size     | `edgeR::calcNormFactors`                         |
+| gene selection    | log2(x + 8) > 5 (in both exons and introns) | cpm > 5 in at least 2 samples (exons or introns) |
+| effect size       | log2((x + 8)/(y + 8))                       | `edgeR::predFC`                                  |
+| model fit         | `edgeR::glmFit`                             | `edgeR::glmQLFit`                                |
+| significance test | `edgeR::glmLRT`                             | `edgeR::glmQLFTest`                              |
 
 While both methods yield highly similar results, `method="new"` is often less
 stringent when selecting quantifyable genes, but more stringent when calling
