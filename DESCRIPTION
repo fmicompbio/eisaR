@@ -17,4 +17,12 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
 Suggests: knitr, rmarkdown, testthat, BiocStyle, QuasR, Rbowtie, rtracklayer
 VignetteBuilder: knitr
-Imports: GenomicRanges, GenomicFeatures, S4Vectors, IRanges, AnnotationDbi, edgeR
+Imports: 
+    GenomicRanges,
+    GenomicFeatures,
+    S4Vectors,
+    IRanges,
+    AnnotationDbi,
+    edgeR,
+    methods,
+    SummarizedExperiment
