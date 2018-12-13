@@ -32,7 +32,12 @@ plotEISA <- function(x, contrast = c("ExIn", "cond", "none"),
                      genecolors = c("#E41A1CFF", "#4DAF4AFF", "#22222244"), ...) {
     # check arguments
     contrast <- match.arg(contrast)
-    sigtab <- switch(contrast, ExIn = x$tab.ExIn, cond = x$tab.cond)
+    sigtab <- switch(contrast, ExIn = x$tab.ExIn, cond = x$tab.cond, none = data.frame())
+    if (nrow(sigtab) == 0 && contrast != "none")
+        stop("'x' does not contain the requested statistics and can only ",
+             "be plotted using contrast = 'none'. Note that at least two ",
+             "replicates per condition are required to run the statistical ",
+             "testing.")
     if (is.null(minLfc))
         minLfc <- 0
     stopifnot(is.numeric(minLfc) && length(minLfc) == 1L)

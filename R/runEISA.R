@@ -110,8 +110,6 @@ runEISA <- function(cntEx, cntIn, cond, method = c("published", "new"),
     stopifnot(is.factor(cond))
     stopifnot(nlevels(cond) == 2L)
     stopifnot(length(cond) == ncol(cntEx))
-    if (any(table(cond) < 2))
-        stop("at least two replicates are needed for each condition")
     # ... method
     method <- match.arg(method)
     # ... pscnt
@@ -151,26 +149,34 @@ runEISA <- function(cntEx, cntIn, cond, method = c("published", "new"),
     y <- edgeR::calcNormFactors(y)
 
     # statistical analysis
-    message("fitting statistical model...", appendLF = FALSE)
-    cond2 <- rep(cond, 2L)
-    region <- factor(rep(c("ex", "in"), each = ncol(cntEx)), levels = c("in", "ex"))
-    design <- model.matrix(~ region * cond2) # design matrix with interaction term
-    rownames(design) <- colnames(cnt)
-    y <- edgeR::estimateDisp(y, design)
-    if (method == "published") {
-        # use glmFit / glmLRT for method = "published"
-        fit <- edgeR::glmFit(y, design)
-        tst.cond <- edgeR::glmLRT(fit, contrast = c(0, 0, 1, 0.5))
-        tst.ExIn <- edgeR::glmLRT(fit, coef = 4L)
-    } else if (method == "new") {
-        # use glmQLFit / glmQLFTest for method = "new"
-        fit <- edgeR::glmQLFit(y, design)
-        tst.cond <- edgeR::glmQLFTest(fit, contrast = c(0, 0, 1, 0.5))
-        tst.ExIn <- edgeR::glmQLFTest(fit, coef = 4L)
+    if (any(table(cond) < 2)) {
+        warning("Need at least two replicates per condition to perform ",
+                "statistical analysis. tt.cond and tt.ExIn will be empty.")
+        tt.cond <- list(table = data.frame())
+        tt.ExIn <- list(table = data.frame())
+    } else {
+        message("fitting statistical model...", appendLF = FALSE)
+        cond2 <- rep(cond, 2L)
+        region <- factor(rep(c("ex", "in"), each = ncol(cntEx)),
+                         levels = c("in", "ex"))
+        design <- model.matrix(~ region * cond2) # design matrix with interaction term
+        rownames(design) <- colnames(cnt)
+        y <- edgeR::estimateDisp(y, design)
+        if (method == "published") {
+            # use glmFit / glmLRT for method = "published"
+            fit <- edgeR::glmFit(y, design)
+            tst.cond <- edgeR::glmLRT(fit, contrast = c(0, 0, 1, 0.5))
+            tst.ExIn <- edgeR::glmLRT(fit, coef = 4L)
+        } else if (method == "new") {
+            # use glmQLFit / glmQLFTest for method = "new"
+            fit <- edgeR::glmQLFit(y, design)
+            tst.cond <- edgeR::glmQLFTest(fit, contrast = c(0, 0, 1, 0.5))
+            tst.ExIn <- edgeR::glmQLFTest(fit, coef = 4L)
+        }
+        tt.cond <- edgeR::topTags(tst.cond, n = nrow(y), sort.by = "none")
+        tt.ExIn <- edgeR::topTags(tst.ExIn, n = nrow(y), sort.by = "none")
+        message("done")
     }
-    tt.cond <- edgeR::topTags(tst.cond, n = nrow(y), sort.by = "none")
-    tt.ExIn <- edgeR::topTags(tst.ExIn, n = nrow(y), sort.by = "none")
-    message("done")
 
     # calculate contrasts
     message("calculating contrasts...", appendLF = FALSE)
@@ -178,10 +184,14 @@ runEISA <- function(cntEx, cntIn, cond, method = c("published", "new"),
     if (method == "published") {
         i1 <- which(cond == levels(cond)[1])
         i2 <- which(cond == levels(cond)[2])
-        Dex <- rowMeans(NLex[quantGenes, i2]) - rowMeans(NLex[quantGenes, i1])
-        Din <- rowMeans(NLin[quantGenes, i2]) - rowMeans(NLin[quantGenes, i1])
+        Dex <- rowMeans(NLex[quantGenes, i2, drop = FALSE]) - 
+            rowMeans(NLex[quantGenes, i1, drop = FALSE])
+        Din <- rowMeans(NLin[quantGenes, i2, drop = FALSE]) - 
+            rowMeans(NLin[quantGenes, i1, drop = FALSE])
         Dex.Din <- Dex - Din
     } else if (method == "new") {
+        if (is.null(y$common.dispersion))
+            stop("method='new' requires that dispersions can be calculated")
         lfc <- edgeR::predFC(y, design, prior.count = pscnt)
         rownames(lfc) <- rownames(y)
         Dex <- rowSums(lfc[, c(3, 4)])
