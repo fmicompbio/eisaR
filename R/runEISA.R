@@ -110,8 +110,6 @@ runEISA <- function(cntEx, cntIn, cond, method = c("published", "new"),
     stopifnot(is.factor(cond))
     stopifnot(nlevels(cond) == 2L)
     stopifnot(length(cond) == ncol(cntEx))
-    #if (any(table(cond) < 2))
-    #    stop("at least two replicates are needed for each condition")
     # ... method
     method <- match.arg(method)
     # ... pscnt
