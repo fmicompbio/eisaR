@@ -26,10 +26,10 @@ test_that("runEISA() runs", {
     expect_gt(cor(res1$contrasts[ids,"Dex"], res2$contrasts[ids,"Dex"]), 0.99)
     expect_gt(cor(res1$contrasts[ids,"Din"], res2$contrasts[ids,"Din"]), 0.99)
     expect_gt(cor(res1$contrasts[ids,"Dex.Din"], res2$contrasts[ids,"Dex.Din"]), 0.97)
-    
+
     # one replicate per condition
-    res1 <- runEISA(cntEx[, c(1, 3)], cntIn[, c(1, 3)], cond[c(1, 3)], 
-                    method = "published")
+    expect_warning(res1 <- runEISA(cntEx[, c(1, 3)], cntIn[, c(1, 3)],
+                                   cond[c(1, 3)], method = "published"))
     expect_is(res1, "list")
     expect_length(res1, 8L)
     expect_named(res1, c("fracIn", "contrastName", "contrasts", "DGEList",
@@ -38,6 +38,6 @@ test_that("runEISA() runs", {
     expect_equal(nrow(res1$tab.cond), 0)
     expect_equal(nrow(res1$tab.ExIn), 0)
     expect_error(plotEISA(res1))
-    expect_error(runEISA(cntEx[, c(1, 3)], cntIn[, c(1, 3)], cond[c(1, 3)],
-                         method = "new"))
+    expect_error(suppressWarnings(runEISA(cntEx[, c(1, 3)], cntIn[, c(1, 3)],
+                                          cond[c(1, 3)], method = "new")))
 })
