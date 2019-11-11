@@ -20,7 +20,7 @@ test_that("runEISA() runs", {
     expect_true(is.list(res1se))
     expect_equal(res1, res1se)
     expect_true(is.list(res2))
-    expect_length(res1, 8L)
+    expect_length(res1, 7L)
     expect_true(all(rownames(res1$DGEList) %in% rownames(cntEx)))
     ids <- intersect(rownames(res1$DGEList), rownames(res2$DGEList))
     expect_gt(cor(res1$contrasts[ids,"Dex"], res2$contrasts[ids,"Dex"]), 0.99)
@@ -31,11 +31,10 @@ test_that("runEISA() runs", {
     expect_warning(res1 <- runEISA(cntEx[, c(1, 3)], cntIn[, c(1, 3)],
                                    cond[c(1, 3)], method = "published"))
     expect_is(res1, "list")
-    expect_length(res1, 8L)
+    expect_length(res1, 7L)
     expect_named(res1, c("fracIn", "contrastName", "contrasts", "DGEList",
-                         "tab.cond", "tab.ExIn", "method", "pscnt"))
-    expect_is(res1$tab.cond, "data.frame")
-    expect_equal(nrow(res1$tab.cond), 0)
+                         "tab.ExIn", "method", "pscnt"))
+    expect_is(res1$tab.ExIn, "data.frame")
     expect_equal(nrow(res1$tab.ExIn), 0)
     expect_error(plotEISA(res1))
     expect_error(suppressWarnings(runEISA(cntEx[, c(1, 3)], cntIn[, c(1, 3)],
