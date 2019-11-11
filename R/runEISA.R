@@ -16,7 +16,7 @@
 #'   if \code{cntEx} is a matrix. Will be disregarded if \code{cntEx} is a
 #'   \code{SummarizedExperiment}.
 #' @param cond \code{numeric}, \code{character} or \code{factor} with two levels
-#'   that groups the samples (columns of \code{cntEx} and \code{cntIn} into two
+#'   that groups the samples (columns of \code{cntEx} and \code{cntIn}) into two
 #'   conditions. The contrast will be defined as secondLevel - firstLevel.
 #' @param method One of \code{"published"} or \code{"new"}. If
 #'   \code{"published"} (the default), sample normalization, gene filtering and
@@ -46,8 +46,6 @@
 #'     fold-changes in exons (\code{Dex}), in introns (\code{Din}), and average
 #'     difference between log2 fold-changes in exons and introns (\code{Dex.Din})}
 #'   \item{DGEList}{\code{\link[edgeR]{DGEList}} object used in model fitting}
-#'   \item{tab.cond}{statistical results for differential expression between
-#'   conditions, based on both exonic and intronic counts}
 #'   \item{tab.ExIn}{statisical results for differential changes between exonic
 #'   and intronic contrast, an indication for post-transcriptional regulation.}
 #'   \item{method}{the method that was used to run EISA}
@@ -61,8 +59,8 @@
 #'
 #' @seealso \code{\link[edgeR]{DGEList}} for \code{DGEList} object construction,
 #'   \code{\link[edgeR]{calcNormFactors}} for normalization,
-#'   \code{\link[edgeR]{glmFit}} for statisical analysis under \code{method = "published"}
-#'   and \code{\link[edgeR]{glmQLFit}} statistical analysis under \code{method = "new"}.
+#'   \code{\link[edgeR]{glmFit}} and \code{\link[edgeR]{glmQLFit}} for statistical
+#'   analysis.
 #'
 #' @examples
 #' cntEx <- readRDS(system.file("extdata", "Fig3abc_GSE33252_rawcounts_exonic.rds",
@@ -76,7 +74,7 @@
 #' @import edgeR
 #' @importFrom stats model.matrix
 #' @importFrom methods is
-#' @importFrom SummarizedExperiment assay SummarizedExperiment
+#' @importFrom SummarizedExperiment assay assayNames SummarizedExperiment
 #'
 #' @export
 runEISA <- function(cntEx, cntIn, cond, method = c("published", "new"), 
@@ -84,15 +82,24 @@ runEISA <- function(cntEx, cntIn, cond, method = c("published", "new"),
     # check arguments
     # ... count matrices
     if (is(cntEx, "SummarizedExperiment")) {
-        cntIn <- SummarizedExperiment::assay(cntEx, "intron")
-        cntEx <- SummarizedExperiment::assay(cntEx, "exon")
+        if (all(c("exon","intron") %in% SummarizedExperiment::assayNames(cntEx))) {
+            cntIn <- SummarizedExperiment::assay(cntEx, "intron")
+            cntEx <- SummarizedExperiment::assay(cntEx, "exon")
+        } else if (all(c("spliced","unspliced") %in% SummarizedExperiment::assayNames(cntEx))) {
+            cntIn <- SummarizedExperiment::assay(cntEx, "unspliced")
+            cntEx <- SummarizedExperiment::assay(cntEx, "spliced")
+        } else {
+            stop("'cntEx' needs to have assayNames 'intron'/'exon' or 'unspliced'/'spliced'.")
+        }
     }
     if (is.data.frame(cntEx))
         cntEx <- as.matrix(cntEx)
-    stopifnot(is.matrix(cntEx))
     if (is.data.frame(cntIn))
         cntIn <- as.matrix(cntIn)
-    stopifnot(is.matrix(cntIn))
+    stopifnot(exprs = {
+        is.matrix(cntEx)
+        is.matrix(cntIn)
+    })
     # ... consistency between cntEx and cntIn
     stopifnot(all(dim(cntEx) == dim(cntIn)))
     if (is.null(rownames(cntEx)))
@@ -107,9 +114,11 @@ runEISA <- function(cntEx, cntIn, cond, method = c("published", "new"),
     # ... conditions
     if (is.numeric(cond) || is.character(cond))
         cond <- factor(cond, levels = unique(cond))
-    stopifnot(is.factor(cond))
-    stopifnot(nlevels(cond) == 2L)
-    stopifnot(length(cond) == ncol(cntEx))
+    stopifnot(exprs = {
+        is.factor(cond)
+        nlevels(cond) == 2L
+        length(cond) == ncol(cntEx)
+    })
     # ... method
     method <- match.arg(method)
     # ... pscnt
@@ -151,8 +160,7 @@ runEISA <- function(cntEx, cntIn, cond, method = c("published", "new"),
     # statistical analysis
     if (any(table(cond) < 2)) {
         warning("Need at least two replicates per condition to perform ",
-                "statistical analysis. tt.cond and tt.ExIn will be empty.")
-        tt.cond <- list(table = data.frame())
+                "statistical analysis. 'ExIn' result will be empty.")
         tt.ExIn <- list(table = data.frame())
     } else {
         message("fitting statistical model...", appendLF = FALSE)
@@ -162,18 +170,26 @@ runEISA <- function(cntEx, cntIn, cond, method = c("published", "new"),
         design <- model.matrix(~ region * cond2) # design matrix with interaction term
         rownames(design) <- colnames(cnt)
         y <- edgeR::estimateDisp(y, design)
+        # remark: if testing for condition, there are three possible contrasts of interest:
+        #     - just using exonic counts:   contrast = c(0, 0, 1, 1)
+        #     - just using intronic counts: contrast = c(0, 0, 1, 0)
+        #     - the averge of the two:      contrast = c(0, 0, 1, 0.5)
+        # * reporting one of these contrasts assumes that exonic/intronic counts are in part independent
+        # * it would be better to add a "sample" factor to the design (~sample+region*cond2), which
+        #   however makes it not of full rank ("sample" is nested within "cond2")
+        # * this design could be fit as a mixed model by defining "sample" a random effect: ~region*cond2|sample
+        # * as a conservative solution, we here prefer not to return the condition contrast
+        # remark: adding a sample factor to the design could make the interaction-term more significant,
+        #     by accounting for sample variation (think of a paired vs. unpaired t-test)
         if (method == "published") {
             # use glmFit / glmLRT for method = "published"
             fit <- edgeR::glmFit(y, design)
-            tst.cond <- edgeR::glmLRT(fit, contrast = c(0, 0, 1, 0.5))
             tst.ExIn <- edgeR::glmLRT(fit, coef = 4L)
         } else if (method == "new") {
             # use glmQLFit / glmQLFTest for method = "new"
             fit <- edgeR::glmQLFit(y, design)
-            tst.cond <- edgeR::glmQLFTest(fit, contrast = c(0, 0, 1, 0.5))
             tst.ExIn <- edgeR::glmQLFTest(fit, coef = 4L)
         }
-        tt.cond <- edgeR::topTags(tst.cond, n = nrow(y), sort.by = "none")
         tt.ExIn <- edgeR::topTags(tst.ExIn, n = nrow(y), sort.by = "none")
         message("done")
     }
@@ -204,7 +220,7 @@ runEISA <- function(cntEx, cntIn, cond, method = c("published", "new"),
     return(list(fracIn = fracIn,
                 contrastName = contrastName,
                 contrasts = cbind(Dex = Dex, Din = Din, Dex.Din = Dex.Din),
-                DGEList = y, tab.cond = tt.cond$table, tab.ExIn = tt.ExIn$table,
+                DGEList = y, tab.ExIn = tt.ExIn$table,
                 method = method, pscnt = pscnt))
 }
 

@@ -20,7 +20,7 @@ if \code{cntEx} is a matrix. Will be disregarded if \code{cntEx} is a
 \code{SummarizedExperiment}.}
 
 \item{cond}{\code{numeric}, \code{character} or \code{factor} with two levels
-that groups the samples (columns of \code{cntEx} and \code{cntIn} into two
+that groups the samples (columns of \code{cntEx} and \code{cntIn}) into two
 conditions. The contrast will be defined as secondLevel - firstLevel.}
 
 \item{method}{One of \code{"published"} or \code{"new"}. If
@@ -54,8 +54,6 @@ a \code{list} with elements \describe{
 fold-changes in exons (\code{Dex}), in introns (\code{Din}), and average
 difference between log2 fold-changes in exons and introns (\code{Dex.Din})}
 \item{DGEList}{\code{\link[edgeR]{DGEList}} object used in model fitting}
-\item{tab.cond}{statistical results for differential expression between
-conditions, based on both exonic and intronic counts}
 \item{tab.ExIn}{statisical results for differential changes between exonic
 and intronic contrast, an indication for post-transcriptional regulation.}
 \item{method}{the method that was used to run EISA}
@@ -86,8 +84,8 @@ Nature Biotechnology, 2015 Jul;33(7):722-9. doi: 10.1038/nbt.3269.
 \seealso{
 \code{\link[edgeR]{DGEList}} for \code{DGEList} object construction,
 \code{\link[edgeR]{calcNormFactors}} for normalization,
-\code{\link[edgeR]{glmFit}} for statisical analysis under \code{method = "published"}
-and \code{\link[edgeR]{glmQLFit}} statistical analysis under \code{method = "new"}.
+\code{\link[edgeR]{glmFit}} and \code{\link[edgeR]{glmQLFit}} for statistical
+analysis.
 }
 \author{
 Michael Stadler

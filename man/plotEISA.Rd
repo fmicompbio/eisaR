@@ -4,16 +4,15 @@
 \alias{plotEISA}
 \title{Visualize the results from an exon-intron split analysis.}
 \usage{
-plotEISA(x, contrast = c("ExIn", "cond", "none"), minLfc = NULL,
+plotEISA(x, contrast = c("ExIn", "none"), minLfc = NULL,
   maxFDR = 0.05, genecolors = c("#E41A1CFF", "#4DAF4AFF", "#22222244"),
   ...)
 }
 \arguments{
 \item{x}{\code{list} with EISA results, typically the return value from \code{\link{runEISA}}}
 
-\item{contrast}{one of \code{"Dex.Din"}, \code{"cond"} or \code{"none"}. If \code{"Dex.Din"}
+\item{contrast}{one of \code{"ExIn"} or \code{"none"}. If \code{"ExIn"}
 (the default), genes that significantly differ between exonic and intronic changes
-are highlighted. If \code{contrast="cond"}, genes that differ between conditions
 are highlighted. \code{"none"} turns off gene highlighting.}
 
 \item{minLfc}{\code{NULL} or \code{numeric(1)} with the minimal absolute log2

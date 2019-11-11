@@ -6,9 +6,8 @@
 #' @author Michael Stadler
 #'
 #' @param x \code{list} with EISA results, typically the return value from \code{\link{runEISA}}
-#' @param contrast one of \code{"Dex.Din"}, \code{"cond"} or \code{"none"}. If \code{"Dex.Din"}
+#' @param contrast one of \code{"ExIn"} or \code{"none"}. If \code{"ExIn"}
 #'   (the default), genes that significantly differ between exonic and intronic changes
-#'   are highlighted. If \code{contrast="cond"}, genes that differ between conditions
 #'   are highlighted. \code{"none"} turns off gene highlighting.
 #' @param minLfc \code{NULL} or \code{numeric(1)} with the minimal absolute log2
 #'   fold change to color a gene. If \code{NULL} (the default), no fold changes
@@ -27,12 +26,12 @@
 #' @importFrom graphics plot legend
 #'
 #' @export
-plotEISA <- function(x, contrast = c("ExIn", "cond", "none"),
+plotEISA <- function(x, contrast = c("ExIn", "none"),
                      minLfc = NULL, maxFDR = 0.05,
                      genecolors = c("#E41A1CFF", "#4DAF4AFF", "#22222244"), ...) {
     # check arguments
     contrast <- match.arg(contrast)
-    sigtab <- switch(contrast, ExIn = x$tab.ExIn, cond = x$tab.cond, none = data.frame())
+    sigtab <- switch(contrast, ExIn = x$tab.ExIn, none = data.frame())
     if (nrow(sigtab) == 0 && contrast != "none")
         stop("'x' does not contain the requested statistics and can only ",
              "be plotted using contrast = 'none'. Note that at least two ",
@@ -40,9 +39,16 @@ plotEISA <- function(x, contrast = c("ExIn", "cond", "none"),
              "testing.")
     if (is.null(minLfc))
         minLfc <- 0
-    stopifnot(is.numeric(minLfc) && length(minLfc) == 1L)
-    stopifnot(is.numeric(maxFDR) && length(maxFDR) == 1L && maxFDR >= 0 && maxFDR <= 1.0)
-    stopifnot(is.character(genecolors) && length(genecolors) == 3L)
+    stopifnot(exprs = {
+        is.numeric(minLfc)
+        length(minLfc) == 1L
+        is.numeric(maxFDR)
+        length(maxFDR) == 1L
+        maxFDR >= 0
+        maxFDR <= 1.0
+        is.character(genecolors)
+        length(genecolors) == 3L
+    })
 
     # identify gene to highlight
     if (contrast == "none") {
