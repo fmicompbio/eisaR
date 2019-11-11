@@ -132,6 +132,13 @@ runEISA <- function(cntEx, cntIn, cond, method = c("published", "new"),
     y <- edgeR::DGEList(counts = cnt, ...)
     y <- edgeR::calcNormFactors(y)
 
+    # create design matrix
+    cond2 <- rep(cond, 2L)
+    region <- factor(rep(c("ex", "in"), each = ncol(cntEx)),
+                     levels = c("in", "ex"))
+    design <- model.matrix(~ region * cond2) # design matrix with interaction term
+    rownames(design) <- colnames(cnt)
+    
     # identify quantifyable genes
     message("filtering quantifyable genes...", appendLF = FALSE)
     if (method == "published") {
@@ -149,8 +156,7 @@ runEISA <- function(cntEx, cntIn, cond, method = c("published", "new"),
         quantGenes <- rownames(cntEx)[ rowMeans(NLex) > 5.0 & rowMeans(NLin) > 5.0 ]
 
     } else if (method == "new") {
-        # Identify quantifyable genes (at least 5.0 reads per million in at least two samples)
-        quantGenes <- rownames(cntEx)[ rowSums(edgeR::cpm(y, prior.count = pscnt) > 5.0) >= 2 ]
+        quantGenes <- rownames(cntEx)[ edgeR::filterByExpr(y, design = design) ]
     }
     message("keeping ", length(quantGenes), " from ", nrow(y), " (",
             round(length(quantGenes) * 100 / nrow(y), 1), "%)")
@@ -164,11 +170,6 @@ runEISA <- function(cntEx, cntIn, cond, method = c("published", "new"),
         tt.ExIn <- list(table = data.frame())
     } else {
         message("fitting statistical model...", appendLF = FALSE)
-        cond2 <- rep(cond, 2L)
-        region <- factor(rep(c("ex", "in"), each = ncol(cntEx)),
-                         levels = c("in", "ex"))
-        design <- model.matrix(~ region * cond2) # design matrix with interaction term
-        rownames(design) <- colnames(cnt)
         y <- edgeR::estimateDisp(y, design)
         # remark: if testing for condition, there are three possible contrasts of interest:
         #     - just using exonic counts:   contrast = c(0, 0, 1, 1)

@@ -178,7 +178,7 @@ in the table below:
 | Aspect:           | `method="published"`                        | `method="new"`                                   |
 |-------------------|---------------------------------------------|--------------------------------------------------|
 | normalization     | linear scaling to the mean library size     | `edgeR::calcNormFactors`                         |
-| gene selection    | log2(x + 8) > 5 (in both exons and introns) | cpm > 5 in at least 2 samples (exons or introns) |
+| gene selection    | log2(x + 8) > 5 (in both exons and introns) | `edgeR::filterByExpr`                            |
 | effect size       | log2((x + 8)/(y + 8))                       | `edgeR::predFC`                                  |
 | model fit         | `edgeR::glmFit`                             | `edgeR::glmQLFit`                                |
 | significance test | `edgeR::glmLRT`                             | `edgeR::glmQLFTest`                              |
