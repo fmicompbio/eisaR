@@ -8,19 +8,19 @@ test_that("runEISA() runs", {
     expect_error(runEISA(data.frame("a")))
     expect_error(runEISA(rbind(1:2, 3:4), "b"))
     expect_error(runEISA(rbind(1:2, 3:4), rbind(1:2, 3:4), c("a","b","c")))
-    expect_warning(runEISA(rbind(1:2, 3:4), rbind(1:2, 3:4), c("a","b")))
-    expect_warning(runEISA(cntEx, cntIn, cond, method = "published", pscnt = 4))
+    expect_warning(runEISA(rbind(1:2, 3:4), rbind(1:2, 3:4), c("a","b"), effects = "Gaidatzis2015"))
+    expect_warning(runEISA(cntEx, cntIn, cond, geneSelection = "Gaidatzis2015", pscnt = 4))
     expect_error(runEISA(SummarizedExperiment(assays = list(exon = cntEx))))
 
     # expected results
-    res1 <- runEISA(cntEx, cntIn, cond, method = "published")
-    res1se <- runEISA(cntEx = cntSE, cntIn = NULL, cond, method = "published")
-    res2 <- runEISA(cntEx, cntIn, cond, method = "new")
+    res1 <- runEISA(cntEx, cntIn, cond, method = "Gaidatzis2015")
+    res1se <- runEISA(cntEx = cntSE, cntIn = NULL, cond, method = "Gaidatzis2015")
+    res2 <- runEISA(cntEx, cntIn, cond, method = NULL)
     expect_true(is.list(res1))
     expect_true(is.list(res1se))
     expect_equal(res1, res1se)
     expect_true(is.list(res2))
-    expect_length(res1, 7L)
+    expect_length(res1, 6L)
     expect_true(all(rownames(res1$DGEList) %in% rownames(cntEx)))
     ids <- intersect(rownames(res1$DGEList), rownames(res2$DGEList))
     expect_gt(cor(res1$contrasts[ids,"Dex"], res2$contrasts[ids,"Dex"]), 0.99)
@@ -29,14 +29,14 @@ test_that("runEISA() runs", {
 
     # one replicate per condition
     expect_warning(res1 <- runEISA(cntEx[, c(1, 3)], cntIn[, c(1, 3)],
-                                   cond[c(1, 3)], method = "published"))
+                                   cond[c(1, 3)], method = "Gaidatzis2015"))
     expect_is(res1, "list")
-    expect_length(res1, 7L)
+    expect_length(res1, 6L)
     expect_named(res1, c("fracIn", "contrastName", "contrasts", "DGEList",
-                         "tab.ExIn", "method", "pscnt"))
+                         "tab.ExIn", "params"))
     expect_is(res1$tab.ExIn, "data.frame")
     expect_equal(nrow(res1$tab.ExIn), 0)
     expect_error(plotEISA(res1))
     expect_error(suppressWarnings(runEISA(cntEx[, c(1, 3)], cntIn[, c(1, 3)],
-                                          cond[c(1, 3)], method = "new")))
+                                          cond[c(1, 3)], method = NULL)))
 })

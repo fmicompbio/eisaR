@@ -18,27 +18,69 @@
 #' @param cond \code{numeric}, \code{character} or \code{factor} with two levels
 #'   that groups the samples (columns of \code{cntEx} and \code{cntIn}) into two
 #'   conditions. The contrast will be defined as secondLevel - firstLevel.
-#' @param method One of \code{"published"} or \code{"new"}. If
-#'   \code{"published"} (the default), sample normalization, gene filtering and
+#' @param method One of \code{NULL} (the default) or \code{"Gaidatzis2015"}. If
+#'   \code{"Gaidatzis2015"}, gene filtering, statistical analysis and
 #'   calculation of contrasts is performed as described in Gaidatzis et al.
 #'   2015, and the statistical analysis is based on \code{\link[edgeR]{glmFit}}
-#'   and \code{\link[edgeR]{glmLRT}}.
-#'   If \code{method="new"}, normalization will be performed using TMM as
-#'   implemented in \code{\link[edgeR]{calcNormFactors}}, the contrast are
-#'   calculated using \code{\link[edgeR]{predFC}}, and the statistical analysis
-#'   will use the quasi-likelihood framework implemented in
-#'   \code{\link[edgeR]{glmQLFit}} and \code{\link[edgeR]{glmQLFTest}}. The
-#'   latter is often less stringent when selecting quantifyable genes, but more
-#'   stringent wenn calling significant changes (especially with low numbers of
-#'   replicates).
+#'   and \code{\link[edgeR]{glmLRT}}. This is done by setting the arguments
+#'   \code{modelSamples}, \code{geneSelection}, \code{effects} and \code{statFramework}
+#'   to appropriate values (see details), overriding the defaults or any value
+#'   passed to these arguments. If \code{NULL}, the default values of the arguments
+#'   will be used instead (recommended).
+#' @param modelSamples Whether to include a sample identifier in the design matrix
+#'   of the statistical model. If \code{TRUE}, potential sample effects
+#'   that affect both exonic and intronic counts of that sample will be taken
+#'   into account, which could result in higher sensitivity (default: FALSE).
+#' @param geneSelection Controls how to select quantifyable genes. One of the
+#'   following:\describe{
+#'       \item{\code{"filterByExpr"}: }{(default) First, counts are normalized using
+#'       \code{\link[edgeR]{calcNormFactors}}, treating intonic and exonic counts
+#'       as individual samples. Then, \code{\link[edgeR]{filterByExpr}} is used
+#'       with default parameters to select quantifyable genes.}
+#'       \item{\code{"none"}: }{This will use all the genes provided in the count
+#'       tables, assuming that an appropriate selection of quantifyable genes has
+#'       already been done.}
+#'       \item{\code{"Gaidatzis2015"}: }{First, intronic and exonic counts are
+#'       linearly scaled to the mean library size (estimated as the sum of all
+#'       intronic or exonic counts, respectively). Then, quantifyable genes are
+#'       selected as the genes with counts \code{x} that fulfill
+#'       \code{log2(x + 8) > 5} in both exons and introns.}
+#'   }
+#' @param statFramework Selects the framework within \code{edgeR} that is used
+#'   for the statistical analysis. One of:\describe{
+#'       \item{\code{"QLF"}: }{(default) Quasi-likelihood F-test using
+#'       \code{\link[edgeR]{glmQLFit}} and \code{\link[edgeR]{glmQLFTest}}. This
+#'       framework is highly recommended as it gives stricter error rate control
+#'       by accounting for the uncertainty in dispersion estimation.}
+#'       \item{\code{"LRT"}: }{Likelyhood ratio test using \code{\link[edgeR]{glmFit}}
+#'       and \code{\link[edgeR]{glmLRT}}}.
+#'   }
+#' @param effects How the effects (contrasts or log2 fold-changes) are calculated.
+#'   One of:\describe{
+#'       \item{\code{"predFC"}: }{(default) Fold-changes are calculated using
+#'       the fitted model with \code{\link[edgeR]{predFC}} with
+#'       \code{prior.count = pscnt}. Please note that if a sample factor is
+#'       included in the model (\code{modelSamples=TRUE}), effects cannot be
+#'       obtained from that model. In that case, effects are obtained from a
+#'       simpler model without sample effects.}
+#'       \item{\code{"Gaidatzis2015"}: }{Fold-changes are calculated using the
+#'       formula \code{log2((x + pscnt)/(y + pscnt))}. If \code{pscnt} is not
+#'       set to 8, \code{runEISA} will warn that this deviates from the method
+#'       used in Gaidatzis et al., 2015.}
+#'   }
 #' @param pscnt \code{numeric(1)} with pseudocount to add to read counts
-#'   (default: 8). It is added to scaled read counts for
-#'   \code{method="published"}, or used in \code{cpm(..., prior.count = pscnt)}
-#'   and \code{predFC(..., prior.count = pscnt)} for \code{method="new"}.
+#'   (default: 2). For \code{method = "Gaidatzis2015"}, it is set to 8.
+#'   It is added to scaled read counts used in \code{geneSelection = "Gaidatzis2015"}
+#'   and \code{effects = "Gaidatzis2015"}, or else used in \code{cpm(..., prior.count = pscnt)}
+#'   and \code{predFC(..., prior.count = pscnt)}.
 #' @param ... additional arguments passed to the \code{\link[edgeR]{DGEList}}
-#'   constructor,
-#'   such as \code{lib.size} or \code{genes}.
+#'   constructor, such as \code{lib.size} or \code{genes}.
 #'
+#' @details Setting \code{method = "Gaidatzis2015"} has precedence over other
+#'   argument values and corresponds to setting:
+#'   \code{modelSamples = FALSE, geneSelection = "Gaidatzis2015",
+#'   statFramework = "LRT", effects = "Gaidatzis2015", pscnt = 8}.
+#'   
 #' @return a \code{list} with elements \describe{
 #'   \item{fracIn}{fraction intronic counts in each sample}
 #'   \item{contrastName}{contrast name}
@@ -48,8 +90,7 @@
 #'   \item{DGEList}{\code{\link[edgeR]{DGEList}} object used in model fitting}
 #'   \item{tab.ExIn}{statisical results for differential changes between exonic
 #'   and intronic contrast, an indication for post-transcriptional regulation.}
-#'   \item{method}{the method that was used to run EISA}
-#'   \item{pscnt}{the pseudocount that was used to run EISA}
+#'   \item{params}{a \code{list} with parameter values used to run EISA}
 #' }
 #'
 #' @references Analysis of intronic and exonic reads in RNA-seq data characterizes
@@ -59,6 +100,7 @@
 #'
 #' @seealso \code{\link[edgeR]{DGEList}} for \code{DGEList} object construction,
 #'   \code{\link[edgeR]{calcNormFactors}} for normalization,
+#'   \code{\link[edgeR]{filterByExpr}} for gene selection,
 #'   \code{\link[edgeR]{glmFit}} and \code{\link[edgeR]{glmQLFit}} for statistical
 #'   analysis.
 #'
@@ -72,13 +114,18 @@
 #' plotEISA(res)
 #'
 #' @import edgeR
+#' @importFrom limma nonEstimable
 #' @importFrom stats model.matrix
 #' @importFrom methods is
 #' @importFrom SummarizedExperiment assay assayNames SummarizedExperiment
 #'
 #' @export
-runEISA <- function(cntEx, cntIn, cond, method = c("published", "new"), 
-                    pscnt = 8, ...) {
+runEISA <- function(cntEx, cntIn, cond, method = NULL, 
+                    modelSamples = FALSE,
+                    geneSelection = c("filterByExpr", "none", "Gaidatzis2015"),
+                    statFramework = c("QLF", "LRT"),
+                    effects = c("predFC", "Gaidatzis2015"),
+                    pscnt = 2, ...) {
     # check arguments
     # ... count matrices
     if (is(cntEx, "SummarizedExperiment")) {
@@ -102,10 +149,11 @@ runEISA <- function(cntEx, cntIn, cond, method = c("published", "new"),
     })
     # ... consistency between cntEx and cntIn
     stopifnot(all(dim(cntEx) == dim(cntIn)))
+    nsmpls <- ncol(cntEx)
     if (is.null(rownames(cntEx)))
         rownames(cntEx) <- as.character(seq.int(nrow(cntEx)))
     if (is.null(colnames(cntEx)))
-        colnames(cntEx) <- as.character(seq.int(ncol(cntEx)))
+        colnames(cntEx) <- as.character(seq.int(nsmpls))
     if (is.null(rownames(cntIn)))
         rownames(cntIn) <- as.character(seq.int(nrow(cntIn)))
     if (is.null(colnames(cntIn)))
@@ -114,16 +162,35 @@ runEISA <- function(cntEx, cntIn, cond, method = c("published", "new"),
     # ... conditions
     if (is.numeric(cond) || is.character(cond))
         cond <- factor(cond, levels = unique(cond))
+    # ... valid arguments
+    geneSelection <- match.arg(geneSelection)
+    statFramework <- match.arg(statFramework)
+    effects <- match.arg(effects)
     stopifnot(exprs = {
+        # cond
         is.factor(cond)
         nlevels(cond) == 2L
-        length(cond) == ncol(cntEx)
+        length(cond) == nsmpls
+        # method
+        is.null(method) || method %in% c("Gaidatzis2015")
+        # modelSamples
+        is.logical(modelSamples)
+        length(modelSamples) == 1L
+        # pscnt
+        is.numeric(pscnt)
+        length(pscnt) == 1L
     })
-    # ... method
-    method <- match.arg(method)
-    # ... pscnt
-    stopifnot(is.numeric(pscnt) && length(pscnt) == 1)
 
+    # override arguments for Gaidatzis2015
+    if (!is.null(method) && method == "Gaidatzis2015") {
+        message("setting parameters according to Gaidatzis et al., 2015")
+        modelSamples <- FALSE
+        geneSelection <- "Gaidatzis2015"
+        statFramework <- "LRT"
+        effects <- "Gaidatzis2015"
+        pscnt <- 8
+    }
+    
     # fraction intronic
     fracIn <- colSums(cntIn) / (colSums(cntEx) + colSums(cntIn))
 
@@ -134,62 +201,74 @@ runEISA <- function(cntEx, cntIn, cond, method = c("published", "new"),
 
     # create design matrix
     cond2 <- rep(cond, 2L)
-    region <- factor(rep(c("ex", "in"), each = ncol(cntEx)),
+    region <- factor(rep(c("ex", "in"), each = nsmpls),
                      levels = c("in", "ex"))
-    design <- model.matrix(~ region * cond2) # design matrix with interaction term
-    rownames(design) <- colnames(cnt)
+    smpl <- factor(rep(sprintf("s%03d", seq.int(nsmpls)), 2))
+    if (modelSamples) {
+        dsgn <- model.matrix(~ smpl + region * cond2)
+        # need to remove a coefficient to make the design full rank
+        toRemove <- limma::nonEstimable(dsgn)
+        dsgn <- dsgn[, -match(toRemove, colnames(dsgn))]
+    } else {
+        dsgn <- model.matrix(~ region * cond2)
+    }
+    rownames(dsgn) <- colnames(cnt)
     
     # identify quantifyable genes
-    message("filtering quantifyable genes...", appendLF = FALSE)
-    if (method == "published") {
-        # scale counts to the mean library size separately for exons and introns
-        Nex <- t(t(cntEx) / colSums(cntEx) * mean(colSums(cntEx)))
-        Nin <- t(t(cntIn) / colSums(cntIn) * mean(colSums(cntIn)))
+    if (geneSelection == "none") {
+        message("skip filtering for quantifyable genes...", appendLF = FALSE)
+        NLex <- edgeR::cpm(y[, seq.int(nsmpls)], log = TRUE, prior.count = pscnt)
+        NLin <- edgeR::cpm(y[, nsmpls + seq.int(nsmpls)], log = TRUE, prior.count = pscnt)
+        
+    } else {
+        message("filtering quantifyable genes...", appendLF = FALSE)
 
-        # log transform (add pseudocount)
-        if (pscnt != 8)
-            warning("Using a 'pscnt' different from 8 deviates from method='published'")
-        NLex <- log2(Nex + pscnt)
-        NLin <- log2(Nin + pscnt)
+        if (geneSelection == "filterByExpr") {
+            quantGenes <- rownames(cntEx)[ edgeR::filterByExpr(y[, seq.int(nsmpls)],
+                                                               design = dsgn[seq.int(nsmpls), ]) &
+                                           edgeR::filterByExpr(y[, nsmpls + seq.int(nsmpls)],
+                                                               design = dsgn[nsmpls + seq.int(nsmpls), ]) ]
+            NLex <- edgeR::cpm(y[, seq.int(nsmpls)], log = TRUE, prior.count = pscnt)
+            NLin <- edgeR::cpm(y[, nsmpls + seq.int(nsmpls)], log = TRUE, prior.count = pscnt)
+            
+        } else if (geneSelection == "Gaidatzis2015") {
+            # scale counts to the mean library size separately for exons and introns
+            Nex <- t(t(cntEx) / colSums(cntEx) * mean(colSums(cntEx)))
+            Nin <- t(t(cntIn) / colSums(cntIn) * mean(colSums(cntIn)))
 
-        # Identify quantifyable genes
-        quantGenes <- rownames(cntEx)[ rowMeans(NLex) > 5.0 & rowMeans(NLin) > 5.0 ]
+            # log transform (add pseudocount)
+            if (pscnt != 8)
+                warning("Using a 'pscnt' different from 8 deviates from geneSelection='Gaidatzis2015'")
+            NLex <- log2(Nex + pscnt)
+            NLin <- log2(Nin + pscnt)
 
-    } else if (method == "new") {
-        quantGenes <- rownames(cntEx)[ edgeR::filterByExpr(y, design = design) ]
+            # Identify quantifyable genes
+            quantGenes <- rownames(cntEx)[ rowMeans(NLex) > 5.0 & rowMeans(NLin) > 5.0 ]
+
+        }
+        message("keeping ", length(quantGenes), " from ", nrow(y), " (",
+                round(length(quantGenes) * 100 / nrow(y), 1), "%)")
+        y <- y[quantGenes, ]
+        y <- edgeR::calcNormFactors(y)
+        NLex <- NLex[quantGenes, ]
+        NLin <- NLin[quantGenes, ]
     }
-    message("keeping ", length(quantGenes), " from ", nrow(y), " (",
-            round(length(quantGenes) * 100 / nrow(y), 1), "%)")
-    y <- y[quantGenes, ]
-    y <- edgeR::calcNormFactors(y)
 
     # statistical analysis
     if (any(table(cond) < 2)) {
         warning("Need at least two replicates per condition to perform ",
                 "statistical analysis. 'ExIn' result will be empty.")
         tt.ExIn <- list(table = data.frame())
+
     } else {
         message("fitting statistical model...", appendLF = FALSE)
-        y <- edgeR::estimateDisp(y, design)
-        # remark: if testing for condition, there are three possible contrasts of interest:
-        #     - just using exonic counts:   contrast = c(0, 0, 1, 1)
-        #     - just using intronic counts: contrast = c(0, 0, 1, 0)
-        #     - the averge of the two:      contrast = c(0, 0, 1, 0.5)
-        # * reporting one of these contrasts assumes that exonic/intronic counts are in part independent
-        # * it would be better to add a "sample" factor to the design (~sample+region*cond2), which
-        #   however makes it not of full rank ("sample" is nested within "cond2")
-        # * this design could be fit as a mixed model by defining "sample" a random effect: ~region*cond2|sample
-        # * as a conservative solution, we here prefer not to return the condition contrast
-        # remark: adding a sample factor to the design could make the interaction-term more significant,
-        #     by accounting for sample variation (think of a paired vs. unpaired t-test)
-        if (method == "published") {
-            # use glmFit / glmLRT for method = "published"
-            fit <- edgeR::glmFit(y, design)
-            tst.ExIn <- edgeR::glmLRT(fit, coef = 4L)
-        } else if (method == "new") {
-            # use glmQLFit / glmQLFTest for method = "new"
-            fit <- edgeR::glmQLFit(y, design)
-            tst.ExIn <- edgeR::glmQLFTest(fit, coef = 4L)
+        y <- edgeR::estimateDisp(y, dsgn)
+        if (statFramework == "QLF") {
+            fit <- edgeR::glmQLFit(y, dsgn)
+            tst.ExIn <- edgeR::glmQLFTest(fit, coef = ncol(dsgn))
+        } else if (statFramework == "LRT") {
+            fit <- edgeR::glmFit(y, dsgn)
+            tst.ExIn <- edgeR::glmLRT(fit, coef = ncol(dsgn))
         }
         tt.ExIn <- edgeR::topTags(tst.ExIn, n = nrow(y), sort.by = "none")
         message("done")
@@ -198,7 +277,31 @@ runEISA <- function(cntEx, cntIn, cond, method = c("published", "new"),
     # calculate contrasts
     message("calculating contrasts...", appendLF = FALSE)
     contrastName <- paste(levels(cond)[2], "-", levels(cond)[1])
-    if (method == "published") {
+    if (effects == "predFC") {
+        if (is.null(y$common.dispersion))
+            stop("effects='predFC' requires a fitted model - rerun with effects='Gaidatzis2015'")
+        lfc <- edgeR::predFC(y, dsgn, prior.count = pscnt)
+        if (modelSamples) {
+            message("fitting model without sample factor...", appendLF = FALSE)
+            dsgn2 <- model.matrix(~ region * cond2)
+            y2 <- edgeR::estimateDisp(y, dsgn2)
+            if (statFramework == "QLF") {
+                fit2 <- edgeR::glmQLFit(y2, dsgn2)
+            } else if (statFramework == "LRT") {
+                fit2 <- edgeR::glmFit(y2, dsgn2)
+            }
+            lfc2 <- edgeR::predFC(y2, dsgn2, prior.count = pscnt)
+        } else {
+            lfc2 <- lfc
+        }
+        rownames(lfc) <- rownames(lfc2) <- rownames(y)
+        Dex <- rowSums(lfc2[, c(3, 4)])
+        Din <- lfc2[, 3]
+        Dex.Din <- lfc[, ncol(lfc)]
+        # remark: for modelSamples=TRUE, should the interaction effect be estimated...
+        #         - from the simpler model (as the condition effects, for consistency among effects)
+        #         - from the full model (for consistency with the interaction FDR and topTags table) -> current implementation
+    } else if (effects == "Gaidatzis2015") {
         i1 <- which(cond == levels(cond)[1])
         i2 <- which(cond == levels(cond)[2])
         Dex <- rowMeans(NLex[quantGenes, i2, drop = FALSE]) - 
@@ -206,14 +309,6 @@ runEISA <- function(cntEx, cntIn, cond, method = c("published", "new"),
         Din <- rowMeans(NLin[quantGenes, i2, drop = FALSE]) - 
             rowMeans(NLin[quantGenes, i1, drop = FALSE])
         Dex.Din <- Dex - Din
-    } else if (method == "new") {
-        if (is.null(y$common.dispersion))
-            stop("method='new' requires that dispersions can be calculated")
-        lfc <- edgeR::predFC(y, design, prior.count = pscnt)
-        rownames(lfc) <- rownames(y)
-        Dex <- rowSums(lfc[, c(3, 4)])
-        Din <- lfc[, 3]
-        Dex.Din <- lfc[, 4]
     }
     message("done")
 
@@ -221,7 +316,10 @@ runEISA <- function(cntEx, cntIn, cond, method = c("published", "new"),
     return(list(fracIn = fracIn,
                 contrastName = contrastName,
                 contrasts = cbind(Dex = Dex, Din = Din, Dex.Din = Dex.Din),
-                DGEList = y, tab.ExIn = tt.ExIn$table,
-                method = method, pscnt = pscnt))
+                DGEList = y,
+                tab.ExIn = tt.ExIn$table,
+                params = list(method = method, modelSamples = modelSamples,
+                              geneSelection = geneSelection, statFramework = statFramework,
+                              effects = effects, pscnt = pscnt)))
 }
 

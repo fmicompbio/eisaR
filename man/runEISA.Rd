@@ -4,8 +4,10 @@
 \alias{runEISA}
 \title{Run Exon-Intron Split Analysis.}
 \usage{
-runEISA(cntEx, cntIn, cond, method = c("published", "new"), pscnt = 8,
-  ...)
+runEISA(cntEx, cntIn, cond, method = NULL, modelSamples = FALSE,
+  geneSelection = c("filterByExpr", "none", "Gaidatzis2015"),
+  statFramework = c("QLF", "LRT"), effects = c("predFC",
+  "Gaidatzis2015"), pscnt = 2, ...)
 }
 \arguments{
 \item{cntEx}{Gene by sample \code{matrix} with exonic counts, OR a
@@ -23,28 +25,69 @@ if \code{cntEx} is a matrix. Will be disregarded if \code{cntEx} is a
 that groups the samples (columns of \code{cntEx} and \code{cntIn}) into two
 conditions. The contrast will be defined as secondLevel - firstLevel.}
 
-\item{method}{One of \code{"published"} or \code{"new"}. If
-\code{"published"} (the default), sample normalization, gene filtering and
+\item{method}{One of \code{NULL} (the default) or \code{"Gaidatzis2015"}. If
+\code{"Gaidatzis2015"}, gene filtering, statistical analysis and
 calculation of contrasts is performed as described in Gaidatzis et al.
 2015, and the statistical analysis is based on \code{\link[edgeR]{glmFit}}
-and \code{\link[edgeR]{glmLRT}}.
-If \code{method="new"}, normalization will be performed using TMM as
-implemented in \code{\link[edgeR]{calcNormFactors}}, the contrast are
-calculated using \code{\link[edgeR]{predFC}}, and the statistical analysis
-will use the quasi-likelihood framework implemented in
-\code{\link[edgeR]{glmQLFit}} and \code{\link[edgeR]{glmQLFTest}}. The
-latter is often less stringent when selecting quantifyable genes, but more
-stringent wenn calling significant changes (especially with low numbers of
-replicates).}
+and \code{\link[edgeR]{glmLRT}}. This is done by setting the arguments
+\code{modelSamples}, \code{geneSelection}, \code{effects} and \code{statFramework}
+to appropriate values (see details), overriding the defaults or any value
+passed to these arguments. If \code{NULL}, the default values of the arguments
+will be used instead (recommended).}
+
+\item{modelSamples}{Whether to include a sample identifier in the design matrix
+of the statistical model. If \code{TRUE}, potential sample effects
+that affect both exonic and intronic counts of that sample will be taken
+into account, which could result in higher sensitivity (default: FALSE).}
+
+\item{geneSelection}{Controls how to select quantifyable genes. One of the
+following:\describe{
+\item{\code{"filterByExpr"}: }{(default) First, counts are normalized using
+\code{\link[edgeR]{calcNormFactors}}, treating intonic and exonic counts
+as individual samples. Then, \code{\link[edgeR]{filterByExpr}} is used
+with default parameters to select quantifyable genes.}
+\item{\code{"none"}: }{This will use all the genes provided in the count
+tables, assuming that an appropriate selection of quantifyable genes has
+already been done.}
+\item{\code{"Gaidatzis2015"}: }{First, intronic and exonic counts are
+linearly scaled to the mean library size (estimated as the sum of all
+intronic or exonic counts, respectively). Then, quantifyable genes are
+selected as the genes with counts \code{x} that fulfill
+\code{log2(x + 8) > 5} in both exons and introns.}
+}}
+
+\item{statFramework}{Selects the framework within \code{edgeR} that is used
+for the statistical analysis. One of:\describe{
+\item{\code{"QLF"}: }{(default) Quasi-likelihood F-test using
+\code{\link[edgeR]{glmQLFit}} and \code{\link[edgeR]{glmQLFTest}}. This
+framework is highly recommended as it gives stricter error rate control
+by accounting for the uncertainty in dispersion estimation.}
+\item{\code{"LRT"}: }{Likelyhood ratio test using \code{\link[edgeR]{glmFit}}
+and \code{\link[edgeR]{glmLRT}}}.
+}}
+
+\item{effects}{How the effects (contrasts or log2 fold-changes) are calculated.
+One of:\describe{
+\item{\code{"predFC"}: }{(default) Fold-changes are calculated using
+the fitted model with \code{\link[edgeR]{predFC}} with
+\code{prior.count = pscnt}. Please note that if a sample factor is
+included in the model (\code{modelSamples=TRUE}), effects cannot be
+obtained from that model. In that case, effects are obtained from a
+simpler model without sample effects.}
+\item{\code{"Gaidatzis2015"}: }{Fold-changes are calculated using the
+formula \code{log2((x + pscnt)/(y + pscnt))}. If \code{pscnt} is not
+set to 8, \code{runEISA} will warn that this deviates from the method
+used in Gaidatzis et al., 2015.}
+}}
 
 \item{pscnt}{\code{numeric(1)} with pseudocount to add to read counts
-(default: 8). It is added to scaled read counts for
-\code{method="published"}, or used in \code{cpm(..., prior.count = pscnt)}
-and \code{predFC(..., prior.count = pscnt)} for \code{method="new"}.}
+(default: 2). For \code{method = "Gaidatzis2015"}, it is set to 8.
+It is added to scaled read counts used in \code{geneSelection = "Gaidatzis2015"}
+and \code{effects = "Gaidatzis2015"}, or else used in \code{cpm(..., prior.count = pscnt)}
+and \code{predFC(..., prior.count = pscnt)}.}
 
 \item{...}{additional arguments passed to the \code{\link[edgeR]{DGEList}}
-constructor,
-such as \code{lib.size} or \code{genes}.}
+constructor, such as \code{lib.size} or \code{genes}.}
 }
 \value{
 a \code{list} with elements \describe{
@@ -56,14 +99,19 @@ difference between log2 fold-changes in exons and introns (\code{Dex.Din})}
 \item{DGEList}{\code{\link[edgeR]{DGEList}} object used in model fitting}
 \item{tab.ExIn}{statisical results for differential changes between exonic
 and intronic contrast, an indication for post-transcriptional regulation.}
-\item{method}{the method that was used to run EISA}
-\item{pscnt}{the pseudocount that was used to run EISA}
+\item{params}{a \code{list} with parameter values used to run EISA}
 }
 }
 \description{
 Starting from count tables with exonic and intronic counts
 for two conditions, perform all the steps in EISA (normalize, identify
 quantifyable genes, calculate contrasts and their significance).
+}
+\details{
+Setting \code{method = "Gaidatzis2015"} has precedence over other
+argument values and corresponds to setting:
+\code{modelSamples = FALSE, geneSelection = "Gaidatzis2015",
+  statFramework = "LRT", effects = "Gaidatzis2015", pscnt = 8}.
 }
 \examples{
 cntEx <- readRDS(system.file("extdata", "Fig3abc_GSE33252_rawcounts_exonic.rds",
@@ -84,6 +132,7 @@ Nature Biotechnology, 2015 Jul;33(7):722-9. doi: 10.1038/nbt.3269.
 \seealso{
 \code{\link[edgeR]{DGEList}} for \code{DGEList} object construction,
 \code{\link[edgeR]{calcNormFactors}} for normalization,
+\code{\link[edgeR]{filterByExpr}} for gene selection,
 \code{\link[edgeR]{glmFit}} and \code{\link[edgeR]{glmQLFit}} for statistical
 analysis.
 }

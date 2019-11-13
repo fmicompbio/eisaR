@@ -23,6 +23,7 @@ Imports:
     S4Vectors,
     IRanges,
     AnnotationDbi,
+    limma,
     edgeR,
     methods,
     SummarizedExperiment

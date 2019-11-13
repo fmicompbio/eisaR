@@ -69,8 +69,8 @@ cond <- factor(c("ES", "ES", "TN", "TN"))
 res <- runEISA(Rex, Rin, cond)
 
 ## ----compare---------------------------------------------------------------
-res1 <- runEISA(Rex, Rin, cond, method = "published")
-res2 <- runEISA(Rex, Rin, cond, method = "new")
+res1 <- runEISA(Rex, Rin, cond, method = "Gaidatzis2015")
+res2 <- runEISA(Rex, Rin, cond)
 
 # number of quantifyable genes
 nrow(res1$DGEList)
@@ -80,15 +80,48 @@ nrow(res2$DGEList)
 sum(res1$tab.ExIn$FDR < 0.05)
 sum(res2$tab.ExIn$FDR < 0.05)
 
+# method="Gaidatzis2015" results contain most of default results
+summary(rownames(res2$contrasts)[res2$tab.ExIn$FDR < 0.05] %in%
+        rownames(res1$contrasts)[res1$tab.ExIn$FDR < 0.05])
+
 # comparison of deltas
 ids <- intersect(rownames(res1$DGEList), rownames(res2$DGEList))
 cor(res1$contrasts[ids,"Dex"], res2$contrasts[ids,"Dex"])
 cor(res1$contrasts[ids,"Din"], res2$contrasts[ids,"Din"])
 cor(res1$contrasts[ids,"Dex.Din"], res2$contrasts[ids,"Dex.Din"])
-plot(res1$contrasts[ids,"Dex.Din"], res2$contrasts[ids,"Dex.Din"])
+plot(res1$contrasts[ids,"Dex.Din"], res2$contrasts[ids,"Dex.Din"], pch = "*",
+     xlab = expression(paste(Delta, "exon", - Delta, "intron for method='Gaidatzis2015'")),
+     ylab = expression(paste(Delta, "exon", - Delta, "intron for default parameters")))
+
+## ----modelSamples----------------------------------------------------------
+res3 <- runEISA(Rex, Rin, cond, modelSamples = FALSE)
+res4 <- runEISA(Rex, Rin, cond, modelSamples = TRUE)
+ids <- intersect(rownames(res3$contrasts), rownames(res4$contrasts))
+
+# number of genes with significant post-transcriptional regulation
+sum(res3$tab.ExIn$FDR < 0.05)
+sum(res4$tab.ExIn$FDR < 0.05)
+
+# modelSamples=TRUE results are a super-set of
+# modelSamples=FALSE results
+summary(rownames(res3$contrasts)[res3$tab.ExIn$FDR < 0.05] %in%
+        rownames(res4$contrasts)[res4$tab.ExIn$FDR < 0.05])
+
+# comparison of contrasts
+diag(cor(res3$contrasts[ids, ], res4$contrasts[ids, ]))
+plot(res3$contrasts[ids, 3], res4$contrasts[ids, 3], pch = "*",
+     xlab = "Interaction effects for modelSamples=FALSE",
+     ylab = "Interaction effects for modelSamples=TRUE")
+
+# comparison of interaction significance
+plot(-log10(res3$tab.ExIn[ids, "FDR"]), -log10(res4$tab.ExIn[ids, "FDR"]), pch = "*",
+     xlab = "-log10(FDR) for modelSamples=FALSE",
+     ylab = "-log10(FDR) for modelSamples=TRUE")
+abline(a=0, b=1, col="gray")
+legend("bottomright", "y = x", bty = "n", lty = 1, col = "gray")
 
 ## ----plotEISA--------------------------------------------------------------
-plotEISA(res, contrast = "ExIn")
+plotEISA(res)
 
 ## ----normalization---------------------------------------------------------
 # remove column "width"

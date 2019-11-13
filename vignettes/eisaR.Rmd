@@ -168,30 +168,67 @@ cond <- factor(c("ES", "ES", "TN", "TN"))
 res <- runEISA(Rex, Rin, cond)
 ```
 
-## Two alternative implementations of EISA
-Using the argument `method`, you can choose between two alternative implementations
-of EISA. `method="published"` will use an implementation that corresponds to the
-algorithm described in [@eisa]. `method="new"` will use more of the functionality
-provided by `edgeR` (e.g. for normalization and effect size calculation), summarized
-in the table below:  
+## Alternative implementations of EISA
+There are five arguments in `runEISA` (`modelSamples`, `geneSelection`, `effects`,
+`statFramework` and `pscnt`) that control gene filtering, calculation of contrasts
+and the statistical method used, summarized in the bullet list below.
 
-| Aspect:           | `method="published"`                        | `method="new"`                                   |
-|-------------------|---------------------------------------------|--------------------------------------------------|
-| normalization     | linear scaling to the mean library size     | `edgeR::calcNormFactors`                         |
-| gene selection    | log2(x + 8) > 5 (in both exons and introns) | `edgeR::filterByExpr`                            |
-| effect size       | log2((x + 8)/(y + 8))                       | `edgeR::predFC`                                  |
-| model fit         | `edgeR::glmFit`                             | `edgeR::glmQLFit`                                |
-| significance test | `edgeR::glmLRT`                             | `edgeR::glmQLFTest`                              |
+The default values of these arguments correspond to the currently recommended way
+of running EISA. You can also run EISA exactly as it was described in [@eisa], by
+setting `method = "Gaidatzis2015"`. This will override the values of the five
+other arguments and set them according to the published algorithm (as indicated
+below). 
 
-While both methods yield highly similar results, `method="new"` is often less
-stringent when selecting quantifyable genes, but more stringent when calling
-significant changes (especially with low numbers of replicates).
+* `modelSamples`: Account for individual samples in statistical model? Possible values are:  
+  - `FALSE` (default and `method="Gaidatzis2015"`): use a model of the form `~ condition * region`  
+  - `TRUE`: use a model of the form `~ sample + condition * region`  
 
-Here is an illustration of how the results differ between the two:  
+* `geneSelection`: How to select detected genes. Possible values are:  
+  - `"filterByExpr"` (default): First, counts are normalized using `edgeR::calcNormFactors`,
+    treating intonic and exonic counts as individual samples. Then, the 
+    `edgeR::filterByExpr` function is used with default parameters to select
+    quantifyable genes.
+  - `"none"`: This will use all the genes provided in the count tables, assuming
+    that an appropriate selection of quantifyable genes has already been done.  
+  - `"Gaidatzis2015"` (`method="Gaidatzis2015"`): First, intronic and exonic counts
+    are linearly scaled to the mean library size (estimated as the sum of all intronic
+    or exonic counts, respectively). Then, quantifyable genes are selected as the
+    genes with counts `x` that fulfill `log2(x + 8) > 5` in both exons and introns.  
+    
+* `statFramework`: The framework within `edgeR` that is used for the statistical analysis.
+  Possible values are:  
+  - `"QLF"` (default): quasi-likelihood F-test using `edgeR::glmQLFit` and
+    `edgeR::glmQLFTest`. This framework is highly recommended as it gives stricter
+    error rate control by accounting for the uncertainty in dispersion estimation.  
+  - `"LRT"` (`method="Gaidatzis2015"`): likelyhood ratio test using `edgeR::glmFit`
+    and `edgeR::glmLRT`.  
+  
+* `effects`: How the effects (log2 fold-changes) are calculated. Possible values are:  
+  - `"predFC"` (default): Fold-changes are calculated using the fitted model with
+    `edgeR::predFC` and the value provided to `pscnt`. Please note that if a
+    sample factor is included in the statistical model (`modelSamples=TRUE`), 
+    effects cannot be obtained from that model. In that case, effects are obtained
+    from a simpler model without sample effects.
+  - `"Gaidatzis2015"` (`method="Gaidatzis2015"`): Fold-changes are calculated
+    using the formula `log2((x + pscnt)/(y + pscnt))`. If `pscnt` is not set to 8,
+    `runEISA` will warn that this deviates from the method used in Gaidatzis et al., 2015.
+    
+* `pscnt`: The pseudocount that is added to normalized counts before log transformation.
+  For `geneSelection="Gaidatzis2015"`, `pscnt` is used both in gene selection as well as
+  in the calculation of log2 fold-changes. Otherwise, `pscnt` is only used in the calculation
+  of log2 fold-changes in `edgeR::predFC(, prior.count = pscnt)`.
+
+While different values for these arguments typically yield similar results,
+the defaults are often less stringent compared to `method="Gaidatzis2015"` when
+selecting quantifyable genes, but more stringent when calling significant changes
+(especially with low numbers of replicates).
+
+Here is an illustration of how the results differ `method="Gaidatzis2015"` and
+the defaults:  
 
 ```{r compare}
-res1 <- runEISA(Rex, Rin, cond, method = "published")
-res2 <- runEISA(Rex, Rin, cond, method = "new")
+res1 <- runEISA(Rex, Rin, cond, method = "Gaidatzis2015")
+res2 <- runEISA(Rex, Rin, cond)
 
 # number of quantifyable genes
 nrow(res1$DGEList)
@@ -201,20 +238,81 @@ nrow(res2$DGEList)
 sum(res1$tab.ExIn$FDR < 0.05)
 sum(res2$tab.ExIn$FDR < 0.05)
 
+# method="Gaidatzis2015" results contain most of default results
+summary(rownames(res2$contrasts)[res2$tab.ExIn$FDR < 0.05] %in%
+        rownames(res1$contrasts)[res1$tab.ExIn$FDR < 0.05])
+
 # comparison of deltas
 ids <- intersect(rownames(res1$DGEList), rownames(res2$DGEList))
 cor(res1$contrasts[ids,"Dex"], res2$contrasts[ids,"Dex"])
 cor(res1$contrasts[ids,"Din"], res2$contrasts[ids,"Din"])
 cor(res1$contrasts[ids,"Dex.Din"], res2$contrasts[ids,"Dex.Din"])
-plot(res1$contrasts[ids,"Dex.Din"], res2$contrasts[ids,"Dex.Din"])
+plot(res1$contrasts[ids,"Dex.Din"], res2$contrasts[ids,"Dex.Din"], pch = "*",
+     xlab = expression(paste(Delta, "exon", - Delta, "intron for method='Gaidatzis2015'")),
+     ylab = expression(paste(Delta, "exon", - Delta, "intron for default parameters")))
 ```
+
+## On the estimation of interactions in a split-plot design experiment
+The calculation of the significance of interactions (here whether the fold-changes
+differ between exonic or intronic data) is well defined for experimental designs
+were all samples are independent from one another. Within EISA, this is not the
+case (each sample yields two data points, on for exons and one for introns). That
+results in a dependency between datapoints: If a sample is affected by a problem
+in the experiment, it might at the same time give rise to outliers in both exonic
+and intronic counts.
+
+In statistics, such an experimental design is often referred to as a split-plot
+design, and a recommended way to analyze interactions in such experiments would
+be to use a mixed effect model with the plot (in our case, the sample) as a random
+effect. The disadvantage here however would be that available packages for mixed
+effect models are not designed for count data, and we therefore use an alternative
+approach to explicitely model the sample dependency, by introducing a sample
+factor into the design matrix (for `modelSamples=TRUE`). That sample factor is
+nested in the condition factor (no sample can belong to more than one condition),
+and therefore not all coefficients can be estimated. We therefore drop one of
+the columns of the design matrix (identified by `limma::nonEstimable`).
+
+This has no impact on the effects (the log2 fold-changes of `modelSamples=TRUE`
+and `modelSamples=FALSE` are nearly identical). However, in the presence of sample effects,
+`modelSamples=TRUE` increases the sensitivity of detecting genes with significant
+interactions. Here is a comparison of the EISA results with and without accounting
+for the sample in the model:  
+
+```{r modelSamples}
+res3 <- runEISA(Rex, Rin, cond, modelSamples = FALSE)
+res4 <- runEISA(Rex, Rin, cond, modelSamples = TRUE)
+ids <- intersect(rownames(res3$contrasts), rownames(res4$contrasts))
+
+# number of genes with significant post-transcriptional regulation
+sum(res3$tab.ExIn$FDR < 0.05)
+sum(res4$tab.ExIn$FDR < 0.05)
+
+# modelSamples=TRUE results are a super-set of
+# modelSamples=FALSE results
+summary(rownames(res3$contrasts)[res3$tab.ExIn$FDR < 0.05] %in%
+        rownames(res4$contrasts)[res4$tab.ExIn$FDR < 0.05])
+
+# comparison of contrasts
+diag(cor(res3$contrasts[ids, ], res4$contrasts[ids, ]))
+plot(res3$contrasts[ids, 3], res4$contrasts[ids, 3], pch = "*",
+     xlab = "Interaction effects for modelSamples=FALSE",
+     ylab = "Interaction effects for modelSamples=TRUE")
+
+# comparison of interaction significance
+plot(-log10(res3$tab.ExIn[ids, "FDR"]), -log10(res4$tab.ExIn[ids, "FDR"]), pch = "*",
+     xlab = "-log10(FDR) for modelSamples=FALSE",
+     ylab = "-log10(FDR) for modelSamples=TRUE")
+abline(a=0, b=1, col="gray")
+legend("bottomright", "y = x", bty = "n", lty = 1, col = "gray")
+```
+
 
 # Visualize EISA results{#plot}
 We can now visualize the results by plotting intronic changes versus exonic
 changes (genes with signficant interactions, which are likely to be post-transcriptionally
 regulated, are color coded):  
 ```{r plotEISA}
-plotEISA(res, contrast = "ExIn")
+plotEISA(res)
 ```
 
 # Run EISA step-by-step{#stepwise}
@@ -224,7 +322,7 @@ as described in [@eisa]. This may be preferrable to understand each
 individual step and be able to access intermediate results.
 
 The results obtained in this way are identical to what you get with
-`runEISA(..., method = "published")`, so if you are happy with `runEISA` you can
+`runEISA(..., method = "Gaidatzis2015")`, so if you are happy with `runEISA` you can
 skip the rest of the vignette.
 
 ## Normalization

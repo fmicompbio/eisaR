@@ -5,8 +5,7 @@
 \title{Visualize the results from an exon-intron split analysis.}
 \usage{
 plotEISA(x, contrast = c("ExIn", "none"), minLfc = NULL,
-  maxFDR = 0.05, genecolors = c("#E41A1CFF", "#4DAF4AFF", "#22222244"),
-  ...)
+  maxFDR = 0.05, genecolors = c("#E41A1C", "#4DAF4A", "#222222"), ...)
 }
 \arguments{
 \item{x}{\code{list} with EISA results, typically the return value from \code{\link{runEISA}}}
@@ -25,7 +24,13 @@ highlighting.}
 \item{genecolors}{Vector of length three specifying the colors to use for
 genes that are significantly up, down or unchanged.}
 
-\item{...}{further arguments past to \code{plot()}}
+\item{...}{further arguments past to \code{plot()}. Parameters that will be set
+automatically unless given in the arguments are:\describe{
+\item{pch}{: plot symbol (default: \code{"."})}
+\item{cex}{: plot symbol expansion factor (default: \code{2})}
+\item{col}{: plot symbol color (default: according to \code{contrast} and \code{genecolors})}
+\item{xlab/ylab}{: axis labels}
+}}
 }
 \value{
 \code{NULL} (invisibly)
