@@ -216,7 +216,7 @@ runEISA <- function(cntEx, cntIn, cond, method = NULL,
     
     # identify quantifyable genes
     if (geneSelection == "none") {
-        message("skip filtering for quantifyable genes...", appendLF = FALSE)
+        message("skip filtering for quantifyable genes")
         NLex <- edgeR::cpm(y[, seq.int(nsmpls)], log = TRUE, prior.count = pscnt)
         NLin <- edgeR::cpm(y[, nsmpls + seq.int(nsmpls)], log = TRUE, prior.count = pscnt)
         

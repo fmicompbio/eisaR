@@ -8,7 +8,7 @@ test_that("plotEISA() runs", {
     tf <- tempfile(fileext = ".pdf")
     pdf(file = tf)
 
-    expect_null(plotEISA(res1))
+    expect_null(plotEISA(res1, col = "purple"))
     expect_null(plotEISA(res1, contrast = "none"))
     expect_error(plotEISA(res2))
 
