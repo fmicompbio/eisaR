@@ -8,8 +8,10 @@ output:
     toc_float: true
 vignette: >
   %\VignetteIndexEntry{Using eisaR for Exon-Intron Split Analysis (EISA)}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include = FALSE}
@@ -113,7 +115,7 @@ sampleFile <- "extdata/samples_chip_single.txt"
 genomeFile <- "extdata/hg19sub.fa"
 
 proj <- qAlign("extdata/samples_rna_single.txt", "extdata/hg19sub.fa",
-               splicedAlignment = TRUE)
+               aligner = "Rhisat2", splicedAlignment = TRUE)
 alignmentStats(proj)
 ```
 
