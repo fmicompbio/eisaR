@@ -68,9 +68,8 @@ jobs:
       run: |
         Rscript -e "install.packages('remotes')"
         Rscript -e "remotes::install_cran(c('rcmdcheck', 'BiocManager'))"
-        echo "start installing bioconductor"
         Rscript -e "BiocManager::install(version = '${{ matrix.config.bioc }}')"
-        Rscript -e "pks <- remotes::dev_package_deps(dependencies = TRUE); print(pks$package); BiocManager::install(pks$package)"
+        Rscript -e "pcks <- remotes::dev_package_deps(dependencies = TRUE); print(pcks$package); BiocManager::install(pcks$package)"
 
     - name: Check
       run: Rscript -e "rcmdcheck::rcmdcheck(args = '${{ matrix.config.args }}', error_on = 'warning', check_dir = 'check')"
