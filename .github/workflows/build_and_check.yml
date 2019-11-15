@@ -14,9 +14,9 @@ jobs:
       matrix:
         config:
         #- { os: windows-latest, r: '3.6', bioc: 'devel', args: "--no-manual"}
-        - { os: windows-latest, r: 'devel', bioc: 'devel', args: "--no-manual"}
+        #- { os: windows-latest, r: 'devel', bioc: 'devel', args: "--no-manual"}
         #- { os: macOS-latest, r: '3.6', bioc: 'devel'}
-        - { os: macOS-latest, r: 'devel', bioc: 'devel', args: "--no-manual"}
+        #- { os: macOS-latest, r: 'devel', bioc: 'devel', args: "--no-manual"}
         #- { os: ubuntu-18.04, r: '3.6', bioc: 'devel', cran: "https://demo.rstudiopm.com/all/__linux__/bionic/latest", args: "--no-manual" }
         - { os: ubuntu-18.04, r: 'devel', bioc: 'devel', cran: "https://demo.rstudiopm.com/all/__linux__/bionic/latest", args: "--no-manual" }
 
@@ -55,14 +55,16 @@ jobs:
     #    sysreqs=$(Rscript -e "cat(sysreqs::sysreq_commands('DESCRIPTION'))")
     #    sudo -s eval "$sysreqs"
 
-    - name: Install Bioconductor
-      run: Rscript -e "install.packages('BiocManager'); BiocManager::install(version = '${{ matrix.config.bioc }}')"
-
     #- name: Install R dependencies
     #  run: Rscript -e "install.packages('remotes')" -e "remotes::install_deps(dependencies = TRUE)" -e "remotes::install_cran('rcmdcheck')"
 
-    - name: Install R dependencies
-      run: Rscript -e "install.packages('remotes')" -e "pks <- remotes::dev_package_deps(dependencies = TRUE); BiocManager::install(pks)" -e "remotes::install_cran('rcmdcheck')"
+    - name: Install BioC and R dependencies
+      run: |
+        Rscript -e "install.packages('remotes')"
+        Rscript -e "remotes::install_cran('rcmdcheck')"
+        Rscript -e "remotes::install_cran('BiocManager')"
+        Rscript -e "BiocManager::install(version = '${{ matrix.config.bioc }}')"
+        Rscript -e "pks <- remotes::dev_package_deps(dependencies = TRUE); print(pks$package); BiocManager::install(pks$package)"
 
     - name: Check
       run: Rscript -e "rcmdcheck::rcmdcheck(args = '${{ matrix.config.args }}', error_on = 'warning', check_dir = 'check')"
@@ -75,7 +77,7 @@ jobs:
         path: check
 
     - name: Test coverage
-      if: matrix.config.os == 'macOS-latest' && matrix.config.r == '3.6'
+      if: matrix.config.os == 'ubuntu-18.04' && matrix.config.r == 'devel'
       run: |
         Rscript -e 'remotes::install_github("r-lib/covr@gh-actions")'
         Rscript -e 'covr::codecov(token = "${{secrets.CODECOV_TOKEN}}")'
