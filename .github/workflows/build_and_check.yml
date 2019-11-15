@@ -68,15 +68,15 @@ jobs:
       #if: steps.cache.outputs.cache-hit != 'true'
       run: |
         Rscript -e "install.packages('remotes')"
-        Rscript -e "remotes::install_cran(c('rcmdcheck', 'BiocManager'))"
+        Rscript -e "remotes::install_cran(c('rcmdcheck', 'rmarkdown', 'knitr', 'BiocManager'))"
         Rscript -e "BiocManager::install(version = '${{ matrix.config.bioc }}')"
         Rscript -e "pcks <- remotes::dev_package_deps(dependencies = TRUE);
                     todo <- setdiff(pcks[['packge']], rownames(installed.packages()));
-                    message('installing ', length(todo), ' missing packges: ', paste(todo, collapse = ', '));
+                    message('installing ', length(todo), ' of ', length(pcks[['packge']]), ' missing packges: ', paste(todo, collapse = ', '));
                     if (length(todo)) { BiocManager::install(todo) };
                     vld <- BiocManager::valid();
                     todo2 <- if (vld != TRUE && 'out_of_date' %in% names(vld)) rownames(vld[['out_of_date']]) else character(0)
-                    message('updating ', length(todo2), ' packages: ', paste(todo2, collapse = ', '));
+                    message('updating ', length(todo2), ' of ', nrow(installed.packages()), ' packages: ', paste(todo2, collapse = ', '));
                     if (length(todo2)) { BiocManager::install(todo2) };
                     all <- installed.packages();
                     message(nrow(all), ' installed packages:\n', paste(sprintf('%s (%s)', rownames(all), all[,'Version']), collapse = '\n'))"
