@@ -32,6 +32,8 @@ jobs:
       uses: r-lib/actions/setup-r@master
       with:
         r-version: ${{ matrix.config.r }}
+
+    - name: R version
       run: Rscript -e 'R.version'
 
     - name: setup Pandoc
