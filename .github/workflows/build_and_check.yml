@@ -77,7 +77,9 @@ jobs:
                     vld <- BiocManager::valid();
                     todo2 <- if (vld != TRUE && 'out_of_date' %in% names(vld)) rownames(vld[['out_of_date']]) else character(0)
                     message('updating ', length(todo2), ' packages: ', paste(todo2, collapse = ', '));
-                    if (length(todo2)) { BiocManager::install(todo2) }"
+                    if (length(todo2)) { BiocManager::install(todo2) };
+                    all <- installed.packages();
+                    message(nrow(all), ' installed packages:\n', paste(sprintf('%s (%s)', rownames(all), all[,'Version']), collapse = '\n'))"
 
     - name: Check
       run: Rscript -e "rcmdcheck::rcmdcheck(args = '${{ matrix.config.args }}', error_on = 'warning', check_dir = 'check')"
