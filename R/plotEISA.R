@@ -29,7 +29,7 @@
 #' @examples
 #'   # see the help for runEISA() for a full example
 #'
-#' @importFrom graphics plot legend
+#' @importFrom graphics plot legend points
 #'
 #' @export
 plotEISA <- function(x, contrast = c("ExIn", "none"),
