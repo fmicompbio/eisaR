@@ -70,14 +70,17 @@ jobs:
         Rscript -e "install.packages('remotes')"
         Rscript -e "remotes::install_cran(c('rcmdcheck', 'rmarkdown', 'knitr', 'BiocManager'))"
         Rscript -e "BiocManager::install(version = '${{ matrix.config.bioc }}')"
-        Rscript -e "pcks <- remotes::dev_package_deps(dependencies = TRUE);
-                    todo <- setdiff(pcks[['package']], rownames(installed.packages()));
-                    message('installing ', length(todo), ' of ', length(pcks[['package']]), ' missing packges: ', paste(todo, collapse = ', '));
-                    if (length(todo)) { BiocManager::install(todo) };
-                    vld <- BiocManager::valid();
-                    todo2 <- if (vld != TRUE && 'out_of_date' %in% names(vld)) rownames(vld[['out_of_date']]) else character(0)
-                    message('updating ', length(todo2), ' of ', nrow(installed.packages()), ' packages: ', paste(todo2, collapse = ', '));
+        Rscript -e "todo1 <- unique(unlist(tools::package_dependencies(c('rmarkdown', 'knitr'), recursive = TRUE)));
+                    message('installing ', length(todo1), ' packages for vignette building: ', paste(todo1, collapse = ', '));
+                    if (length(todo1)) { BiocManager::install(todo1) };
+                    pcks <- remotes::dev_package_deps(dependencies = TRUE);
+                    todo2 <- setdiff(pcks[['package']], rownames(installed.packages()));
+                    message('installing ', length(todo2), ' of ', length(pcks[['package']]), ' missing dependency packges: ', paste(todo2, collapse = ', '));
                     if (length(todo2)) { BiocManager::install(todo2) };
+                    vld <- BiocManager::valid();
+                    todo3 <- if (vld != TRUE && 'out_of_date' %in% names(vld)) rownames(vld[['out_of_date']]) else character(0)
+                    message('updating ', length(todo3), ' of ', nrow(installed.packages()), ' outdated packages: ', paste(todo3, collapse = ', '));
+                    if (length(todo3)) { BiocManager::install(todo3) };
                     all <- installed.packages();
                     message(nrow(all), ' installed packages:\n', paste(sprintf('%s (%s)', rownames(all), all[,'Version']), collapse = '\n'))"
 
