@@ -49,7 +49,8 @@ jobs:
       uses: actions/cache@v1
       with:
         path: ${{ env.R_LIBS_USER }}
-        key: ${{ runner.os }}-r-${{ matrix.config.r }}-${{ hashFiles('DESCRIPTION') }}-${{ hashFiles('.github/workflows/build_and_check.yml') }}
+        key: ${{ runner.os }}-r-${{ matrix.config.r }}-${{ hashFiles('DESCRIPTION') }}
+        #key: ${{ runner.os }}-r-${{ matrix.config.r }}-${{ hashFiles('DESCRIPTION') }}-${{ hashFiles('.github/workflows/build_and_check.yml') }}
 
     #- name: Install system dependencies
     #  if: runner.os == 'Linux'
@@ -64,12 +65,12 @@ jobs:
     #  run: Rscript -e "install.packages('remotes')" -e "remotes::install_deps(dependencies = TRUE)" -e "remotes::install_cran('rcmdcheck')"
 
     - name: Install BioC and R dependencies
-      if: steps.cache.outputs.cache-hit != 'true'
+      #if: steps.cache.outputs.cache-hit != 'true'
       run: |
         Rscript -e "install.packages('remotes')"
         Rscript -e "remotes::install_cran(c('rcmdcheck', 'BiocManager'))"
         Rscript -e "BiocManager::install(version = '${{ matrix.config.bioc }}')"
-        Rscript -e "pcks <- remotes::dev_package_deps(dependencies = TRUE); print(pcks[['package']]); BiocManager::install(pcks[['package']])"
+        Rscript -e "pcks <- remotes::dev_package_deps(dependencies = TRUE); todo <- setdiff(pcks[['packge']], rownames(installed.packages())); print(todo); if (length(todo)) BiocManager::install(todo)"
 
     - name: Check
       run: Rscript -e "rcmdcheck::rcmdcheck(args = '${{ matrix.config.args }}', error_on = 'warning', check_dir = 'check')"
