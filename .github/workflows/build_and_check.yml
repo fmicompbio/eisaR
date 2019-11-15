@@ -75,7 +75,7 @@ jobs:
                     message('installing ', length(todo), ' missing packges: ', paste(todo, collapse = ', '));
                     if (length(todo)) { BiocManager::install(todo) };
                     vld <- BiocManager::valid();
-                    todo2 <- rownames(vld[['out_of_date']])
+                    todo2 <- if (vld != TRUE && 'out_of_date' %in% names(vld)) rownames(vld[['out_of_date']]) else character(0)
                     message('updating ', length(todo2), ' packages: ', paste(todo2, collapse = ', '));
                     if (length(todo2)) { BiocManager::install(todo2) }"
 
