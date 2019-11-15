@@ -4,10 +4,18 @@
 \alias{runEISA}
 \title{Run Exon-Intron Split Analysis.}
 \usage{
-runEISA(cntEx, cntIn, cond, method = NULL, modelSamples = FALSE,
+runEISA(
+  cntEx,
+  cntIn,
+  cond,
+  method = NULL,
+  modelSamples = FALSE,
   geneSelection = c("filterByExpr", "none", "Gaidatzis2015"),
-  statFramework = c("QLF", "LRT"), effects = c("predFC",
-  "Gaidatzis2015"), pscnt = 2, ...)
+  statFramework = c("QLF", "LRT"),
+  effects = c("predFC", "Gaidatzis2015"),
+  pscnt = 2,
+  ...
+)
 }
 \arguments{
 \item{cntEx}{Gene by sample \code{matrix} with exonic counts, OR a

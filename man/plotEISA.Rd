@@ -4,8 +4,14 @@
 \alias{plotEISA}
 \title{Visualize the results from an exon-intron split analysis.}
 \usage{
-plotEISA(x, contrast = c("ExIn", "none"), minLfc = NULL,
-  maxFDR = 0.05, genecolors = c("#E41A1C", "#4DAF4A", "#222222"), ...)
+plotEISA(
+  x,
+  contrast = c("ExIn", "none"),
+  minLfc = NULL,
+  maxFDR = 0.05,
+  genecolors = c("#E41A1C", "#4DAF4A", "#222222"),
+  ...
+)
 }
 \arguments{
 \item{x}{\code{list} with EISA results, typically the return value from \code{\link{runEISA}}}
