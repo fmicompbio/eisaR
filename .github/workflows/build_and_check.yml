@@ -41,10 +41,11 @@ jobs:
       if: contains(matrix.config.args, 'no-manual') == false
 
     - name: Cache R packages
+      id: cache
       uses: actions/cache@v1
       with:
         path: ${{ env.R_LIBS_USER }}
-        key: ${{ runner.os }}-r-${{ matrix.config.r }}-${{ hashFiles('DESCRIPTION') }}
+        key: ${{ runner.os }}-r-${{ matrix.config.r }}-${{ hashFiles('DESCRIPTION' }}-${{'.github/workflows/build_and_check.yml'}}
 
     #- name: Install system dependencies
     #  if: runner.os == 'Linux'
@@ -59,10 +60,10 @@ jobs:
     #  run: Rscript -e "install.packages('remotes')" -e "remotes::install_deps(dependencies = TRUE)" -e "remotes::install_cran('rcmdcheck')"
 
     - name: Install BioC and R dependencies
+      if: steps.cache.outputs.cache-hit != 'true'
       run: |
         Rscript -e "install.packages('remotes')"
-        Rscript -e "remotes::install_cran('rcmdcheck')"
-        Rscript -e "remotes::install_cran('BiocManager')"
+        Rscript -e "remotes::install_cran(c('rcmdcheck', 'BiocManager'))"
         Rscript -e "BiocManager::install(version = '${{ matrix.config.bioc }}')"
         Rscript -e "pks <- remotes::dev_package_deps(dependencies = TRUE); print(pks$package); BiocManager::install(pks$package)"
 
