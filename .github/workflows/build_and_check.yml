@@ -45,7 +45,7 @@ jobs:
       uses: actions/cache@v1
       with:
         path: ${{ env.R_LIBS_USER }}
-        key: ${{ runner.os }}-r-${{ matrix.config.r }}-${{ hashFiles('DESCRIPTION' }}-${{'.github/workflows/build_and_check.yml'}}
+        key: ${{ runner.os }}-r-${{ matrix.config.r }}-${{ hashFiles('DESCRIPTION') }}-${{ hashFiles('.github/workflows/build_and_check.yml') }}
 
     #- name: Install system dependencies
     #  if: runner.os == 'Linux'
