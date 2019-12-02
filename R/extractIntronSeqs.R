@@ -4,6 +4,8 @@
 #' @param genome A \code{DNAStringSet} object with the genome sequence
 #' @param type Either 'collapse' or 'separate'
 #' @param flanklength The length of the exonic flanking sequence
+#' @param joinOverlappingIntrons Whether to join introns of the same gene if
+#'   they overlap after expanding with the flanking sequences
 #'
 #' @return A \code{DNAStringSet} object with intronic sequences
 #' @export

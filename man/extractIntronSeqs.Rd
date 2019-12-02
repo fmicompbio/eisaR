@@ -4,7 +4,13 @@
 \alias{extractIntronSeqs}
 \title{Extract intron sequences}
 \usage{
-extractIntronSeqs(gtf, genome, type = "collapse", flanklength = 90)
+extractIntronSeqs(
+  gtf,
+  genome,
+  type = "collapse",
+  flanklength = 90,
+  joinOverlappingIntrons = FALSE
+)
 }
 \arguments{
 \item{gtf}{The path to a gtf file}
@@ -14,6 +20,9 @@ extractIntronSeqs(gtf, genome, type = "collapse", flanklength = 90)
 \item{type}{Either 'collapse' or 'separate'}
 
 \item{flanklength}{The length of the exonic flanking sequence}
+
+\item{joinOverlappingIntrons}{Whether to join introns of the same gene if
+they overlap after expanding with the flanking sequences}
 }
 \value{
 A \code{DNAStringSet} object with intronic sequences
