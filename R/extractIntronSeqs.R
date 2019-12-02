@@ -8,7 +8,8 @@
 #' @return A \code{DNAStringSet} object with intronic sequences
 #' @export
 #'
-extractIntronSeqs <- function(gtf, genome, type = "collapse", flanklength = 90) {
+extractIntronSeqs <- function(gtf, genome, type = "collapse", flanklength = 90,
+                              joinOverlappingIntrons = FALSE) {
     ## Construct TxDb from gtf file
     txdb <- GenomicFeatures::makeTxDbFromGFF(gtf, format = "gtf")
     
@@ -35,15 +36,30 @@ extractIntronSeqs <- function(gtf, genome, type = "collapse", flanklength = 90) 
     ## Add flanking region
     grl <- grl + flanklength
     
-    ## If two (introns + flanklength) overlap, join them
-    grl <- GenomicRanges::reduce(grl)
-    
+    if (joinOverlappingIntrons) {
+        ## If two (introns + flanklength) overlap, join them
+        grl <- GenomicRanges::reduce(grl)
+    }
+
     gr <- unlist(grl)
     
     ## Add -I{X} to names
     names(gr) <- gsub("\\-I\\.", "-I", make.unique(paste0(names(gr), "-I")))
     
     ## Get sequence
-    return(BSgenome::getSeq(x = genome, names = gr))
+    gs <- BSgenome::getSeq(x = genome, names = gr)
+    
+    ## Manually set names of extracted sequences
+    if (any(width(gs) != width(gr))) {
+        stop("Something went wrong in the sequence extraction - ", 
+             "the widths of the extracted sequences don't agree ", 
+             "with the widths of the features")
+    }
+    if (any(names(gs) != names(gr))) {
+        warning("Setting names of extracted sequences manually")
+        names(gs) <- names(gr)
+    }
+
+    return(gs)
 }
 
