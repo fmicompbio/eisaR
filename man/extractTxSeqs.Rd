@@ -4,7 +4,7 @@
 \alias{extractTxSeqs}
 \title{Extract (spliced or unspliced) transcript sequences}
 \usage{
-extractTxSeqs(gtf, genome, type = "spliced")
+extractTxSeqs(gtf, genome, type = c("spliced", "unspliced"), verbose = TRUE)
 }
 \arguments{
 \item{gtf}{The path to a gtf file}
@@ -12,6 +12,8 @@ extractTxSeqs(gtf, genome, type = "spliced")
 \item{genome}{A \code{DNAStringSet} object with the genome sequence}
 
 \item{type}{Either 'spliced' or 'unspliced'}
+
+\item{verbose}{Logical, whether or not to print messages}
 }
 \value{
 A \code{DNAStringSet} object with intronic sequences

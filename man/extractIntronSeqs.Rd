@@ -7,9 +7,10 @@
 extractIntronSeqs(
   gtf,
   genome,
-  type = "collapse",
+  type = c("collapse", "separate"),
   flanklength = 90L,
-  joinOverlappingIntrons = FALSE
+  joinOverlappingIntrons = FALSE,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -24,6 +25,8 @@ is added to each intron}
 
 \item{joinOverlappingIntrons}{Whether to join introns of the same gene if
 they overlap after expanding with the flanking sequences}
+
+\item{verbose}{Logical, whether or not to print messages}
 }
 \value{
 A \code{DNAStringSet} object with intronic sequences

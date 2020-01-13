@@ -42,57 +42,70 @@ f <- tempfile()
 rtracklayer::export(gtf, con = f, format = "gtf")
 
 test_that("reference extraction fails with the wrong inputs", {
-    expect_error(extractTxSeqs(gtf = "nonexistent", genome = genome, type = "spliced"), 
+    expect_error(extractTxSeqs(gtf = "nonexistent", genome = genome, type = "spliced", verbose = FALSE), 
                  regexp = "'gtf' must be a character scalar")
-    expect_error(extractTxSeqs(gtf = 1, genome = genome, type = "spliced"), 
+    expect_error(extractTxSeqs(gtf = 1, genome = genome, type = "spliced", verbose = FALSE), 
                  regexp = "'gtf' must be a character scalar")
-    expect_error(extractTxSeqs(gtf = c(f, f), genome = genome, type = "spliced"), 
+    expect_error(extractTxSeqs(gtf = c(f, f), genome = genome, type = "spliced", verbose = FALSE), 
                  regexp = "'gtf' must be a character scalar")
-    expect_error(extractTxSeqs(gtf = f, genome = "string", type = "spliced"), 
+    expect_error(extractTxSeqs(gtf = f, genome = "string", type = "spliced", verbose = FALSE), 
                  regexp = "'genome' must be a DNAStringSet")
-    expect_error(extractTxSeqs(gtf = f, genome = genome, type = "wrongvalue"), 
-                 regexp = "'type' must be a character scalar")
-    expect_error(extractTxSeqs(gtf = f, genome = genome, type = 1), 
-                 regexp = "'type' must be a character scalar")
-    expect_error(extractTxSeqs(gtf = f, genome = genome, type = c("spliced", "unspliced")), 
-                 regexp = "'type' must be a character scalar")
+    expect_error(extractTxSeqs(gtf = f, genome = genome, type = "wrongvalue", verbose = FALSE), 
+                 regexp = "'arg' should be one of")
+    expect_error(extractTxSeqs(gtf = f, genome = genome, type = 1, verbose = FALSE), 
+                 regexp = "'arg' must be NULL or a character vector")
+    expect_message(extractTxSeqs(gtf = f, genome = genome, type = c("spliced", "unspliced"), verbose = TRUE), 
+                   regexp = "Extracting spliced transcript sequences")
+    expect_error(extractTxSeqs(gtf = f, genome = genome, type = "spliced", verbose = 1),
+                 regexp = "'verbose' must be a logical scalar")
+    expect_error(extractTxSeqs(gtf = f, genome = genome, type = "spliced", verbose = c(TRUE, FALSE)),
+                 regexp = "'verbose' must be a logical scalar")
     
     expect_error(extractIntronSeqs(gtf = "nonexistent", genome = genome, type = "collapse",
-                                   flanklength = 90L, joinOverlappingIntrons = FALSE), 
+                                   flanklength = 90L, joinOverlappingIntrons = FALSE, verbose = FALSE), 
                  regexp = "'gtf' must be a character scalar")
     expect_error(extractIntronSeqs(gtf = 1, genome = genome, type = "collapse",
-                                   flanklength = 90L, joinOverlappingIntrons = FALSE), 
+                                   flanklength = 90L, joinOverlappingIntrons = FALSE, verbose = FALSE), 
                  regexp = "'gtf' must be a character scalar")
     expect_error(extractIntronSeqs(gtf = c(f, f), genome = genome, type = "collapse",
-                                   flanklength = 90L, joinOverlappingIntrons = FALSE), 
+                                   flanklength = 90L, joinOverlappingIntrons = FALSE, verbose = FALSE), 
                  regexp = "'gtf' must be a character scalar")
     expect_error(extractIntronSeqs(gtf = f, genome = "string", type = "collapse",
-                                   flanklength = 90L, joinOverlappingIntrons = FALSE), 
+                                   flanklength = 90L, joinOverlappingIntrons = FALSE, verbose = FALSE), 
                  regexp = "'genome' must be a DNAStringSet")
     expect_error(extractIntronSeqs(gtf = f, genome = genome, type = "wrongvalue",
-                                   flanklength = 90L, joinOverlappingIntrons = FALSE), 
-                 regexp = "'type' must be a character scalar")
+                                   flanklength = 90L, joinOverlappingIntrons = FALSE, verbose = FALSE), 
+                 regexp = "'arg' should be one of ")
     expect_error(extractIntronSeqs(gtf = f, genome = genome, type = 1,
-                                   flanklength = 90L, joinOverlappingIntrons = FALSE), 
-                 regexp = "'type' must be a character scalar")
-    expect_error(extractIntronSeqs(gtf = f, genome = genome, type = c("collapse", "separate"),
-                                   flanklength = 90L, joinOverlappingIntrons = FALSE), 
-                 regexp = "'type' must be a character scalar")
+                                   flanklength = 90L, joinOverlappingIntrons = FALSE, verbose = FALSE), 
+                 regexp = "'arg' must be NULL or a character vector")
+    expect_message(extractIntronSeqs(gtf = f, genome = genome, type = c("collapse", "separate"),
+                                     flanklength = 2L, joinOverlappingIntrons = FALSE, verbose = TRUE), 
+                   regexp = "Extracting intron sequences using the collapse approach")
     expect_error(extractIntronSeqs(gtf = f, genome = genome, type = "collapse",
-                                   flanklength = "string", joinOverlappingIntrons = FALSE), 
+                                   flanklength = "string", joinOverlappingIntrons = FALSE, verbose = FALSE), 
                  regexp = "'flanklength' must be a numeric non-negative scalar")
     expect_error(extractIntronSeqs(gtf = f, genome = genome, type = "collapse",
-                                   flanklength = -1, joinOverlappingIntrons = FALSE), 
+                                   flanklength = -1, joinOverlappingIntrons = FALSE, verbose = FALSE), 
                  regexp = "'flanklength' must be a numeric non-negative scalar")
     expect_error(extractIntronSeqs(gtf = f, genome = genome, type = "collapse",
-                                   flanklength = c(1L, 2L), joinOverlappingIntrons = FALSE), 
+                                   flanklength = c(1L, 2L), joinOverlappingIntrons = FALSE, verbose = FALSE), 
                  regexp = "'flanklength' must be a numeric non-negative scalar")
     expect_error(extractIntronSeqs(gtf = f, genome = genome, type = "collapse",
-                                   flanklength = 90L, joinOverlappingIntrons = c(TRUE, FALSE)), 
+                                   flanklength = 90L, joinOverlappingIntrons = c(TRUE, FALSE), verbose = FALSE), 
                  regexp = "'joinOverlappingIntrons' must be a logical scalar")
     expect_error(extractIntronSeqs(gtf = f, genome = genome, type = "collapse",
-                                   flanklength = 90L, joinOverlappingIntrons = "TRUE"), 
+                                   flanklength = 90L, joinOverlappingIntrons = "TRUE", verbose = FALSE), 
                  regexp = "'joinOverlappingIntrons' must be a logical scalar")
+    expect_error(extractIntronSeqs(gtf = f, genome = genome, type = "collapse",
+                                   flanklength = 90L, joinOverlappingIntrons = FALSE,
+                                   verbose = 1),
+                 regexp = "'verbose' must be a logical scalar")
+    expect_error(extractIntronSeqs(gtf = f, genome = genome, type = "collapse",
+                                   flanklength = 90L, joinOverlappingIntrons = FALSE,
+                                   verbose = c(TRUE, FALSE)),
+                 regexp = "'verbose' must be a logical scalar")
+    
 })
 
 test_that("reference generation works", {

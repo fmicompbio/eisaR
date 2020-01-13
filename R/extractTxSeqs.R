@@ -3,6 +3,7 @@
 #' @param gtf The path to a gtf file
 #' @param genome A \code{DNAStringSet} object with the genome sequence
 #' @param type Either 'spliced' or 'unspliced'
+#' @param verbose Logical, whether or not to print messages
 #'
 #' @return A \code{DNAStringSet} object with intronic sequences
 #' @export
@@ -10,7 +11,9 @@
 #'
 #' @importFrom GenomicFeatures extractTranscriptSeqs makeTxDbFromGFF exonsBy
 #'
-extractTxSeqs <- function(gtf, genome, type = "spliced") {
+extractTxSeqs <- function(gtf, genome, type = c("spliced", "unspliced"), verbose = TRUE) {
+    type <- match.arg(type)
+    
     if (!is.character(gtf) || length(gtf) != 1 || !file.exists(gtf)) {
         stop("'gtf' must be a character scalar providing ", 
              "the path to an existing file.")
@@ -18,9 +21,12 @@ extractTxSeqs <- function(gtf, genome, type = "spliced") {
     if (!is(genome, "DNAStringSet")) {
         stop("'genome' must be a DNAStringSet")
     }
-    if (!is.character(type) || length(type) != 1 || 
-        !(type %in% c("spliced", "unspliced"))) {
-        stop("'type' must be a character scalar, either 'spliced' or 'unspliced'")
+    if (!is.logical(verbose) || length(verbose) != 1) {
+        stop("'verbose' must be a logical scalar")
+    }
+    
+    if (verbose) {
+        message("Extracting ", type, " transcript sequences")
     }
 
     ## Construct TxDb from gtf file
