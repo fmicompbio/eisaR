@@ -6,23 +6,34 @@
 #'
 #' @return A \code{DNAStringSet} object with intronic sequences
 #' @export
+#' @author Charlotte Soneson
 #'
-#' @importFrom BSgenome getSeq
 #' @importFrom GenomicFeatures extractTranscriptSeqs makeTxDbFromGFF exonsBy
 #'
 extractTxSeqs <- function(gtf, genome, type = "spliced") {
-    ## TODO: Check that gtf is path to existing file, genome is DNAStringSet, type is either 'spliced' or 'unspliced'
-    
+    if (!is.character(gtf) || length(gtf) != 1 || !file.exists(gtf)) {
+        stop("'gtf' must be a character scalar providing ", 
+             "the path to an existing file.")
+    }
+    if (!is(genome, "DNAStringSet")) {
+        stop("'genome' must be a DNAStringSet")
+    }
+    if (!is.character(type) || length(type) != 1 || 
+        !(type %in% c("spliced", "unspliced"))) {
+        stop("'type' must be a character scalar, either 'spliced' or 'unspliced'")
+    }
+
     ## Construct TxDb from gtf file
     txdb <- GenomicFeatures::makeTxDbFromGFF(gtf, format = "gtf")
     
-    ## Group exons by transcript. At this stage, exons are ordered
-    ## by exon_rank (i.e., from 5' to 3' in the transcript)
+    ## Group exons by transcript. When using exonsBy with by = "tx", 
+    ## the returned exons are ordered by ascending rank for each transcript, 
+    ## that is, by their position in the transcript. 
     grl <- GenomicFeatures::exonsBy(txdb, by = "tx", use.names = TRUE)
     
-    ## TODO: Check that exons are ordered by exon_rank
-    
-    ## Extract transcript sequences
+    ## Extract transcript sequences.
+    ## Here, it's important that for each transcript, the exons must be ordered 
+    ## by ascending rank, that is, by ascending position in the transcript.
     if (type == "spliced") {
         txout <- GenomicFeatures::extractTranscriptSeqs(x = genome, transcripts = grl)
     } else if (type == "unspliced") {

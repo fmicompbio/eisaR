@@ -19,3 +19,6 @@ A \code{DNAStringSet} object with intronic sequences
 \description{
 Extract (spliced or unspliced) transcript sequences
 }
+\author{
+Charlotte Soneson
+}

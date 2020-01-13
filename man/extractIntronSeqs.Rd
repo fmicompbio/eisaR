@@ -8,7 +8,7 @@ extractIntronSeqs(
   gtf,
   genome,
   type = "collapse",
-  flanklength = 90,
+  flanklength = 90L,
   joinOverlappingIntrons = FALSE
 )
 }
@@ -19,7 +19,8 @@ extractIntronSeqs(
 
 \item{type}{Either 'collapse' or 'separate'}
 
-\item{flanklength}{The length of the exonic flanking sequence}
+\item{flanklength}{The length of the exonic/genomic flanking sequence that
+is added to each intron}
 
 \item{joinOverlappingIntrons}{Whether to join introns of the same gene if
 they overlap after expanding with the flanking sequences}
@@ -29,4 +30,7 @@ A \code{DNAStringSet} object with intronic sequences
 }
 \description{
 Extract intron sequences
+}
+\author{
+Charlotte Soneson
 }
