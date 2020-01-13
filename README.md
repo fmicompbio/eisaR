@@ -10,7 +10,12 @@ conditions to quantify transcriptional and post-transcriptional regulation
 of gene expression.
 
 For details see Gaidatzis et al., Nat Biotechnol 2015. doi: 10.1038/nbt.3269.  
-eisaR implements the major steps of EISA in R.
+eisaR implements the major steps of EISA in R. 
+In addition, it contains functionality for extracting spliced and unspliced 
+transcript sequences, as well as intron sequences (with similar options as 
+the [BUSpaRse](https://github.com/BUStools/BUSpaRse)) package), from an 
+annotated genome. These sequences can be indexed and used, e.g., for 
+quantification in preparation for RNA velocity estimation.
 
 Current contributors include:
 
@@ -44,6 +49,12 @@ transcriptional and post-transcriptional regulation."
 Gaidatzis D., Burger L., Florescu M. and Stadler, M.B.  
 *Nat Biotechnol.* **2015**; 33(7):722-9.
 [PubMed: 26098447](https://www.ncbi.nlm.nih.gov/pubmed/26098447), [doi: 10.1038/nbt.3269](https://doi.org/10.1038/nbt.3269)
+
+## Software status
+
+| Platforms |  OS  | R CMD check | Coverage | 
+|:----------------:|:----------------:|:----------------:|:----------------:|
+| Travis CI | Linux | [![Travis CI build status](https://travis-ci.com/fmicompbio/eisaR.svg?branch=master)](https://travis-ci.com/fmicompbio/eisaR) | [![Codecov.io coverage status](https://codecov.io/github/fmicompbio/eisaR/coverage.svg?branch=master)](https://codecov.io/github/fmicompbio/eisaR) |
 
 <!--
 ## Download from Bioconductor
