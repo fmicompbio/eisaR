@@ -1,0 +1,9 @@
+authors:
+  Charlotte Soneson:
+    href: https://csoneson.github.io
+
+url: https://fmicompbio.github.io/eisaR
+
+template:
+  params:
+    bootswatch: cerulean
