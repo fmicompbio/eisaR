@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://fmicompbio.github.io/eisaR/index.html</loc>
+  </url>
+  <url>
+    <loc>https://fmicompbio.github.io/eisaR/reference/eisaR-package.html</loc>
+  </url>
+  <url>
+    <loc>https://fmicompbio.github.io/eisaR/reference/extractIntronSeqs.html</loc>
+  </url>
+  <url>
+    <loc>https://fmicompbio.github.io/eisaR/reference/extractTxSeqs.html</loc>
+  </url>
+  <url>
+    <loc>https://fmicompbio.github.io/eisaR/reference/getRegionsFromTxDb.html</loc>
+  </url>
+  <url>
+    <loc>https://fmicompbio.github.io/eisaR/reference/plotEISA.html</loc>
+  </url>
+  <url>
+    <loc>https://fmicompbio.github.io/eisaR/reference/runEISA.html</loc>
+  </url>
+  <url>
+    <loc>https://fmicompbio.github.io/eisaR/articles/eisaR.html</loc>
+  </url>
+</urlset>

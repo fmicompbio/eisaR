@@ -1,0 +1,9 @@
+pandoc: '2.2'
+pkgdown: 1.4.1
+pkgdown_sha: ~
+articles:
+  eisaR: eisaR.html
+urls:
+  reference: https://fmicompbio.github.io/eisaR/reference
+  article: https://fmicompbio.github.io/eisaR/articles
+
