@@ -417,7 +417,7 @@ regulated, are color coded):
 sig     <- tt$table$FDR < 0.05
 sum(sig)
 sig.dir <- sign(tt$table$logFC[sig])
-cols <- ifelse(sig, ifelse(tt$table$logFC > 0, "#E41A1CFF", "#4DAF4AFF"), "#22222244")
+cols <- ifelse(sig, ifelse(tt$table$logFC > 0, "#E41A1CFF", "#497AB3FF"), "#22222244")
 
 # volcano plot
 plot(tt$table$logFC, -log10(tt$table$FDR), col = cols, pch = 20,
@@ -426,7 +426,7 @@ plot(tt$table$logFC, -log10(tt$table$FDR), col = cols, pch = 20,
 abline(h = -log10(0.05), lty = 2)
 abline(v = 0, lty = 2)
 text(x = par("usr")[1] + 3 * par("cxy")[1], y = par("usr")[4], adj = c(0,1),
-     labels = sprintf("n=%d", sum(sig.dir == -1)), col = "#4DAF4AFF")
+     labels = sprintf("n=%d", sum(sig.dir == -1)), col = "#497AB3FF")
 text(x = par("usr")[2] - 3 * par("cxy")[1], y = par("usr")[4], adj = c(1,1),
      labels = sprintf("n=%d", sum(sig.dir ==  1)), col = "#E41A1CFF")
 
@@ -434,7 +434,7 @@ text(x = par("usr")[2] - 3 * par("cxy")[1], y = par("usr")[4], adj = c(1,1),
 plot(rowMeans(Din)[quantGenes], rowMeans(Dex)[quantGenes], pch = 20, col = cols,
      xlab = expression(paste(Delta,"intron (log2 TN/ES)")),
      ylab = expression(paste(Delta,"exon (log2 TN/ES)")))
-legend(x = "bottomright", bty = "n", pch = 20, col = c("#E41A1CFF","#4DAF4AFF"),
+legend(x = "bottomright", bty = "n", pch = 20, col = c("#E41A1CFF","#497AB3FF"),
        legend = sprintf("%s (%d)", c("Up","Down"), c(sum(sig.dir == 1), sum(sig.dir == -1))))
 ```
 

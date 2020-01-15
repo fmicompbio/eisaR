@@ -34,7 +34,7 @@
 #' @export
 plotEISA <- function(x, contrast = c("ExIn", "none"),
                      minLfc = NULL, maxFDR = 0.05,
-                     genecolors = c("#E41A1C", "#4DAF4A", "#222222"), ...) {
+                     genecolors = c("#E41A1C", "#497AB3", "#222222"), ...) {
     # check arguments
     contrast <- match.arg(contrast)
     contrastName <- ifelse("contrastName" %in% names(x), paste0(" (",x$contrastName, ")"), "")
