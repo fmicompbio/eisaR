@@ -1,8 +1,45 @@
 authors:
+  Michael Stadler:
+    href: https://github.com/mbstadler
+  Lukas Burger:
+    href: https://github.com/LukasBurger
   Charlotte Soneson:
     href: https://csoneson.github.io
 
 url: https://fmicompbio.github.io/eisaR
+
+navbar:
+  structure:
+    left:
+    - home
+    - intro
+    - reference
+    - articles
+    - tutorials
+    - news
+    right: github
+  components:
+    articles:
+      text: Articles
+      menu:
+      - text: eisaR
+        href: articles/eisaR.html
+    github:
+      icon: fa-github fa-lg
+      href: https://github.com/fmicompbio/eisaR
+
+reference:
+- title: Feature extraction from gene annotation
+  desc: "Extract exon/intron/gene features from gene annotation."
+  contents:
+    - '`getRegionsFromTxDb`'
+    - '`extractTxSeqs`'
+    - '`extractIntronSeqs`'
+- title: Run EISA
+  desc: "Run Exon-Intron Split Analysis on bulk RNA-seq data"
+  contents:
+    - '`runEISA`'
+    - '`plotEISA`'
 
 template:
   params:
