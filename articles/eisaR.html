@@ -85,7 +85,7 @@
       <h1>Using eisaR for Exon-Intron Split Analysis (EISA)</h1>
                         <h4 class="author">Michael Stadler</h4>
             
-            <h4 class="date">2020-01-15</h4>
+            <h4 class="date">2020-01-16</h4>
       
       
       <div class="hidden name"><code>eisaR.Rmd</code></div>
@@ -188,9 +188,9 @@
 <a class="sourceLine" id="cb6-12" data-line-number="12"><span class="co">#&gt; Testing the compute nodes...OK</span></a>
 <a class="sourceLine" id="cb6-13" data-line-number="13"><span class="co">#&gt; Loading QuasR on the compute nodes...OK</span></a>
 <a class="sourceLine" id="cb6-14" data-line-number="14"><span class="co">#&gt; Available cores:</span></a>
-<a class="sourceLine" id="cb6-15" data-line-number="15"><span class="co">#&gt; travis-job-f57bad55-ee9d-4c82-863c-9458c89e37dc: 1</span></a>
+<a class="sourceLine" id="cb6-15" data-line-number="15"><span class="co">#&gt; travis-job-f88a3a4e-d2ad-4e72-9eac-a84a68b75e0a: 1</span></a>
 <a class="sourceLine" id="cb6-16" data-line-number="16"><span class="co">#&gt; Performing genomic alignments for 4 samples. See progress in the log file:</span></a>
-<a class="sourceLine" id="cb6-17" data-line-number="17"><span class="co">#&gt; /home/travis/build/fmicompbio/eisaR/vignettes/QuasR_log_395c3c72986d.txt</span></a>
+<a class="sourceLine" id="cb6-17" data-line-number="17"><span class="co">#&gt; /home/travis/build/fmicompbio/eisaR/vignettes/QuasR_log_3d35527021f6.txt</span></a>
 <a class="sourceLine" id="cb6-18" data-line-number="18"><span class="co">#&gt; Genomic alignments have been created successfully</span></a>
 <a class="sourceLine" id="cb6-19" data-line-number="19"><span class="kw"><a href="https://rdrr.io/pkg/QuasR/man/alignmentStats.html">alignmentStats</a></span>(proj)</a>
 <a class="sourceLine" id="cb6-20" data-line-number="20"><span class="co">#&gt;                seqlength mapped unmapped</span></a>
@@ -520,7 +520,7 @@
 <a class="sourceLine" id="cb18-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(sig)</a>
 <a class="sourceLine" id="cb18-3" data-line-number="3"><span class="co">#&gt; [1] 490</span></a>
 <a class="sourceLine" id="cb18-4" data-line-number="4">sig.dir &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/sign.html">sign</a></span>(tt<span class="op">$</span>table<span class="op">$</span>logFC[sig])</a>
-<a class="sourceLine" id="cb18-5" data-line-number="5">cols &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(sig, <span class="kw"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(tt<span class="op">$</span>table<span class="op">$</span>logFC <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>, <span class="st">"#E41A1CFF"</span>, <span class="st">"#4DAF4AFF"</span>), <span class="st">"#22222244"</span>)</a>
+<a class="sourceLine" id="cb18-5" data-line-number="5">cols &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(sig, <span class="kw"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(tt<span class="op">$</span>table<span class="op">$</span>logFC <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>, <span class="st">"#E41A1CFF"</span>, <span class="st">"#497AB3FF"</span>), <span class="st">"#22222244"</span>)</a>
 <a class="sourceLine" id="cb18-6" data-line-number="6"></a>
 <a class="sourceLine" id="cb18-7" data-line-number="7"><span class="co"># volcano plot</span></a>
 <a class="sourceLine" id="cb18-8" data-line-number="8"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(tt<span class="op">$</span>table<span class="op">$</span>logFC, <span class="op">-</span><span class="kw"><a href="https://rdrr.io/r/base/Log.html">log10</a></span>(tt<span class="op">$</span>table<span class="op">$</span>FDR), <span class="dt">col =</span> cols, <span class="dt">pch =</span> <span class="dv">20</span>,</a>
@@ -529,7 +529,7 @@
 <a class="sourceLine" id="cb18-11" data-line-number="11"><span class="kw"><a href="https://rdrr.io/r/graphics/abline.html">abline</a></span>(<span class="dt">h =</span> <span class="op">-</span><span class="kw"><a href="https://rdrr.io/r/base/Log.html">log10</a></span>(<span class="fl">0.05</span>), <span class="dt">lty =</span> <span class="dv">2</span>)</a>
 <a class="sourceLine" id="cb18-12" data-line-number="12"><span class="kw"><a href="https://rdrr.io/r/graphics/abline.html">abline</a></span>(<span class="dt">v =</span> <span class="dv">0</span>, <span class="dt">lty =</span> <span class="dv">2</span>)</a>
 <a class="sourceLine" id="cb18-13" data-line-number="13"><span class="kw"><a href="https://rdrr.io/r/graphics/text.html">text</a></span>(<span class="dt">x =</span> <span class="kw"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="st">"usr"</span>)[<span class="dv">1</span>] <span class="op">+</span><span class="st"> </span><span class="dv">3</span> <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="st">"cxy"</span>)[<span class="dv">1</span>], <span class="dt">y =</span> <span class="kw"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="st">"usr"</span>)[<span class="dv">4</span>], <span class="dt">adj =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">0</span>,<span class="dv">1</span>),</a>
-<a class="sourceLine" id="cb18-14" data-line-number="14">     <span class="dt">labels =</span> <span class="kw"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span>(<span class="st">"n=%d"</span>, <span class="kw"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(sig.dir <span class="op">==</span><span class="st"> </span><span class="dv">-1</span>)), <span class="dt">col =</span> <span class="st">"#4DAF4AFF"</span>)</a>
+<a class="sourceLine" id="cb18-14" data-line-number="14">     <span class="dt">labels =</span> <span class="kw"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span>(<span class="st">"n=%d"</span>, <span class="kw"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(sig.dir <span class="op">==</span><span class="st"> </span><span class="dv">-1</span>)), <span class="dt">col =</span> <span class="st">"#497AB3FF"</span>)</a>
 <a class="sourceLine" id="cb18-15" data-line-number="15"><span class="kw"><a href="https://rdrr.io/r/graphics/text.html">text</a></span>(<span class="dt">x =</span> <span class="kw"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="st">"usr"</span>)[<span class="dv">2</span>] <span class="op">-</span><span class="st"> </span><span class="dv">3</span> <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="st">"cxy"</span>)[<span class="dv">1</span>], <span class="dt">y =</span> <span class="kw"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="st">"usr"</span>)[<span class="dv">4</span>], <span class="dt">adj =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">1</span>,<span class="dv">1</span>),</a>
 <a class="sourceLine" id="cb18-16" data-line-number="16">     <span class="dt">labels =</span> <span class="kw"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span>(<span class="st">"n=%d"</span>, <span class="kw"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(sig.dir <span class="op">==</span><span class="st">  </span><span class="dv">1</span>)), <span class="dt">col =</span> <span class="st">"#E41A1CFF"</span>)</a></code></pre></div>
 <p><img src="eisaR_files/figure-html/plot-1.png" width="700"></p>
@@ -538,7 +538,7 @@
 <a class="sourceLine" id="cb19-3" data-line-number="3"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/colSums.html">rowMeans</a></span>(Din)[quantGenes], <span class="kw"><a href="https://rdrr.io/r/base/colSums.html">rowMeans</a></span>(Dex)[quantGenes], <span class="dt">pch =</span> <span class="dv">20</span>, <span class="dt">col =</span> cols,</a>
 <a class="sourceLine" id="cb19-4" data-line-number="4">     <span class="dt">xlab =</span> <span class="kw"><a href="https://rdrr.io/r/base/expression.html">expression</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(Delta,<span class="st">"intron (log2 TN/ES)"</span>)),</a>
 <a class="sourceLine" id="cb19-5" data-line-number="5">     <span class="dt">ylab =</span> <span class="kw"><a href="https://rdrr.io/r/base/expression.html">expression</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(Delta,<span class="st">"exon (log2 TN/ES)"</span>)))</a>
-<a class="sourceLine" id="cb19-6" data-line-number="6"><span class="kw"><a href="https://rdrr.io/r/graphics/legend.html">legend</a></span>(<span class="dt">x =</span> <span class="st">"bottomright"</span>, <span class="dt">bty =</span> <span class="st">"n"</span>, <span class="dt">pch =</span> <span class="dv">20</span>, <span class="dt">col =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"#E41A1CFF"</span>,<span class="st">"#4DAF4AFF"</span>),</a>
+<a class="sourceLine" id="cb19-6" data-line-number="6"><span class="kw"><a href="https://rdrr.io/r/graphics/legend.html">legend</a></span>(<span class="dt">x =</span> <span class="st">"bottomright"</span>, <span class="dt">bty =</span> <span class="st">"n"</span>, <span class="dt">pch =</span> <span class="dv">20</span>, <span class="dt">col =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"#E41A1CFF"</span>,<span class="st">"#497AB3FF"</span>),</a>
 <a class="sourceLine" id="cb19-7" data-line-number="7">       <span class="dt">legend =</span> <span class="kw"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span>(<span class="st">"%s (%d)"</span>, <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Up"</span>,<span class="st">"Down"</span>), <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(sig.dir <span class="op">==</span><span class="st"> </span><span class="dv">1</span>), <span class="kw"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(sig.dir <span class="op">==</span><span class="st"> </span><span class="dv">-1</span>))))</a></code></pre></div>
 <p><img src="eisaR_files/figure-html/plot-2.png" width="700"></p>
 </div>
@@ -548,7 +548,7 @@
 <a href="#session-information" class="anchor"></a>Session information</h1>
 <p>The output in this vignette was produced under:</p>
 <div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span>()</a>
-<a class="sourceLine" id="cb20-2" data-line-number="2"><span class="co">#&gt; R Under development (unstable) (2020-01-14 r77665)</span></a>
+<a class="sourceLine" id="cb20-2" data-line-number="2"><span class="co">#&gt; R Under development (unstable) (2020-01-16 r77668)</span></a>
 <a class="sourceLine" id="cb20-3" data-line-number="3"><span class="co">#&gt; Platform: x86_64-pc-linux-gnu (64-bit)</span></a>
 <a class="sourceLine" id="cb20-4" data-line-number="4"><span class="co">#&gt; Running under: Ubuntu 16.04.6 LTS</span></a>
 <a class="sourceLine" id="cb20-5" data-line-number="5"><span class="co">#&gt; </span></a>
@@ -572,7 +572,7 @@
 <a class="sourceLine" id="cb20-23" data-line-number="23"><span class="co">#&gt;  [1] edgeR_3.29.0           limma_3.43.0           QuasR_1.27.0          </span></a>
 <a class="sourceLine" id="cb20-24" data-line-number="24"><span class="co">#&gt;  [4] Rbowtie_1.27.1         rtracklayer_1.47.0     GenomicFeatures_1.39.2</span></a>
 <a class="sourceLine" id="cb20-25" data-line-number="25"><span class="co">#&gt;  [7] AnnotationDbi_1.49.0   Biobase_2.47.2         GenomicRanges_1.39.1  </span></a>
-<a class="sourceLine" id="cb20-26" data-line-number="26"><span class="co">#&gt; [10] GenomeInfoDb_1.23.4    IRanges_2.21.3         S4Vectors_0.25.10     </span></a>
+<a class="sourceLine" id="cb20-26" data-line-number="26"><span class="co">#&gt; [10] GenomeInfoDb_1.23.5    IRanges_2.21.3         S4Vectors_0.25.10     </span></a>
 <a class="sourceLine" id="cb20-27" data-line-number="27"><span class="co">#&gt; [13] BiocGenerics_0.33.0    eisaR_0.8              BiocStyle_2.15.5      </span></a>
 <a class="sourceLine" id="cb20-28" data-line-number="28"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb20-29" data-line-number="29"><span class="co">#&gt; loaded via a namespace (and not attached):</span></a>
@@ -604,7 +604,7 @@
 <a class="sourceLine" id="cb20-55" data-line-number="55"><span class="co">#&gt; [51] DelayedArray_0.13.2         Biostrings_2.55.4          </span></a>
 <a class="sourceLine" id="cb20-56" data-line-number="56"><span class="co">#&gt; [53] compiler_4.0.0              pkgdown_1.4.1              </span></a>
 <a class="sourceLine" id="cb20-57" data-line-number="57"><span class="co">#&gt; [55] rlang_0.4.2                 grid_4.0.0                 </span></a>
-<a class="sourceLine" id="cb20-58" data-line-number="58"><span class="co">#&gt; [57] RCurl_1.95-4.12             VariantAnnotation_1.33.0   </span></a>
+<a class="sourceLine" id="cb20-58" data-line-number="58"><span class="co">#&gt; [57] RCurl_1.95-4.13             VariantAnnotation_1.33.0   </span></a>
 <a class="sourceLine" id="cb20-59" data-line-number="59"><span class="co">#&gt; [59] rappdirs_0.3.1              bitops_1.0-6               </span></a>
 <a class="sourceLine" id="cb20-60" data-line-number="60"><span class="co">#&gt; [61] rmarkdown_2.0               DBI_1.1.0                  </span></a>
 <a class="sourceLine" id="cb20-61" data-line-number="61"><span class="co">#&gt; [63] curl_4.3                    R6_2.4.1                   </span></a>
