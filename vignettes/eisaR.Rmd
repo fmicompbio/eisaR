@@ -111,9 +111,6 @@ We next align the reads to a mini-genome (fasta file `extdata/hg19sub.fa`) using
 `qAlign`:  
 
 ```{r align}
-sampleFile <- "extdata/samples_chip_single.txt"
-genomeFile <- "extdata/hg19sub.fa"
-
 proj <- qAlign("extdata/samples_rna_single.txt", "extdata/hg19sub.fa",
                aligner = "Rhisat2", splicedAlignment = TRUE)
 alignmentStats(proj)
