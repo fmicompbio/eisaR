@@ -257,7 +257,7 @@ plot(res1$contrasts[ids,"Dex.Din"], res2$contrasts[ids,"Dex.Din"], pch = "*",
 ## On the estimation of interactions in a split-plot design experiment
 The calculation of the significance of interactions (here whether the fold-changes
 differ between exonic or intronic data) is well defined for experimental designs
-were all samples are independent from one another. Within EISA, this is not the
+where all samples are independent from one another. Within EISA, this is not the
 case (each sample yields two data points, on for exons and one for introns). That
 results in a dependency between datapoints: If a sample is affected by a problem
 in the experiment, it might at the same time give rise to outliers in both exonic
