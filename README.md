@@ -17,12 +17,16 @@ the [BUSpaRse](https://github.com/BUStools/BUSpaRse)) package), from an
 annotated genome. These sequences can be indexed and used, e.g., for 
 quantification in preparation for RNA velocity estimation.
 
-Current contributors include:
+Developed by:
 
 - [Michael Stadler](https://github.com/mbstadler)
 - Dimos Gaidatzis
 - [Lukas Burger](https://github.com/LukasBurger)
 - [Charlotte Soneson](https://github.com/csoneson)
+
+Also a big "thank you" for contributions to:
+
+- [Federico Marini](https://github.com/federicomarini)
 
 ## Functionality
 
