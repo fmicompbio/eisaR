@@ -22,7 +22,6 @@ Suggests:
     BiocStyle,
     QuasR,
     Rbowtie,
-    rtracklayer,
     Biostrings
 VignetteBuilder: knitr
 Imports: 
@@ -36,4 +35,6 @@ Imports:
     methods,
     SummarizedExperiment,
     BSgenome,
-    BiocGenerics
+    BiocGenerics,
+    rtracklayer,
+    utils

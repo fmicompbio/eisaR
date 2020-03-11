@@ -3,3 +3,4 @@
 .travis.yml
 .gitignore
 .github
+_pkgdown.yml

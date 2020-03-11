@@ -1,0 +1,8 @@
+tx1.1	g1
+tx1.2	g1
+tx1.3	g1
+tx2.1-I	g2-I
+tx2.2-U	g2-I
+tx3.1	g3-U
+tx3.2	g3-U
+tx3.3	g3-U
