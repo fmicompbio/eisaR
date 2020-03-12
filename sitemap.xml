@@ -7,13 +7,16 @@
     <loc>https://fmicompbio.github.io/eisaR/reference/eisaR-package.html</loc>
   </url>
   <url>
-    <loc>https://fmicompbio.github.io/eisaR/reference/extractIntronSeqs.html</loc>
+    <loc>https://fmicompbio.github.io/eisaR/reference/exportToGtf.html</loc>
   </url>
   <url>
-    <loc>https://fmicompbio.github.io/eisaR/reference/extractTxSeqs.html</loc>
+    <loc>https://fmicompbio.github.io/eisaR/reference/getFeatureRanges.html</loc>
   </url>
   <url>
     <loc>https://fmicompbio.github.io/eisaR/reference/getRegionsFromTxDb.html</loc>
+  </url>
+  <url>
+    <loc>https://fmicompbio.github.io/eisaR/reference/getTx2Gene.html</loc>
   </url>
   <url>
     <loc>https://fmicompbio.github.io/eisaR/reference/plotEISA.html</loc>
@@ -23,5 +26,8 @@
   </url>
   <url>
     <loc>https://fmicompbio.github.io/eisaR/articles/eisaR.html</loc>
+  </url>
+  <url>
+    <loc>https://fmicompbio.github.io/eisaR/articles/rna-velocity.html</loc>
   </url>
 </urlset>
