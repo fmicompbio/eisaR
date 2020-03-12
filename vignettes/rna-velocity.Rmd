@@ -1,0 +1,125 @@
+---
+title: "Generating reference files for spliced and unspliced abundance estimation with alignment-free methods"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Generating reference files for spliced and unspliced abundance estimation with alignment-free methods}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Introduction
+
+In this vignette, we show how to prepare reference files for estimating abundances of spliced and unspliced abundances with alignment-free methods (e.g., [Salmon](), [alevin]() or [kallisto]()). 
+Such abundances are used as input, e.g., for estimation of RNA velocity in single-cell data. 
+
+```{r setup}
+library(eisaR)
+```
+
+## Generate feature ranges
+
+The first step is to generate a `GRangesList` object containing the genomic ranges for the features of interest (spliced transcripts, and either unspliced transcripts or intron sequences). 
+This is done using the `getFeatureRanges()` function, based on a reference GTF file. 
+Here, we exemplify this with a small subset of a GTF file from [Gencode release 28].
+We extract genomic ranges for spliced transcript and introns, where the latter are defined for each transcript separately (using the same terminology as in the \Biocpkg{BUSpaRse} package).
+For each intron, a flanking sequence of 50 nt is added on each side to accommodate reads mapping across an exon/intron boundary. 
+
+```{r}
+gtf <- system.file("extdata/gencode.v28.annotation.sub.gtf", 
+                   package = "eisaR")
+grl <- getFeatureRanges(
+  gtf = gtf,
+  featureType = c("spliced", "intron"), 
+  intronType = "separate", 
+  flankLength = 50L, 
+  joinOverlappingIntrons = FALSE, 
+  verbose = TRUE
+)
+```
+
+The output from `getFeatureRanges` is a `GRangesList` object, with all the features of interest (both spliced transcripts and introns):
+
+```{r}
+grl
+```
+
+The `metadata` slot of the `GRangesList` object contains a list of the feature IDs for each type of feature:
+
+```{r}
+lapply(S4Vectors::metadata(grl)$featurelist, head)
+```
+
+As we can see, the intron IDs are identified by a `-I` suffix. 
+Each feature is further annotated to a gene ID. 
+For the intronic features, the corresponding gene ID also bears the `-I` suffix appended to the original gene ID. 
+Having separate gene IDs for spliced transcripts and introns allows, for example, joint quantification of spliced and unspliced versions of a gene with alevin. 
+Adding a suffix rather than defining a completely new gene ID allows us to easily match corresponding spliced and unspliced feature IDs. 
+To further simplify the latter, the metadata of the `GRangesList` object returned by `getFeatureRanges()` contains `data.frame`s matching the corresponding gene IDs (as well as transcript IDs, if unspliced transcripts are extracted):
+
+```{r}
+head(S4Vectors::metadata(grl)$corrgene)
+```
+
+## Extract feature sequences
+
+Once the genomic ranges of the features of interest are extracted, we can obtain the nucleotide sequences using the `extractTranscriptSeqs()` function from the \BiocPkg{GenomicFeatures} package. 
+In addition to the ranges, this requires the genome sequence. 
+This can be obtained, for example, from the corresponding BSgenome package, or from an external FASTA file. 
+
+```{r}
+suppressPackageStartupMessages({
+  library(BSgenome)
+  library(BSgenome.Hsapiens.UCSC.hg38)
+})
+seqs <- GenomicFeatures::extractTranscriptSeqs(
+  x = BSgenome.Hsapiens.UCSC.hg38, 
+  transcripts = grl
+)
+seqs
+```
+
+The resulting `DNAStringSet` can be written to a FASTA file and used to generate an index for alignment-free methods such as _Salmon_ and _kallisto_. 
+
+## Generate an expanded GTF file
+
+In addition to extracting feature sequences, we can also export a GTF file with the full set of features. 
+This is useful, for example, in order to generate a linked transcriptome for later import of estimated abundances with \Biocpkg{tximeta}. 
+
+```{r}
+exportToGtf(
+  grl, 
+  filepath = file.path(tempdir(), "exported.gtf")
+)
+```
+
+In the exported GTF file, each entry of `grl` will correspond to a "transcript" feature, and each individual range corresponds to an "exon" feature. 
+In addition, each gene is represented as a "gene" feature. 
+
+## Generate a transcript-to-gene mapping
+
+Finally, we can export a `data.frame` (or a tab-separated test file) providing a conversion table between "transcript" and "gene" identifiers. 
+This is needed to aggregate the transcript-level abundance estimates from alignment-free methods such as _Salmon_ and _kallisto_ to the gene level. 
+
+```{r}
+df <- getTx2Gene(grl)
+head(df)
+tail(df)
+```
+
+## Session info
+
+```{r}
+sessionInfo()
+```
+
+
+

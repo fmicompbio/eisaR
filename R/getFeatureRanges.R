@@ -3,21 +3,21 @@
 #' Generate a GRangesList object with genomic ranges for (any combination of) 
 #' spliced transcripts, unspliced transcripts and introns.
 #' 
-#' @param gtf Path to gtf file
+#' @param gtf Path to gtf file.
 #' @param featureType Character vector indicating the type(s) of features to
-#'   extract, any subset of c("spliced", "intron", "unspliced")
+#'   extract, any subset of \code{c("spliced", "intron", "unspliced")}.
 #' @param intronType Character vector indicating how to define the introns 
 #'   (only used if "intron" is part of \code{featureType}). Has to be either 
 #'   "separate" (introns are defined for each transcript separately) or 
 #'   "collapse" (transcripts of the same gene are first collapsed before 
-#'   introns are defined as any non-exonic part of the gene locus)
+#'   introns are defined as any non-exonic part of the gene locus). 
 #' @param flankLength Integer scalar indicating the length of the flanking 
 #'   sequence added to each side of each extracted intron (only used if 
-#'   "intron" is part of \code{featureType})
+#'   "intron" is included in \code{featureType}).
 #' @param joinOverlappingIntrons Logical scalar indicating whether two introns 
 #'   that overlap (after adding the flanking sequences) should be joined into 
-#'   one feature
-#' @param verbose Logical scalar, whether to print out progress messages
+#'   one feature.
+#' @param verbose Logical scalar, whether to print out progress messages.
 #' 
 #' @author Charlotte Soneson
 #' 
@@ -26,7 +26,7 @@
 #' @return Returns a \code{GRangesList} object where each element represents 
 #'   one extracted feature. The metadata of this object contains two 
 #'   \code{data.frame}s mapping corresponding identifiers between the 
-#'   different feature types.
+#'   different feature types, as well as a list of all features for each type.
 #' 
 #' @importFrom GenomicFeatures makeTxDbFromGFF exonsBy
 #' @importFrom GenomicRanges GRangesList reduce
