@@ -24,6 +24,8 @@ navbar:
       menu:
       - text: eisaR
         href: articles/eisaR.html
+      - test: Feature extraction for RNA velocity
+        href: articles/rna-velocity.html
     github:
       icon: fa-github fa-lg
       href: https://github.com/fmicompbio/eisaR
@@ -33,8 +35,9 @@ reference:
   desc: "Extract exon/intron/gene features from gene annotation."
   contents:
     - '`getRegionsFromTxDb`'
-    - '`extractTxSeqs`'
-    - '`extractIntronSeqs`'
+    - '`getFeatureRanges`'
+    - '`exportToGtf`'
+    - '`getTx2Gene`'
 - title: Run EISA
   desc: "Run Exon-Intron Split Analysis on bulk RNA-seq data"
   contents:
