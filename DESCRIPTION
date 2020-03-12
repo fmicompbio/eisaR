@@ -22,7 +22,8 @@ Suggests:
     BiocStyle,
     QuasR,
     Rbowtie,
-    Biostrings
+    Biostrings,
+    BSgenome.Hsapiens.UCSC.hg38
 VignetteBuilder: knitr
 Imports: 
     GenomicRanges,
