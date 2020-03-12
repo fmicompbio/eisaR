@@ -231,7 +231,11 @@ getFeatureRanges <- function(
         gr <- BiocGenerics::unlist(grl)
         gr$exon_rank <- 1L
         gr$transcript_id <- names(gr)
-        gr$gene_id <- t2g$GENEID[match(gr$transcript_id, t2g$TXNAME)]
+        if (intronType == "separate") {
+            gr$gene_id <- t2g$GENEID[match(gr$transcript_id, t2g$TXNAME)]
+        } else {
+            gr$gene_id <- gr$transcript_id
+        }
         gr$type <- "exon"
         gr$transcript_id <- gsub(paste0(suffixes["intron"], "."), suffixes["intron"], 
                                  make.unique(paste0(gr$transcript_id, suffixes["intron"])),
