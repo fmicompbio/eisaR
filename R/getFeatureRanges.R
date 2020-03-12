@@ -104,9 +104,9 @@ getFeatureRanges <- function(
     }
     
     ## --------------------------------------------------------------------- ##
-    ## Define suffixes
+    ## Define suffixes for unspliced transcripts and introns
     ## --------------------------------------------------------------------- ##
-    suffixes <- c(intron = "-I", unspliced = "-U", spliced = "")
+    suffixes <- c(intron = "-I", unspliced = "-U")
     
     ## --------------------------------------------------------------------- ##
     ## Construct TxDb from gtf file
@@ -115,10 +115,6 @@ getFeatureRanges <- function(
     
     ## Initialize GRangesList
     grlfull <- GenomicRanges::GRangesList()
-    corrtx <- data.frame(spliced = NA_character_,
-                         stringsAsFactors = FALSE)[numeric(0), , drop = FALSE]
-    corrgene <- data.frame(spliced = NA_character_,
-                           stringsAsFactors = FALSE)[numeric(0), , drop = FALSE]
     featurelist <- list()
     
     ## --------------------------------------------------------------------- ##
