@@ -1,6 +1,10 @@
 ---
 title: "Generating reference files for spliced and unspliced abundance estimation with alignment-free methods"
-output: rmarkdown::html_vignette
+author: "Charlotte Soneson"
+date: "`r Sys.Date()`"
+output: 
+  BiocStyle::html_document:
+    toc_float: true
 vignette: >
   %\VignetteIndexEntry{Generating reference files for spliced and unspliced abundance estimation with alignment-free methods}
   %\VignetteEncoding{UTF-8}
@@ -16,7 +20,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-## Introduction
+# Introduction
 
 In this vignette, we show how to prepare reference files for estimating abundances of spliced and unspliced abundances with alignment-free methods (e.g., [Salmon](), [alevin]() or [kallisto]()). 
 Such abundances are used as input, e.g., for estimation of RNA velocity in single-cell data. 
@@ -25,7 +29,7 @@ Such abundances are used as input, e.g., for estimation of RNA velocity in singl
 library(eisaR)
 ```
 
-## Generate feature ranges
+# Generate feature ranges
 
 The first step is to generate a `GRangesList` object containing the genomic ranges for the features of interest (spliced transcripts, and either unspliced transcripts or intron sequences). 
 This is done using the `getFeatureRanges()` function, based on a reference GTF file. 
@@ -69,7 +73,7 @@ To further simplify the latter, the metadata of the `GRangesList` object returne
 head(S4Vectors::metadata(grl)$corrgene)
 ```
 
-## Extract feature sequences
+# Extract feature sequences
 
 Once the genomic ranges of the features of interest are extracted, we can obtain the nucleotide sequences using the `extractTranscriptSeqs()` function from the \BiocPkg{GenomicFeatures} package. 
 In addition to the ranges, this requires the genome sequence. 
@@ -89,7 +93,7 @@ seqs
 
 The resulting `DNAStringSet` can be written to a FASTA file and used to generate an index for alignment-free methods such as _Salmon_ and _kallisto_. 
 
-## Generate an expanded GTF file
+# Generate an expanded GTF file
 
 In addition to extracting feature sequences, we can also export a GTF file with the full set of features. 
 This is useful, for example, in order to generate a linked transcriptome for later import of estimated abundances with \Biocpkg{tximeta}. 
@@ -104,7 +108,7 @@ exportToGtf(
 In the exported GTF file, each entry of `grl` will correspond to a "transcript" feature, and each individual range corresponds to an "exon" feature. 
 In addition, each gene is represented as a "gene" feature. 
 
-## Generate a transcript-to-gene mapping
+# Generate a transcript-to-gene mapping
 
 Finally, we can export a `data.frame` (or a tab-separated test file) providing a conversion table between "transcript" and "gene" identifiers. 
 This is needed to aggregate the transcript-level abundance estimates from alignment-free methods such as _Salmon_ and _kallisto_ to the gene level. 
@@ -115,7 +119,7 @@ head(df)
 tail(df)
 ```
 
-## Session info
+# Session info
 
 ```{r}
 sessionInfo()
