@@ -18,11 +18,12 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+options(width = 70)
 ```
 
 # Introduction
 
-In this vignette, we show how to prepare reference files for estimating abundances of spliced and unspliced abundances with alignment-free methods (e.g., [Salmon](), [alevin]() or [kallisto]()). 
+In this vignette, we show how to prepare reference files for estimating abundances of spliced and unspliced abundances with alignment-free methods (e.g., [Salmon](https://salmon.readthedocs.io/en/latest/salmon.html), [alevin](https://salmon.readthedocs.io/en/latest/alevin.html) or [kallisto](https://pachterlab.github.io/kallisto/)). 
 Such abundances are used as input, e.g., for estimation of RNA velocity in single-cell data. 
 
 ```{r setup}
@@ -33,8 +34,8 @@ library(eisaR)
 
 The first step is to generate a `GRangesList` object containing the genomic ranges for the features of interest (spliced transcripts, and either unspliced transcripts or intron sequences). 
 This is done using the `getFeatureRanges()` function, based on a reference GTF file. 
-Here, we exemplify this with a small subset of a GTF file from [Gencode release 28].
-We extract genomic ranges for spliced transcript and introns, where the latter are defined for each transcript separately (using the same terminology as in the \Biocpkg{BUSpaRse} package).
+Here, we exemplify this with a small subset of a GTF file from [Gencode release 28](https://www.gencodegenes.org/human/release_28.html).
+We extract genomic ranges for spliced transcript and introns, where the latter are defined for each transcript separately (using the same terminology as in the `r Biocpkg("BUSpaRse")` package).
 For each intron, a flanking sequence of 50 nt is added on each side to accommodate reads mapping across an exon/intron boundary. 
 
 ```{r}
@@ -50,7 +51,7 @@ grl <- getFeatureRanges(
 )
 ```
 
-The output from `getFeatureRanges` is a `GRangesList` object, with all the features of interest (both spliced transcripts and introns):
+The output from `getFeatureRanges()` is a `GRangesList` object, with all the features of interest (both spliced transcripts and introns):
 
 ```{r}
 grl
@@ -75,7 +76,7 @@ head(S4Vectors::metadata(grl)$corrgene)
 
 # Extract feature sequences
 
-Once the genomic ranges of the features of interest are extracted, we can obtain the nucleotide sequences using the `extractTranscriptSeqs()` function from the \BiocPkg{GenomicFeatures} package. 
+Once the genomic ranges of the features of interest are extracted, we can obtain the nucleotide sequences using the `extractTranscriptSeqs()` function from the `r Biocpkg("GenomicFeatures")` package. 
 In addition to the ranges, this requires the genome sequence. 
 This can be obtained, for example, from the corresponding BSgenome package, or from an external FASTA file. 
 
@@ -96,7 +97,7 @@ The resulting `DNAStringSet` can be written to a FASTA file and used to generate
 # Generate an expanded GTF file
 
 In addition to extracting feature sequences, we can also export a GTF file with the full set of features. 
-This is useful, for example, in order to generate a linked transcriptome for later import of estimated abundances with \Biocpkg{tximeta}. 
+This is useful, for example, in order to generate a linked transcriptome for later import of estimated abundances with `r Biocpkg("tximeta")`. 
 
 ```{r}
 exportToGtf(
