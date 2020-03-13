@@ -88,7 +88,7 @@ plotEISA <- function(x, contrast = c("ExIn", "none"),
         if (length(dotsL$col) == 1L)
             dotsL$col <- rep(dotsL$col, length(dotsL$x))
         points(dotsL$x[sig], dotsL$y[sig], pch = 20, col = dotsL$col[sig])
-        legend(x = "bottomright", bty = "n", pch = 20, col = genecolors[1:2],
+        legend(x = "bottomright", bty = "n", pch = 20, col = genecolors[c(1,2)],
                legend = sprintf("%s (%d)", c("Up","Down"), c(sum(sig.dir == 1), sum(sig.dir == -1))))
     }
 

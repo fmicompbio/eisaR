@@ -4,3 +4,4 @@
 .gitignore
 .github
 _pkgdown.yml
+.git
