@@ -24,7 +24,7 @@ navbar:
       menu:
       - text: eisaR
         href: articles/eisaR.html
-      - test: Feature extraction for RNA velocity
+      - text: Feature extraction for RNA velocity
         href: articles/rna-velocity.html
     github:
       icon: fa-github fa-lg
