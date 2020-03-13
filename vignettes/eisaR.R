@@ -1,13 +1,13 @@
-## ----setup, include = FALSE------------------------------------------------
+## ----setup, include = FALSE---------------------------------------------------------------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
 
-## ----availableOnline, eval=FALSE-------------------------------------------
+## ----availableOnline, eval=FALSE----------------------------------------------------------------------------------------------------------
 #  pkgs <- BiocManager::available("TxDb")
 
-## ----annotation, message=FALSE---------------------------------------------
+## ----annotation, message=FALSE------------------------------------------------------------------------------------------------------------
 # load package
 library(eisaR)
 
@@ -15,7 +15,7 @@ library(eisaR)
 txdbFile <- system.file("extdata", "hg19sub.sqlite", package = "eisaR")
 txdb <- AnnotationDbi::loadDb(txdbFile)
 
-## ----regions---------------------------------------------------------------
+## ----regions------------------------------------------------------------------------------------------------------------------------------
 # extract filtered exonic and gene body regions
 regS <- getRegionsFromTxDb(txdb = txdb, strandedData = TRUE)
 regU <- getRegionsFromTxDb(txdb = txdb, strandedData = FALSE)
@@ -25,31 +25,32 @@ lengths(regU)
 
 regS$exons
 
-## ----exportregions---------------------------------------------------------
+## ----exportregions------------------------------------------------------------------------------------------------------------------------
 library(rtracklayer)
 export(regS$exons, "hg19sub_exons_stranded.gtf")
 export(regS$genebodies, "hg19sub_genebodies_stranded.gtf")
 
-## ----extdata---------------------------------------------------------------
+## ----extdata------------------------------------------------------------------------------------------------------------------------------
 library(QuasR)
 file.copy(system.file(package = "QuasR", "extdata"), ".", recursive = TRUE)
 
-## ----align-----------------------------------------------------------------
+## ----align--------------------------------------------------------------------------------------------------------------------------------
 sampleFile <- "extdata/samples_chip_single.txt"
 genomeFile <- "extdata/hg19sub.fa"
 
-proj <- qAlign("extdata/samples_rna_single.txt", "extdata/hg19sub.fa",
-               splicedAlignment = TRUE)
+proj <- qAlign(sampleFile = "extdata/samples_rna_single.txt", 
+               genome = "extdata/hg19sub.fa",
+               aligner = "Rhisat2", splicedAlignment = TRUE)
 alignmentStats(proj)
 
-## ----count-----------------------------------------------------------------
+## ----count--------------------------------------------------------------------------------------------------------------------------------
 cntEx <- qCount(proj, regU$exons, orientation = "any")
 cntGb <- qCount(proj, regU$genebodies, orientation = "any")
 cntIn <- cntGb - cntEx
 head(cntEx)
 head(cntIn)
 
-## ----loadcounts------------------------------------------------------------
+## ----loadcounts---------------------------------------------------------------------------------------------------------------------------
 cntEx <- readRDS(system.file("extdata",
                              "Fig3abc_GSE33252_rawcounts_exonic.rds",
                              package = "eisaR"))
@@ -57,7 +58,7 @@ cntIn <- readRDS(system.file("extdata",
                              "Fig3abc_GSE33252_rawcounts_intronic.rds",
                              package = "eisaR"))
 
-## ----runEISA---------------------------------------------------------------
+## ----runEISA------------------------------------------------------------------------------------------------------------------------------
 # remove "width" column
 Rex <- cntEx[, colnames(cntEx) != "width"]
 Rin <- cntIn[, colnames(cntIn) != "width"]
@@ -68,7 +69,7 @@ cond <- factor(c("ES", "ES", "TN", "TN"))
 # run EISA
 res <- runEISA(Rex, Rin, cond)
 
-## ----compare---------------------------------------------------------------
+## ----compare------------------------------------------------------------------------------------------------------------------------------
 res1 <- runEISA(Rex, Rin, cond, method = "Gaidatzis2015")
 res2 <- runEISA(Rex, Rin, cond)
 
@@ -93,7 +94,7 @@ plot(res1$contrasts[ids,"Dex.Din"], res2$contrasts[ids,"Dex.Din"], pch = "*",
      xlab = expression(paste(Delta, "exon", - Delta, "intron for method='Gaidatzis2015'")),
      ylab = expression(paste(Delta, "exon", - Delta, "intron for default parameters")))
 
-## ----modelSamples----------------------------------------------------------
+## ----modelSamples-------------------------------------------------------------------------------------------------------------------------
 res3 <- runEISA(Rex, Rin, cond, modelSamples = FALSE)
 res4 <- runEISA(Rex, Rin, cond, modelSamples = TRUE)
 ids <- intersect(rownames(res3$contrasts), rownames(res4$contrasts))
@@ -120,10 +121,10 @@ plot(-log10(res3$tab.ExIn[ids, "FDR"]), -log10(res4$tab.ExIn[ids, "FDR"]), pch =
 abline(a=0, b=1, col="gray")
 legend("bottomright", "y = x", bty = "n", lty = 1, col = "gray")
 
-## ----plotEISA--------------------------------------------------------------
+## ----plotEISA-----------------------------------------------------------------------------------------------------------------------------
 plotEISA(res)
 
-## ----normalization---------------------------------------------------------
+## ----normalization------------------------------------------------------------------------------------------------------------------------
 # remove column "width"
 Rex <- cntEx[,colnames(cntEx) != "width"]
 Rin <- cntIn[,colnames(cntIn) != "width"]
@@ -140,11 +141,11 @@ Nin <- t(t(Rin) / colSums(Rin) * mean(colSums(Rin)))
 NLex <- log2(Nex + 8)
 NLin <- log2(Nin + 8)
 
-## ----quantgenes------------------------------------------------------------
+## ----quantgenes---------------------------------------------------------------------------------------------------------------------------
 quantGenes <- rownames(Rex)[ rowMeans(NLex) > 5.0 & rowMeans(NLin) > 5.0 ]
 length(quantGenes)
 
-## ----dIdE------------------------------------------------------------------
+## ----dIdE---------------------------------------------------------------------------------------------------------------------------------
 Dex <- NLex[,c("MmTN_RNA_total_a","MmTN_RNA_total_b")] - NLex[,c("MmES_RNA_total_a","MmES_RNA_total_b")]
 Din <- NLin[,c("MmTN_RNA_total_a","MmTN_RNA_total_b")] - NLin[,c("MmES_RNA_total_a","MmES_RNA_total_b")]
 Dex.Din <- Dex - Din
@@ -153,7 +154,7 @@ cor(Dex[quantGenes,1], Dex[quantGenes,2])
 cor(Din[quantGenes,1], Din[quantGenes,2])
 cor(Dex.Din[quantGenes,1], Dex.Din[quantGenes,2])
 
-## ----sig-------------------------------------------------------------------
+## ----sig----------------------------------------------------------------------------------------------------------------------------------
 # create DGEList object with exonic and intronic counts
 library(edgeR)
 cnt <- data.frame(Ex = Rex, In = Rin)
@@ -181,11 +182,11 @@ lrt <- glmLRT(fit)
 tt <- topTags(lrt, n = nrow(y), sort.by = "none")
 head(tt$table[order(tt$table$FDR, decreasing = FALSE), ])
 
-## ----plot------------------------------------------------------------------
+## ----plot---------------------------------------------------------------------------------------------------------------------------------
 sig     <- tt$table$FDR < 0.05
 sum(sig)
 sig.dir <- sign(tt$table$logFC[sig])
-cols <- ifelse(sig, ifelse(tt$table$logFC > 0, "#E41A1CFF", "#4DAF4AFF"), "#22222244")
+cols <- ifelse(sig, ifelse(tt$table$logFC > 0, "#E41A1CFF", "#497AB3FF"), "#22222244")
 
 # volcano plot
 plot(tt$table$logFC, -log10(tt$table$FDR), col = cols, pch = 20,
@@ -194,7 +195,7 @@ plot(tt$table$logFC, -log10(tt$table$FDR), col = cols, pch = 20,
 abline(h = -log10(0.05), lty = 2)
 abline(v = 0, lty = 2)
 text(x = par("usr")[1] + 3 * par("cxy")[1], y = par("usr")[4], adj = c(0,1),
-     labels = sprintf("n=%d", sum(sig.dir == -1)), col = "#4DAF4AFF")
+     labels = sprintf("n=%d", sum(sig.dir == -1)), col = "#497AB3FF")
 text(x = par("usr")[2] - 3 * par("cxy")[1], y = par("usr")[4], adj = c(1,1),
      labels = sprintf("n=%d", sum(sig.dir ==  1)), col = "#E41A1CFF")
 
@@ -202,9 +203,9 @@ text(x = par("usr")[2] - 3 * par("cxy")[1], y = par("usr")[4], adj = c(1,1),
 plot(rowMeans(Din)[quantGenes], rowMeans(Dex)[quantGenes], pch = 20, col = cols,
      xlab = expression(paste(Delta,"intron (log2 TN/ES)")),
      ylab = expression(paste(Delta,"exon (log2 TN/ES)")))
-legend(x = "bottomright", bty = "n", pch = 20, col = c("#E41A1CFF","#4DAF4AFF"),
+legend(x = "bottomright", bty = "n", pch = 20, col = c("#E41A1CFF","#497AB3FF"),
        legend = sprintf("%s (%d)", c("Up","Down"), c(sum(sig.dir == 1), sum(sig.dir == -1))))
 
-## ----sessionInfo-----------------------------------------------------------
+## ----sessionInfo--------------------------------------------------------------------------------------------------------------------------
 sessionInfo()
 
