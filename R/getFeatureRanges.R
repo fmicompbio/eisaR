@@ -220,7 +220,7 @@ getFeatureRanges <- function(
         grl <- grl + flankLength
         
         ## Make sure that introns don't go to negative coordinates
-        grl <- GenomicRanges::restrict(grl, start = 1)
+        grl <- GenomicRanges::restrict(grl, start = 1L)
         
         if (joinOverlappingIntrons) {
             ## If two (introns + flankLength) overlap, join them
