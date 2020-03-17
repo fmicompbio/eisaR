@@ -35,9 +35,12 @@
 #'   t2g
 #'    
 getTx2Gene <- function(grl, filepath = NULL) {
-    t2g <- unique(data.frame(S4Vectors::mcols(BiocGenerics::subset(
-        BiocGenerics::unlist(grl), type == "exon"))[, c("transcript_id", "gene_id")],
-        stringsAsFactors = FALSE))
+    grl <- BiocGenerics::unlist(grl)
+    grl <- grl[grl$type == "exon"]
+    t2g <- unique(data.frame(
+        S4Vectors::mcols(grl)[, c("transcript_id", "gene_id")],
+        stringsAsFactors = FALSE
+    ))
     
     if (!is.null(filepath)) {
         utils::write.table(t2g, file = filepath, sep = "\t", quote = FALSE, 
