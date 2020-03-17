@@ -234,14 +234,14 @@ test_that("feature range extraction works", {
   ## ----------------------------------------------------------------------- ##
   ## 'Separate' intron definition, flank length extends beyond chromosome end
   ## ----------------------------------------------------------------------- ##
-  frs <- getFeatureRanges(gtf = gtf, 
-                          featureType = c("spliced", "unspliced", "intron"), 
-                          intronType = "separate", 
-                          flankLength = 30L, 
-                          joinOverlappingIntrons = TRUE, 
-                          verbose = FALSE)
-  expect_length(frs, 22L)
-  expect_equal(ranges(frs$`tx2.2-U-I`), IRanges(start = 1, end = 90))
+  # frs <- getFeatureRanges(gtf = gtf, 
+  #                         featureType = c("spliced", "unspliced", "intron"), 
+  #                         intronType = "separate", 
+  #                         flankLength = 30L, 
+  #                         joinOverlappingIntrons = TRUE, 
+  #                         verbose = FALSE)
+  # expect_length(frs, 22L)
+  # expect_equal(ranges(frs$`tx2.2-U-I`), IRanges(start = 1, end = 90))
   
   ## ----------------------------------------------------------------------- ##
   ## 'Collapse' intron definition
