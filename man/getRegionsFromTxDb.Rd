@@ -24,7 +24,7 @@ named \code{GenomicRanges} objects with ranges for exons and gene bodies,
 respectively.
 }
 \description{
-From a transcript database package (\code{\link[GenomicFeatures]{TxDb}}),
+From a transcript database package (\code{\link[GenomicFeatures:TxDb-class]{TxDb}}),
 extract exonic and gene body ranges for use with EISA. These regions can
 be used to quantify RNA-seq alignments in exons and gene bodies, respectively.
 Intronic counts can then be obtained from the difference between gene bodies
@@ -49,7 +49,7 @@ lengths(regL)
 
 }
 \seealso{
-\code{\link[GenomicFeatures]{TxDb}} for details on \code{TxDb} objects
+\code{\link[GenomicFeatures:TxDb-class]{TxDb}} for details on \code{TxDb} objects
 and how to create them, e.g. from \code{.gtf} files.
 }
 \author{
