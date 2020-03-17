@@ -22,7 +22,7 @@
 #'   \code{"Gaidatzis2015"}, gene filtering, statistical analysis and
 #'   calculation of contrasts is performed as described in Gaidatzis et al.
 #'   2015, and the statistical analysis is based on \code{\link[edgeR]{glmFit}}
-#'   and \code{\link[edgeR]{glmLRT}}. This is done by setting the arguments
+#'   and \code{\link[edgeR:glmFit]{glmLRT}}. This is done by setting the arguments
 #'   \code{modelSamples}, \code{geneSelection}, \code{effects} and \code{statFramework}
 #'   to appropriate values (see details), overriding the defaults or any value
 #'   passed to these arguments. If \code{NULL}, the default values of the arguments
@@ -49,11 +49,11 @@
 #' @param statFramework Selects the framework within \code{edgeR} that is used
 #'   for the statistical analysis. One of:\describe{
 #'       \item{\code{"QLF"}: }{(default) Quasi-likelihood F-test using
-#'       \code{\link[edgeR]{glmQLFit}} and \code{\link[edgeR]{glmQLFTest}}. This
+#'       \code{\link[edgeR:glmQLFTest]{glmQLFit}} and \code{\link[edgeR]{glmQLFTest}}. This
 #'       framework is highly recommended as it gives stricter error rate control
 #'       by accounting for the uncertainty in dispersion estimation.}
 #'       \item{\code{"LRT"}: }{Likelyhood ratio test using \code{\link[edgeR]{glmFit}}
-#'       and \code{\link[edgeR]{glmLRT}}}.
+#'       and \code{\link[edgeR:glmFit]{glmLRT}}}.
 #'   }
 #' @param effects How the effects (contrasts or log2 fold-changes) are calculated.
 #'   One of:\describe{
@@ -101,7 +101,7 @@
 #' @seealso \code{\link[edgeR]{DGEList}} for \code{DGEList} object construction,
 #'   \code{\link[edgeR]{calcNormFactors}} for normalization,
 #'   \code{\link[edgeR]{filterByExpr}} for gene selection,
-#'   \code{\link[edgeR]{glmFit}} and \code{\link[edgeR]{glmQLFit}} for statistical
+#'   \code{\link[edgeR]{glmFit}} and \code{\link[edgeR:glmQLFTest]{glmQLFit}} for statistical
 #'   analysis.
 #'
 #' @examples
