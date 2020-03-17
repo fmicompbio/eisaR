@@ -216,6 +216,9 @@ getFeatureRanges <- function(
         ## will not be joined together into a transcript
         grl <- BiocGenerics::setdiff(range(grl), grl)
         
+        ## Remove empty entries
+        grl <- grl[vapply(grl, length, 0L) > 0]
+        
         ## Add flanking region
         grl <- grl + flankLength
         
