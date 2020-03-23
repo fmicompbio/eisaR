@@ -41,16 +41,19 @@ introns using some other pipeline or approach, and directly start with step 3.
 
 # Preparing the annotation{#annotation}
 As mentioned, `eisaR` uses gene annotations from Bioconductor.
-They are provided in the form of `TxDb` objects, e.g. via packages such as `r Biocpkg("TxDb.Mmusculus.UCSC.mm10.knownGene")`.
+They are provided in the form of `TxDb` or `EnsDb` objects, e.g. via packages such as `r Biocpkg("TxDb.Mmusculus.UCSC.mm10.knownGene")` or `r Biocpkg("EnsDb.Hsapiens.v86")`.
 You can see available annotations using the following code:  
 
 ```{r availableOnline, eval=FALSE}
-pkgs <- BiocManager::available("TxDb")
+pkgs <- c(BiocManager::available("TxDb")
+          BiocManager::available("EnsDb"))
 ```
 
 If you would like to use an alternative source of gene annotations, you might
 still be able to use `eisaR` by first converting your annotations into a `TxDb`
-(see `makeTxDb` in the `r Biocpkg("GenomicFeatures")` package).
+or an `EnsDb` (for creating a `TxDb` see `makeTxDb` in the `r Biocpkg("GenomicFeatures")`
+package, for creating an `EnsDb` see `makeEnsembldbPackage` in the `r Biocpkg("ensembldb")`
+package).
 
 For this example, `eisaR` contains a small `TxDb` to illustrate how regions are extracted.
 We will load it from a file. Alternatively, the object would be loaded using `library(...)`,

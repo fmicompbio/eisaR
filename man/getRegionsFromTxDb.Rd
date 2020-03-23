@@ -7,7 +7,7 @@
 getRegionsFromTxDb(txdb, exonExt = 10L, strandedData = TRUE)
 }
 \arguments{
-\item{txdb}{a \code{TxDb} object with the transcript annotations.}
+\item{txdb}{a \code{TxDb} or an \code{EnsDb} object with the transcript annotations.}
 
 \item{exonExt}{\code{numeric} (default = 10L). Exonic ranges will be extended
 on either side by this many nucleotides, in order to avoid "bleed-over" of

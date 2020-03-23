@@ -8,7 +8,7 @@
 #'
 #' @author Michael Stadler
 #'
-#' @param txdb a \code{TxDb} object with the transcript annotations.
+#' @param txdb a \code{TxDb} or an \code{EnsDb} object with the transcript annotations.
 #' @param exonExt \code{numeric} (default = 10L). Exonic ranges will be extended
 #'   on either side by this many nucleotides, in order to avoid "bleed-over" of
 #'   exonic alignments into adjacent intronic regions.
@@ -48,7 +48,7 @@
 #' @export
 getRegionsFromTxDb <- function(txdb, exonExt = 10L, strandedData = TRUE) {
     # check arguments
-    stopifnot(inherits(txdb, "TxDb"))
+    stopifnot(inherits(txdb, "TxDb") || inherits(txdb, "EnsDb"))
     stopifnot(is.numeric(exonExt) && length(exonExt) == 1L)
     stopifnot(is.logical(strandedData) && length(strandedData) == 1L)
 
