@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">eisaR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.7</span>
       </span>
     </div>
 
@@ -91,7 +91,7 @@
       <h1>Using eisaR for Exon-Intron Split Analysis (EISA)</h1>
                         <h4 class="author">Michael Stadler</h4>
             
-            <h4 class="date">2020-03-17</h4>
+            <h4 class="date">2020-03-23</h4>
       
       
       <div class="hidden name"><code>eisaR.Rmd</code></div>
@@ -114,9 +114,10 @@
 <div id="annotation" class="section level1">
 <h1 class="hasAnchor">
 <a href="#annotation" class="anchor"></a>Preparing the annotation</h1>
-<p>As mentioned, <code>eisaR</code> uses gene annotations from Bioconductor. They are provided in the form of <code>TxDb</code> objects, e.g. via packages such as <em><a href="https://bioconductor.org/packages/3.11/TxDb.Mmusculus.UCSC.mm10.knownGene">TxDb.Mmusculus.UCSC.mm10.knownGene</a></em>. You can see available annotations using the following code:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">pkgs &lt;-<span class="st"> </span>BiocManager<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/BiocManager/man/available.html">available</a></span>(<span class="st">"TxDb"</span>)</a></code></pre></div>
-<p>If you would like to use an alternative source of gene annotations, you might still be able to use <code>eisaR</code> by first converting your annotations into a <code>TxDb</code> (see <code>makeTxDb</code> in the <em><a href="https://bioconductor.org/packages/3.11/GenomicFeatures">GenomicFeatures</a></em> package).</p>
+<p>As mentioned, <code>eisaR</code> uses gene annotations from Bioconductor. They are provided in the form of <code>TxDb</code> or <code>EnsDb</code> objects, e.g. via packages such as <em><a href="https://bioconductor.org/packages/3.11/TxDb.Mmusculus.UCSC.mm10.knownGene">TxDb.Mmusculus.UCSC.mm10.knownGene</a></em> or <em><a href="https://bioconductor.org/packages/3.11/EnsDb.Hsapiens.v86">EnsDb.Hsapiens.v86</a></em>. You can see available annotations using the following code:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">pkgs &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(BiocManager<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/BiocManager/man/available.html">available</a></span>(<span class="st">"TxDb"</span>)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2">          BiocManager<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/BiocManager/man/available.html">available</a></span>(<span class="st">"EnsDb"</span>))</a></code></pre></div>
+<p>If you would like to use an alternative source of gene annotations, you might still be able to use <code>eisaR</code> by first converting your annotations into a <code>TxDb</code> or an <code>EnsDb</code> (for creating a <code>TxDb</code> see <code>makeTxDb</code> in the <em><a href="https://bioconductor.org/packages/3.11/GenomicFeatures">GenomicFeatures</a></em> package, for creating an <code>EnsDb</code> see <code>makeEnsembldbPackage</code> in the <em><a href="https://bioconductor.org/packages/3.11/ensembldb">ensembldb</a></em> package).</p>
 <p>For this example, <code>eisaR</code> contains a small <code>TxDb</code> to illustrate how regions are extracted. We will load it from a file. Alternatively, the object would be loaded using <code><a href="https://rdrr.io/r/base/library.html">library(...)</a></code>, for example using <code><a href="https://rdrr.io/r/base/library.html">library(TxDb.Mmusculus.UCSC.mm10.knownGene)</a></code>.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co"># load package</span></a>
 <a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(eisaR)</a>
@@ -195,9 +196,9 @@
 <a class="sourceLine" id="cb6-13" data-line-number="13"><span class="co">#&gt; Testing the compute nodes...OK</span></a>
 <a class="sourceLine" id="cb6-14" data-line-number="14"><span class="co">#&gt; Loading QuasR on the compute nodes...OK</span></a>
 <a class="sourceLine" id="cb6-15" data-line-number="15"><span class="co">#&gt; Available cores:</span></a>
-<a class="sourceLine" id="cb6-16" data-line-number="16"><span class="co">#&gt; travis-job-3a87d40a-0fe7-4f07-8bb6-69e097c6b732: 1</span></a>
+<a class="sourceLine" id="cb6-16" data-line-number="16"><span class="co">#&gt; travis-job-e9c829f5-da49-46f4-8a73-5c32730b5be5: 1</span></a>
 <a class="sourceLine" id="cb6-17" data-line-number="17"><span class="co">#&gt; Performing genomic alignments for 4 samples. See progress in the log file:</span></a>
-<a class="sourceLine" id="cb6-18" data-line-number="18"><span class="co">#&gt; /home/travis/build/fmicompbio/eisaR/vignettes/QuasR_log_3a4877771e68.txt</span></a>
+<a class="sourceLine" id="cb6-18" data-line-number="18"><span class="co">#&gt; /home/travis/build/fmicompbio/eisaR/vignettes/QuasR_log_4deb5b5c19c1.txt</span></a>
 <a class="sourceLine" id="cb6-19" data-line-number="19"><span class="co">#&gt; Genomic alignments have been created successfully</span></a>
 <a class="sourceLine" id="cb6-20" data-line-number="20"><span class="kw"><a href="https://rdrr.io/pkg/QuasR/man/alignmentStats.html">alignmentStats</a></span>(proj)</a>
 <a class="sourceLine" id="cb6-21" data-line-number="21"><span class="co">#&gt;                seqlength mapped unmapped</span></a>
@@ -577,26 +578,26 @@
 <a class="sourceLine" id="cb20-21" data-line-number="21"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb20-22" data-line-number="22"><span class="co">#&gt; other attached packages:</span></a>
 <a class="sourceLine" id="cb20-23" data-line-number="23"><span class="co">#&gt;  [1] edgeR_3.29.1           limma_3.43.5           QuasR_1.27.0          </span></a>
-<a class="sourceLine" id="cb20-24" data-line-number="24"><span class="co">#&gt;  [4] Rbowtie_1.27.1         rtracklayer_1.47.0     GenomicFeatures_1.39.5</span></a>
-<a class="sourceLine" id="cb20-25" data-line-number="25"><span class="co">#&gt;  [7] AnnotationDbi_1.49.1   Biobase_2.47.2         GenomicRanges_1.39.2  </span></a>
-<a class="sourceLine" id="cb20-26" data-line-number="26"><span class="co">#&gt; [10] GenomeInfoDb_1.23.13   IRanges_2.21.3         S4Vectors_0.25.13     </span></a>
-<a class="sourceLine" id="cb20-27" data-line-number="27"><span class="co">#&gt; [13] BiocGenerics_0.33.0    eisaR_0.99.6           BiocStyle_2.15.6      </span></a>
+<a class="sourceLine" id="cb20-24" data-line-number="24"><span class="co">#&gt;  [4] Rbowtie_1.27.1         rtracklayer_1.47.0     GenomicFeatures_1.39.7</span></a>
+<a class="sourceLine" id="cb20-25" data-line-number="25"><span class="co">#&gt;  [7] AnnotationDbi_1.49.1   Biobase_2.47.3         GenomicRanges_1.39.2  </span></a>
+<a class="sourceLine" id="cb20-26" data-line-number="26"><span class="co">#&gt; [10] GenomeInfoDb_1.23.13   IRanges_2.21.5         S4Vectors_0.25.13     </span></a>
+<a class="sourceLine" id="cb20-27" data-line-number="27"><span class="co">#&gt; [13] BiocGenerics_0.33.2    eisaR_0.99.7           BiocStyle_2.15.6      </span></a>
 <a class="sourceLine" id="cb20-28" data-line-number="28"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb20-29" data-line-number="29"><span class="co">#&gt; loaded via a namespace (and not attached):</span></a>
 <a class="sourceLine" id="cb20-30" data-line-number="30"><span class="co">#&gt;  [1] httr_1.4.1                  splines_4.0.0              </span></a>
-<a class="sourceLine" id="cb20-31" data-line-number="31"><span class="co">#&gt;  [3] bit64_0.9-7                 GenomicFiles_1.23.0        </span></a>
+<a class="sourceLine" id="cb20-31" data-line-number="31"><span class="co">#&gt;  [3] bit64_0.9-7                 GenomicFiles_1.23.1        </span></a>
 <a class="sourceLine" id="cb20-32" data-line-number="32"><span class="co">#&gt;  [5] assertthat_0.2.1            askpass_1.1                </span></a>
 <a class="sourceLine" id="cb20-33" data-line-number="33"><span class="co">#&gt;  [7] BiocManager_1.30.10         BiocFileCache_1.11.4       </span></a>
 <a class="sourceLine" id="cb20-34" data-line-number="34"><span class="co">#&gt;  [9] latticeExtra_0.6-29         blob_1.2.1                 </span></a>
-<a class="sourceLine" id="cb20-35" data-line-number="35"><span class="co">#&gt; [11] BSgenome_1.55.3             GenomeInfoDbData_1.2.2     </span></a>
-<a class="sourceLine" id="cb20-36" data-line-number="36"><span class="co">#&gt; [13] Rsamtools_2.3.5             yaml_2.2.1                 </span></a>
+<a class="sourceLine" id="cb20-35" data-line-number="35"><span class="co">#&gt; [11] BSgenome_1.55.4             GenomeInfoDbData_1.2.2     </span></a>
+<a class="sourceLine" id="cb20-36" data-line-number="36"><span class="co">#&gt; [13] Rsamtools_2.3.7             yaml_2.2.1                 </span></a>
 <a class="sourceLine" id="cb20-37" data-line-number="37"><span class="co">#&gt; [15] progress_1.2.2              pillar_1.4.3               </span></a>
 <a class="sourceLine" id="cb20-38" data-line-number="38"><span class="co">#&gt; [17] RSQLite_2.2.0               backports_1.1.5            </span></a>
 <a class="sourceLine" id="cb20-39" data-line-number="39"><span class="co">#&gt; [19] lattice_0.20-40             glue_1.3.2                 </span></a>
 <a class="sourceLine" id="cb20-40" data-line-number="40"><span class="co">#&gt; [21] digest_0.6.25               RColorBrewer_1.1-2         </span></a>
 <a class="sourceLine" id="cb20-41" data-line-number="41"><span class="co">#&gt; [23] XVector_0.27.1              htmltools_0.4.0            </span></a>
 <a class="sourceLine" id="cb20-42" data-line-number="42"><span class="co">#&gt; [25] Matrix_1.2-18               XML_3.99-0.3               </span></a>
-<a class="sourceLine" id="cb20-43" data-line-number="43"><span class="co">#&gt; [27] pkgconfig_2.0.3             ShortRead_1.45.3           </span></a>
+<a class="sourceLine" id="cb20-43" data-line-number="43"><span class="co">#&gt; [27] pkgconfig_2.0.3             ShortRead_1.45.4           </span></a>
 <a class="sourceLine" id="cb20-44" data-line-number="44"><span class="co">#&gt; [29] biomaRt_2.43.3              bookdown_0.18              </span></a>
 <a class="sourceLine" id="cb20-45" data-line-number="45"><span class="co">#&gt; [31] zlibbioc_1.33.1             purrr_0.3.3                </span></a>
 <a class="sourceLine" id="cb20-46" data-line-number="46"><span class="co">#&gt; [33] jpeg_0.1-8.1                BiocParallel_1.21.2        </span></a>
@@ -608,10 +609,10 @@
 <a class="sourceLine" id="cb20-52" data-line-number="52"><span class="co">#&gt; [45] tools_4.0.0                 prettyunits_1.1.1          </span></a>
 <a class="sourceLine" id="cb20-53" data-line-number="53"><span class="co">#&gt; [47] hms_0.5.3                   matrixStats_0.56.0         </span></a>
 <a class="sourceLine" id="cb20-54" data-line-number="54"><span class="co">#&gt; [49] stringr_1.4.0               locfit_1.5-9.1             </span></a>
-<a class="sourceLine" id="cb20-55" data-line-number="55"><span class="co">#&gt; [51] DelayedArray_0.13.7         Biostrings_2.55.5          </span></a>
+<a class="sourceLine" id="cb20-55" data-line-number="55"><span class="co">#&gt; [51] DelayedArray_0.13.7         Biostrings_2.55.6          </span></a>
 <a class="sourceLine" id="cb20-56" data-line-number="56"><span class="co">#&gt; [53] compiler_4.0.0              pkgdown_1.4.1              </span></a>
 <a class="sourceLine" id="cb20-57" data-line-number="57"><span class="co">#&gt; [55] rlang_0.4.5                 grid_4.0.0                 </span></a>
-<a class="sourceLine" id="cb20-58" data-line-number="58"><span class="co">#&gt; [57] RCurl_1.98-1.1              VariantAnnotation_1.33.0   </span></a>
+<a class="sourceLine" id="cb20-58" data-line-number="58"><span class="co">#&gt; [57] RCurl_1.98-1.1              VariantAnnotation_1.33.2   </span></a>
 <a class="sourceLine" id="cb20-59" data-line-number="59"><span class="co">#&gt; [59] rappdirs_0.3.1              bitops_1.0-6               </span></a>
 <a class="sourceLine" id="cb20-60" data-line-number="60"><span class="co">#&gt; [61] rmarkdown_2.1               DBI_1.1.0                  </span></a>
 <a class="sourceLine" id="cb20-61" data-line-number="61"><span class="co">#&gt; [63] curl_4.3                    R6_2.4.1                   </span></a>
