@@ -82,7 +82,8 @@ getFeatureRanges <- function(
     }
     if (!all(is.character(featureType)) || 
         !all(featureType %in% c("spliced", "unspliced", "intron"))) {
-        stop("'featureType' must be a subset of c('spliced', 'unspliced', 'intron')")
+        stop("'featureType' must be a subset of c('spliced',", 
+             "'unspliced', 'intron')")
     }
     if ("intron" %in% featureType) {
         if (length(intronType) != 1 || !is.character(intronType) || 
@@ -158,8 +159,9 @@ getFeatureRanges <- function(
         
         featurelist$spliced <- names(ebt)
         
-        ## Here, it's important that for each transcript, the exons must be ordered 
-        ## by ascending rank, that is, by ascending position in the transcript.
+        ## Here, it's important that for each transcript, the exons must be 
+        ## ordered by ascending rank, that is, by ascending position in 
+        ## the transcript.
         grlfull <- c(grlfull, ebt)
     }
     
@@ -181,8 +183,9 @@ getFeatureRanges <- function(
         e2$gene_id <- paste0(e2$gene_id, suffixes["unspliced"])
         e2$exon_id <- e2$transcript_id
         names(e2) <- NULL
-        mcols(e2) <- S4Vectors::mcols(e2)[, c("exon_id", "exon_rank", 
-                                              "transcript_id", "gene_id", "type")]
+        mcols(e2) <- 
+            S4Vectors::mcols(e2)[, c("exon_id", "exon_rank", 
+                                     "transcript_id", "gene_id", "type")]
         ebtr <- BiocGenerics::relist(e2, ebtr)
         names(ebtr) <- paste0(names(ebtr), suffixes["unspliced"])
         
@@ -239,16 +242,20 @@ getFeatureRanges <- function(
             gr$gene_id <- gr$transcript_id
         }
         gr$type <- "exon"
-        gr$transcript_id <- gsub(paste0(suffixes["intron"], "."), suffixes["intron"], 
-                                 make.unique(paste0(gr$transcript_id, suffixes["intron"])),
-                                 fixed = TRUE)
+        gr$transcript_id <- gsub(
+            paste0(suffixes["intron"], "."), suffixes["intron"], 
+            make.unique(paste0(gr$transcript_id, suffixes["intron"])),
+            fixed = TRUE
+        )
         gr$gene_id <- paste0(gr$gene_id, suffixes["intron"])
         gr$exon_id <- gr$transcript_id
         names(gr) <- NULL
-        mcols(gr) <- S4Vectors::mcols(gr)[, c("exon_id", "exon_rank", 
-                                              "transcript_id", "gene_id", "type")]
+        mcols(gr) <- 
+            S4Vectors::mcols(gr)[, c("exon_id", "exon_rank", 
+                                     "transcript_id", "gene_id", "type")]
         grl <- BiocGenerics::relist(gr, lapply(
-            structure(seq_along(gr), names = gr$transcript_id), function(i) i))
+            structure(seq_along(gr), 
+                      names = gr$transcript_id), function(i) i))
         
         featurelist$intron <- names(grl)
 
