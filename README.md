@@ -59,6 +59,7 @@ Gaidatzis D., Burger L., Florescu M. and Stadler, M.B.
 | Platforms |  OS  | R CMD check | Coverage | 
 |:----------------:|:----------------:|:----------------:|:----------------:|
 | Travis CI | Linux | [![Travis CI build status](https://travis-ci.com/fmicompbio/eisaR.svg?branch=master)](https://travis-ci.com/fmicompbio/eisaR) | [![Codecov.io coverage status](https://codecov.io/github/fmicompbio/eisaR/coverage.svg?branch=master)](https://codecov.io/github/fmicompbio/eisaR) |
+| GitHub Actions | Linux/Windows/macOS | [![R build status](https://github.com/fmicompbio/eisaR/workflows/R-CMD-check/badge.svg)](https://github.com/fmicompbio/eisaR/actions) | [![Codecov.io coverage status](https://codecov.io/github/fmicompbio/eisaR/coverage.svg?branch=master)](https://codecov.io/github/fmicompbio/eisaR) |
 
 <!--
 ## Download from Bioconductor
