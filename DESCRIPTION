@@ -50,3 +50,5 @@ Imports:
     BiocGenerics,
     rtracklayer,
     utils
+URL: https://github.com/fmicompbio/eisaR
+BugReports: https://github.com/fmicompbio/eisaR/issues
