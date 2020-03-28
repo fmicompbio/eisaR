@@ -37,7 +37,7 @@ jobs:
           install.packages(c('remotes', 'BiocManager'))
           BiocManager::install(c('GenomicFiles', 'BSgenome'))
           install.packages("Rcpp", repos="https://rcppcore.github.io/drat")
-          saveRDS(remotes::dev_package_deps(dependencies = TRUE), "depends.Rds", version = 2)
+          saveRDS(remotes::dev_package_deps(dependencies = TRUE, repos = c(getOption('repos'), BiocManager::repositories())), "depends.Rds", version = 2)
         shell: Rscript {0}
 
       - name: Cache R packages
@@ -59,7 +59,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          remotes::install_deps(dependencies = TRUE)
+          remotes::install_deps(dependencies = TRUE, repos = c(getOption('repos'), BiocManager::repositories()))
           remotes::install_cran("rcmdcheck")
         shell: Rscript {0}
 
