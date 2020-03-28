@@ -39,6 +39,23 @@ For the steps 1. and 2. above, this vignette makes use of Bioconductor annotatio
 the `r Biocpkg("QuasR")` package. It is also possible to obtain count tables for exons and
 introns using some other pipeline or approach, and directly start with step 3.
 
+# Installation
+To install the `eisaR` package, start R and enter:
+
+```{r install_eisaR, eval=FALSE}
+# BiocManager is needed to install Bioconductor packages
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+# The following initializes usage of Bioc devel
+# Warning: only run this is you want to use Bioc devel
+BiocManager::install(version = 'devel')
+
+# Install eisaR
+BiocManager::install("eisaR")
+```
+
+
 # Preparing the annotation{#annotation}
 As mentioned, `eisaR` uses gene annotations from Bioconductor.
 They are provided in the form of `TxDb` or `EnsDb` objects, e.g. via packages such as `r Biocpkg("TxDb.Mmusculus.UCSC.mm10.knownGene")` or `r Biocpkg("EnsDb.Hsapiens.v86")`.

@@ -12,6 +12,14 @@ Exon-intron split analysis (EISA) uses ordinary RNA-seq data to measure
     For details see Gaidatzis et al., Nat Biotechnol 2015. doi: 10.1038/nbt.3269.
     eisaR implements the major steps of EISA in R.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/fmicompbio/eisaR}
+  \item Report bugs at \url{https://github.com/fmicompbio/eisaR/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Michael Stadler \email{michael.stadler@fmi.ch}
 
