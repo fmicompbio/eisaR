@@ -47,10 +47,6 @@ To install the `eisaR` package, start R and enter:
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 
-# The following initializes usage of Bioc devel
-# Warning: only run this is you want to use Bioc devel
-BiocManager::install(version = 'devel')
-
 # Install eisaR
 BiocManager::install("eisaR")
 ```
