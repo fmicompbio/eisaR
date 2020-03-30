@@ -4,7 +4,7 @@ pkgdown_sha: 2254f318a4c1cb12419e27155cce74307bd844ea
 articles:
   eisaR: eisaR.html
   rna-velocity: rna-velocity.html
-last_built: 2020-03-28T20:52Z
+last_built: 2020-03-30T21:51Z
 urls:
   reference: https://fmicompbio.github.io/eisaR/reference
   article: https://fmicompbio.github.io/eisaR/articles
