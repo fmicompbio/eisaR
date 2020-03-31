@@ -1,4 +1,4 @@
-# swissknife 1.0
+# eisaR 1.0
 
 * Initial version  
 * R implementation of Exon-Intron Split Analysis (EISA, doi: 10.1038/nbt.3269)  
