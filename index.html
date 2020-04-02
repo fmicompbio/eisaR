@@ -99,8 +99,7 @@
 <h2 class="hasAnchor">
 <a href="#overview" class="anchor"></a>Overview</h2>
 <p>Exon-intron split analysis (<code>EISA</code>) uses ordinary RNA-seq data to measure changes in mature RNA and pre-mRNA reads across different experimental conditions to quantify transcriptional and post-transcriptional regulation of gene expression.</p>
-<p>For details see Gaidatzis et al., Nat Biotechnol 2015. doi: 10.1038/nbt.3269.<br>
-eisaR implements the major steps of EISA in R. In addition, it contains functionality for extracting spliced and unspliced transcript sequences, as well as intron sequences (with similar options as the <a href="https://github.com/BUStools/BUSpaRse">BUSpaRse</a>) package), from an annotated genome. These sequences can be indexed and used, e.g., for quantification in preparation for RNA velocity estimation.</p>
+<p>For details see Gaidatzis et al., Nat Biotechnol 2015. doi: 10.1038/nbt.3269.<br><code>eisaR</code> implements the major steps of EISA in R. In addition, it contains functionality for extracting spliced and unspliced transcript sequences, as well as intron sequences (with similar options as the <a href="https://github.com/BUStools/BUSpaRse">BUSpaRse</a>) package), from an annotated genome. These sequences can be indexed and used, e.g., for quantification in preparation for RNA velocity estimation.</p>
 <p>Developed by:</p>
 <ul>
 <li><a href="https://github.com/mbstadler">Michael Stadler</a></li>
@@ -108,15 +107,26 @@ eisaR implements the major steps of EISA in R. In addition, it contains function
 <li><a href="https://github.com/LukasBurger">Lukas Burger</a></li>
 <li><a href="https://github.com/csoneson">Charlotte Soneson</a></li>
 </ul>
-<p>Also a big “thank you” for contributions to:</p>
+<p>Also a big âthank youâ for contributions to:</p>
 <ul>
 <li><a href="https://github.com/federicomarini">Federico Marini</a></li>
 </ul>
 </div>
+<div id="installation" class="section level2">
+<h2 class="hasAnchor">
+<a href="#installation" class="anchor"></a>Installation</h2>
+<p>To install <code>eisaR</code> from Bioconductor, you will need at least R 4.0 and Bioconductor 3.11, which is available on April 28, 2020. Then use the following within R (see also <a href="https://bioconductor.org/packages/eisaR/">eisaR download page</a>):</p>
+<pre><code># BiocManager is needed to install Bioconductor packages
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+# Install eisaR
+BiocManager::install("eisaR")</code></pre>
+</div>
 <div id="functionality" class="section level2">
 <h2 class="hasAnchor">
 <a href="#functionality" class="anchor"></a>Functionality</h2>
-<p>All you need is RNA-seq data from at least two conditions (e.g. wildtype and mutant). The <code>eisaR</code> package contains convenience functions to facilitate the steps in an exon-intron split analysis, which consists of:</p>
+<p>All you need is RNA-seq data from at least two conditions (e.g.Â wildtype and mutant). The <code>eisaR</code> package contains convenience functions to facilitate the steps in an exon-intron split analysis, which consists of:</p>
 <ol>
 <li>preparing the annotation (exonic and gene body coordinate ranges)<br>
 </li>
@@ -132,8 +142,10 @@ eisaR implements the major steps of EISA in R. In addition, it contains function
 <h2 class="hasAnchor">
 <a href="#reference" class="anchor"></a>Reference</h2>
 <p><code>EISA</code> has been described in:</p>
-<p>“Analysis of intronic and exonic reads in RNA-seq data characterizes transcriptional and post-transcriptional regulation.”<br>
+<p>âAnalysis of intronic and exonic reads in RNA-seq data characterizes transcriptional and post-transcriptional regulation.â<br>
 Gaidatzis D., Burger L., Florescu M. and Stadler, M.B.<br><em>Nat Biotechnol.</em> <strong>2015</strong>; 33(7):722-9. <a href="https://www.ncbi.nlm.nih.gov/pubmed/26098447">PubMed: 26098447</a>, <a href="https://doi.org/10.1038/nbt.3269">doi: 10.1038/nbt.3269</a></p>
+<p>The functionality for extracting spliced and unspliced transcript sequences, as well as intron sequences, for use in RNA velocity analysis, has been described in:</p>
+<p>âPreprocessing choices affect RNA velocity results for droplet scRNA-seq data.â Soneson C., Srivastava A., Patro R. and Stadler, M.B. <em>bioRxiv</em> <strong>2020</strong>. <a href="https://www.biorxiv.org/content/10.1101/2020.03.13.990069v1">bioRxiv</a>, <a href="https://doi.org/10.1101/2020.03.13.990069">doi: 10.1101/2020.03.13.990069</a></p>
 </div>
 <div id="software-status" class="section level2">
 <h2 class="hasAnchor">
@@ -164,20 +176,20 @@ Gaidatzis D., Burger L., Florescu M. and Stadler, M.B.<br><em>Nat Biotechnol.</e
 <td align="center"><a href="https://github.com/fmicompbio/eisaR/actions"><img src="https://github.com/fmicompbio/eisaR/workflows/R-CMD-check/badge.svg" alt="R build status"></a></td>
 <td align="center"><a href="https://codecov.io/github/fmicompbio/eisaR"><img src="https://codecov.io/github/fmicompbio/eisaR/coverage.svg?branch=master" alt="Codecov.io coverage status"></a></td>
 </tr>
+<tr class="odd">
+<td align="center">Bioc (<a href="http://bioconductor.org/packages/devel/bioc/html/eisaR.html"><em>devel</em></a>)</td>
+<td align="center">Multiple</td>
+<td align="center"><a href="http://bioconductor.org/checkResults/devel/bioc-LATEST/eisaR"><img src="http://bioconductor.org/shields/build/devel/bioc/eisaR.svg" alt="Bioconductor-devel Build Status"></a></td>
+<td align="center"><a href="https://codecov.io/github/fmicompbio/eisaR"><img src="https://codecov.io/github/fmicompbio/eisaR/coverage.svg?branch=master" alt="Codecov.io coverage status"></a></td>
+</tr>
+<tr class="even">
+<td align="center"><a href="http://bioconductor.org/checkResults/release/bioc-LATEST/eisaR"><img src="http://bioconductor.org/shields/build/release/bioc/eisaR.svg" alt="Bioconductor-release Build Status"></a></td>
+<td align="center"><a href="https://codecov.io/github/fmicompbio/eisaR"><img src="https://codecov.io/github/fmicompbio/eisaR/coverage.svg?branch=master" alt="Codecov.io coverage status"></a></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
 </tbody>
 </table>
-<!--
-## Download from Bioconductor
-[QuasR download page](https://bioconductor.org/packages/QuasR/)
-
-## Software status
-
-| Platforms |  OS  | R CMD check | Coverage | 
-|:----------------:|:----------------:|:----------------:|:----------------:|
-| Travis CI | Linux | [![Travis CI build status](https://travis-ci.com/fmicompbio/QuasR.svg?branch=master)](https://travis-ci.com/fmicompbio/QuasR) | [![Codecov.io coverage status](https://codecov.io/github/fmicompbio/QuasR/coverage.svg?branch=master)](https://codecov.io/github/fmicompbio/QuasR) |
-| Bioc ([_devel_](http://bioconductor.org/packages/devel/bioc/html/QuasR.html)) | Multiple | [![Bioconductor-devel Build Status](http://bioconductor.org/shields/build/devel/bioc/QuasR.svg)](http://bioconductor.org/checkResults/devel/bioc-LATEST/QuasR) | `NA` |
-| Bioc ([_release_](http://bioconductor.org/packages/release/bioc/html/QuasR.html)) | Multiple | [![Bioconductor-release Build Status](http://bioconductor.org/shields/build/release/bioc/QuasR.svg)](http://bioconductor.org/checkResults/release/bioc-LATEST/QuasR) | `NA` |
--->
 </div>
 </div>
   </div>
@@ -186,6 +198,8 @@ Gaidatzis D., Burger L., Florescu M. and Stadler, M.B.<br><em>Nat Biotechnol.</e
     <div class="links">
 <h2>Links</h2>
 <ul class="list-unstyled">
+<li>Download from BIOC at <br><a href="https://www.bioconductor.org/packages/eisaR">https://​www.bioconductor.org/​packages/​eisaR</a>
+</li>
 <li>Browse source code at <br><a href="https://github.com/fmicompbio/eisaR/">https://​github.com/​fmicompbio/​eisaR/​</a>
 </li>
 <li>Report a bug at <br><a href="https://github.com/fmicompbio/eisaR/issues">https://​github.com/​fmicompbio/​eisaR/​issues</a>
