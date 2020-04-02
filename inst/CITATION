@@ -1,14 +1,14 @@
-citHeader("Please use the first reference below to cite the eisaR software itself, or the second reference to cite the EISA paper.")
+citHeader("Please use the first reference below to cite the eisaR software itself, the second reference (Gaidatzis et al.) to cite the EISA paper, or the third (Soneson et al.) to cite the preprocessing analysis for RNA velocity.")
 
 citEntry(entry="Manual",
 	 title="eisaR: Exon-Intron Split Anaalysis (EISA) in R",
-	 author=personList(as.person("Dimos Gaidatzis"),
+	 author=personList(as.person("Michael B Stadler"),
+	           as.person("Dimos Gaidatzis"),
 			   as.person("Lukas Burger"),
-			   as.person("Michael B Stadler")),
-	 year=2018,
-	 note="R package version 0.5",
-	 textVersion="Gaidatzis D, Burger L and Stadler MB. eisaR: Exon-Intron Split Anaalysis (EISA) in R. R package version
-  0.5."
+			   as.person("Charlotte Soneson")),
+	 year=2020,
+	 note="R package version 1.0",
+	 textVersion="Stadler MB, Gaidatzis D, Burger L and Soneson C. eisaR: Exon-Intron Split Analysis (EISA) in R. R package version 1.0"
 )
 
 citEntry(entry="article",
@@ -17,13 +17,26 @@ citEntry(entry="article",
 			   as.person("Lukas Burger"),
 			   as.person("Michael B Stadler")),
 	 journal="Nature Biotechnology",
-         volume="33",
-         number="7",
-         pages="722--729",
+     volume="33",
+     number="7",
+     pages="722--729",
 	 year=2015,
 	 note="PMID:26098447",
-         doi="10.1038/nbt.3269",
+     doi="10.1038/nbt.3269",
 	 textVersion="Gaidatzis D, Burger L, Florescu M and Stadler MB. Analysis of intronic and exonic reads in RNA-seq data characterizes transcriptional and post-transcriptional regulation. Nature Biotechnology 33(7):722-729 (2015)."
+)
+
+citEntry(entry="article",
+	 title="Preprocessing choices affect RNA velocity results for droplet scRNA-seq data",
+	 author=personList(as.person("Dimos Gaidatzis"),
+			   as.person("Charlotte Soneson"),
+			   as.person("Avi Srivastava"),
+			   as.person("Rob Patro"),
+			   as.person("Michael B Stadler")),
+	 journal="bioRxiv",
+	 year=2020,
+     doi="10.1101/2020.03.13.990069",
+	 textVersion="Soneson C, Srivastava A, Patro R and Stadler MB. 2020. Preprocessing choices affect RNA velocity results for droplet scRNA-seq data. bioRxiv doi: 10.1101/2020.03.13.990069"
 )
 
 citFooter("This free open-source software implements academic
