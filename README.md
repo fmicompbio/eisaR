@@ -10,7 +10,7 @@ conditions to quantify transcriptional and post-transcriptional regulation
 of gene expression.
 
 For details see Gaidatzis et al., Nat Biotechnol 2015. doi: 10.1038/nbt.3269.  
-eisaR implements the major steps of EISA in R. 
+`eisaR` implements the major steps of EISA in R. 
 In addition, it contains functionality for extracting spliced and unspliced 
 transcript sequences, as well as intron sequences (with similar options as 
 the [BUSpaRse](https://github.com/BUStools/BUSpaRse)) package), from an 
@@ -27,6 +27,18 @@ Developed by:
 Also a big "thank you" for contributions to:
 
 - [Federico Marini](https://github.com/federicomarini)
+
+## Installation
+
+To install `eisaR` from Bioconductor, you will need at least R 4.0 and Bioconductor 3.11, which is available on April 28, 2020. Then use the following within R (see also [eisaR download page](https://bioconductor.org/packages/eisaR/)):
+```
+# BiocManager is needed to install Bioconductor packages
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+# Install eisaR
+BiocManager::install("eisaR")
+```
 
 ## Functionality
 
@@ -54,22 +66,21 @@ Gaidatzis D., Burger L., Florescu M. and Stadler, M.B.
 *Nat Biotechnol.* **2015**; 33(7):722-9.
 [PubMed: 26098447](https://www.ncbi.nlm.nih.gov/pubmed/26098447), [doi: 10.1038/nbt.3269](https://doi.org/10.1038/nbt.3269)
 
+The functionality for extracting spliced and unspliced transcript sequences,
+as well as intron sequences, for use in RNA velocity analysis, has been described in:
+
+"Preprocessing choices affect RNA velocity results for droplet scRNA-seq data."
+Soneson C., Srivastava A., Patro R. and Stadler, M.B.
+*bioRxiv* **2020**.
+[bioRxiv](https://www.biorxiv.org/content/10.1101/2020.03.13.990069v1), [doi: 10.1101/2020.03.13.990069](https://doi.org/10.1101/2020.03.13.990069)
+
+
 ## Software status
 
 | Platforms |  OS  | R CMD check | Coverage | 
 |:----------------:|:----------------:|:----------------:|:----------------:|
 | Travis CI | Linux | [![Travis CI build status](https://travis-ci.com/fmicompbio/eisaR.svg?branch=master)](https://travis-ci.com/fmicompbio/eisaR) | [![Codecov.io coverage status](https://codecov.io/github/fmicompbio/eisaR/coverage.svg?branch=master)](https://codecov.io/github/fmicompbio/eisaR) |
 | GitHub Actions | Linux/Windows/macOS | [![R build status](https://github.com/fmicompbio/eisaR/workflows/R-CMD-check/badge.svg)](https://github.com/fmicompbio/eisaR/actions) | [![Codecov.io coverage status](https://codecov.io/github/fmicompbio/eisaR/coverage.svg?branch=master)](https://codecov.io/github/fmicompbio/eisaR) |
+| Bioc ([_devel_](http://bioconductor.org/packages/devel/bioc/html/eisaR.html)) | Multiple | [![Bioconductor-devel Build Status](http://bioconductor.org/shields/build/devel/bioc/eisaR.svg)](http://bioconductor.org/checkResults/devel/bioc-LATEST/eisaR) | [![Codecov.io coverage status](https://codecov.io/github/fmicompbio/eisaR/coverage.svg?branch=master)](https://codecov.io/github/fmicompbio/eisaR) |
+[![Bioconductor-release Build Status](http://bioconductor.org/shields/build/release/bioc/eisaR.svg)](http://bioconductor.org/checkResults/release/bioc-LATEST/eisaR) | [![Codecov.io coverage status](https://codecov.io/github/fmicompbio/eisaR/coverage.svg?branch=master)](https://codecov.io/github/fmicompbio/eisaR) |
 
-<!--
-## Download from Bioconductor
-[QuasR download page](https://bioconductor.org/packages/QuasR/)
-
-## Software status
-
-| Platforms |  OS  | R CMD check | Coverage | 
-|:----------------:|:----------------:|:----------------:|:----------------:|
-| Travis CI | Linux | [![Travis CI build status](https://travis-ci.com/fmicompbio/QuasR.svg?branch=master)](https://travis-ci.com/fmicompbio/QuasR) | [![Codecov.io coverage status](https://codecov.io/github/fmicompbio/QuasR/coverage.svg?branch=master)](https://codecov.io/github/fmicompbio/QuasR) |
-| Bioc ([_devel_](http://bioconductor.org/packages/devel/bioc/html/QuasR.html)) | Multiple | [![Bioconductor-devel Build Status](http://bioconductor.org/shields/build/devel/bioc/QuasR.svg)](http://bioconductor.org/checkResults/devel/bioc-LATEST/QuasR) | `NA` |
-| Bioc ([_release_](http://bioconductor.org/packages/release/bioc/html/QuasR.html)) | Multiple | [![Bioconductor-release Build Status](http://bioconductor.org/shields/build/release/bioc/QuasR.svg)](http://bioconductor.org/checkResults/release/bioc-LATEST/QuasR) | `NA` |
--->
