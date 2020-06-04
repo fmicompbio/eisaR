@@ -20,7 +20,7 @@ test_that("runEISA() runs", {
                       modelSamples = TRUE, geneSelection = "none")
     res1 <- runEISA(cntEx, cntIn, cond, method = "Gaidatzis2015")
     res1se <- runEISA(cntEx = cntSE1, cntIn = NULL, cond, method = "Gaidatzis2015")
-    res2 <- runEISA(cntEx, cntIn, cond, method = NULL)
+    res2 <- runEISA(cntEx, cntIn, cond, method = NULL, modelSamples = FALSE, sizeFactor = "default")
     expect_is(res0, "list")
     expect_is(res0se, "list")
     expect_equal(res0$contrasts, res0se$contrasts)

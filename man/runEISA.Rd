@@ -9,11 +9,12 @@ runEISA(
   cntIn,
   cond,
   method = NULL,
-  modelSamples = FALSE,
+  modelSamples = TRUE,
   geneSelection = c("filterByExpr", "none", "Gaidatzis2015"),
   statFramework = c("QLF", "LRT"),
   effects = c("predFC", "Gaidatzis2015"),
   pscnt = 2,
+  sizeFactor = c("exon", "default"),
   ...
 )
 }
@@ -46,12 +47,12 @@ will be used instead (recommended).}
 \item{modelSamples}{Whether to include a sample identifier in the design matrix
 of the statistical model. If \code{TRUE}, potential sample effects
 that affect both exonic and intronic counts of that sample will be taken
-into account, which could result in higher sensitivity (default: FALSE).}
+into account, which could result in higher sensitivity (default: \code{TRUE}).}
 
 \item{geneSelection}{Controls how to select quantifyable genes. One of the
 following:\describe{
 \item{\code{"filterByExpr"}: }{(default) First, counts are normalized using
-\code{\link[edgeR]{calcNormFactors}}, treating intonic and exonic counts
+\code{\link[edgeR]{calcNormFactors}}, treating intronic and exonic counts
 as individual samples. Then, \code{\link[edgeR]{filterByExpr}} is used
 with default parameters to select quantifyable genes.}
 \item{\code{"none"}: }{This will use all the genes provided in the count
@@ -70,7 +71,7 @@ for the statistical analysis. One of:\describe{
 \code{\link[edgeR:glmQLFTest]{glmQLFit}} and \code{\link[edgeR]{glmQLFTest}}. This
 framework is highly recommended as it gives stricter error rate control
 by accounting for the uncertainty in dispersion estimation.}
-\item{\code{"LRT"}: }{Likelyhood ratio test using \code{\link[edgeR]{glmFit}}
+\item{\code{"LRT"}: }{Likelihood ratio test using \code{\link[edgeR]{glmFit}}
 and \code{\link[edgeR:glmFit]{glmLRT}}}.
 }}
 
@@ -93,6 +94,11 @@ used in Gaidatzis et al., 2015.}
 It is added to scaled read counts used in \code{geneSelection = "Gaidatzis2015"}
 and \code{effects = "Gaidatzis2015"}, or else used in \code{cpm(..., prior.count = pscnt)}
 and \code{predFC(..., prior.count = pscnt)}.}
+
+\item{sizeFactor}{How the size factors are calculated in the analysis.
+If 'exon' (default), the exon-derived size factors are used also for the
+columns corresponding to intronic counts. If 'default', column-wise size factors
+are calculated.}
 
 \item{...}{additional arguments passed to the \code{\link[edgeR]{DGEList}}
 constructor, such as \code{lib.size} or \code{genes}.}
