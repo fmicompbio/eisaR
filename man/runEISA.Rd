@@ -14,7 +14,7 @@ runEISA(
   statFramework = c("QLF", "LRT"),
   effects = c("predFC", "Gaidatzis2015"),
   pscnt = 2,
-  sizeFactor = c("exon", "default"),
+  sizeFactor = c("exon", "intron", "individual"),
   ...
 )
 }
@@ -97,8 +97,9 @@ and \code{predFC(..., prior.count = pscnt)}.}
 
 \item{sizeFactor}{How the size factors are calculated in the analysis.
 If 'exon' (default), the exon-derived size factors are used also for the
-columns corresponding to intronic counts. If 'default', column-wise size factors
-are calculated.}
+columns corresponding to intronic counts. If 'intron', the intron-derived
+size factors are used also for the columns corresponding to exonic
+counts. If 'individual', column-wise size factors are calculated.}
 
 \item{...}{additional arguments passed to the \code{\link[edgeR]{DGEList}}
 constructor, such as \code{lib.size} or \code{genes}.}

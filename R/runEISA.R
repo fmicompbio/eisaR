@@ -75,8 +75,9 @@
 #'   and \code{predFC(..., prior.count = pscnt)}.
 #' @param sizeFactor How the size factors are calculated in the analysis. 
 #'   If 'exon' (default), the exon-derived size factors are used also for the 
-#'   columns corresponding to intronic counts. If 'default', column-wise size factors
-#'   are calculated. 
+#'   columns corresponding to intronic counts. If 'intron', the intron-derived 
+#'   size factors are used also for the columns corresponding to exonic 
+#'   counts. If 'individual', column-wise size factors are calculated. 
 #' @param ... additional arguments passed to the \code{\link[edgeR]{DGEList}}
 #'   constructor, such as \code{lib.size} or \code{genes}.
 #'
@@ -130,7 +131,7 @@ runEISA <- function(cntEx, cntIn, cond, method = NULL,
                     statFramework = c("QLF", "LRT"),
                     effects = c("predFC", "Gaidatzis2015"),
                     pscnt = 2, 
-                    sizeFactor = c("exon", "default"), ...) {
+                    sizeFactor = c("exon", "intron", "individual"), ...) {
     # check arguments
     # ... count matrices
     if (is(cntEx, "SummarizedExperiment")) {
@@ -195,7 +196,7 @@ runEISA <- function(cntEx, cntIn, cond, method = NULL,
         statFramework <- "LRT"
         effects <- "Gaidatzis2015"
         pscnt <- 8
-        sizeFactor <- "default"
+        sizeFactor <- "individual"
     }
     
     # fraction intronic
@@ -209,9 +210,11 @@ runEISA <- function(cntEx, cntIn, cond, method = NULL,
     # calculate normalization factors and library sizes based on exons only, or 
     # based on the individual columns
     y$samples$norm.factors.exons <- rep(edgeR::calcNormFactors(cntEx), 2)
-    y$samples$norm.factors.default <- edgeR::calcNormFactors(y$counts)
+    y$samples$norm.factors.introns <- rep(edgeR::calcNormFactors(cntIn), 2)
+    y$samples$norm.factors.individual <- edgeR::calcNormFactors(y$counts)
     y$samples$lib.size.exons <- rep(colSums(cntEx), 2)
-    y$samples$lib.size.default <- colSums(y$counts)
+    y$samples$lib.size.introns <- rep(colSums(cntIn), 2)
+    y$samples$lib.size.individual <- colSums(y$counts)
     # y <- edgeR::calcNormFactors(y)
 
     # create design matrix
@@ -233,14 +236,16 @@ runEISA <- function(cntEx, cntIn, cond, method = NULL,
     }
     rownames(dsgn) <- colnames(cnt)
     
-    # identify quantifyable genes
-    y$samples$norm.factors <- y$samples$norm.factors.default
-    y$samples$lib.size <- y$samples$lib.size.default
+    # identify quantifyable genes and calculate log-expression values
+    # here, each column is normalized with its own size factors
+    y$samples$norm.factors <- y$samples$norm.factors.individual
+    y$samples$lib.size <- y$samples$lib.size.individual
     if (geneSelection == "none") {
         message("skip filtering for quantifyable genes")
-        NLex <- edgeR::cpm(y[, seq.int(nsmpls)], log = TRUE, prior.count = pscnt)
-        NLin <- edgeR::cpm(y[, nsmpls + seq.int(nsmpls)], log = TRUE, prior.count = pscnt)
-        
+        NLex <- edgeR::cpm(y[, seq.int(nsmpls)], log = TRUE, 
+                           prior.count = pscnt)
+        NLin <- edgeR::cpm(y[, nsmpls + seq.int(nsmpls)], log = TRUE, 
+                           prior.count = pscnt)
     } else {
         message("filtering quantifyable genes...", appendLF = FALSE)
 
@@ -251,8 +256,10 @@ runEISA <- function(cntEx, cntIn, cond, method = NULL,
                     edgeR::filterByExpr(y[, nsmpls + seq.int(nsmpls)],
                                         design = dsgn[nsmpls + seq.int(nsmpls), ])
                 ]
-            NLex <- edgeR::cpm(y[, seq.int(nsmpls)], log = TRUE, prior.count = pscnt)
-            NLin <- edgeR::cpm(y[, nsmpls + seq.int(nsmpls)], log = TRUE, prior.count = pscnt)
+            NLex <- edgeR::cpm(y[, seq.int(nsmpls)], log = TRUE, 
+                               prior.count = pscnt)
+            NLin <- edgeR::cpm(y[, nsmpls + seq.int(nsmpls)], log = TRUE, 
+                               prior.count = pscnt)
             
         } else if (geneSelection == "Gaidatzis2015") {
             # scale counts to the mean library size separately for exons and introns
@@ -266,59 +273,64 @@ runEISA <- function(cntEx, cntIn, cond, method = NULL,
             NLin <- log2(Nin + pscnt)
 
             # Identify quantifyable genes
-            quantGenes <- rownames(cntEx)[rowMeans(NLex) > 5.0 & rowMeans(NLin) > 5.0]
+            quantGenes <- rownames(cntEx)[rowMeans(NLex) > 5.0 & 
+                                              rowMeans(NLin) > 5.0]
 
         }
         message("keeping ", length(quantGenes), " from ", nrow(y), " (",
                 round(length(quantGenes) * 100 / nrow(y), 1), "%)")
         y <- y[quantGenes, ]
         
-        y$samples$norm.factors.exons <- rep(edgeR::calcNormFactors(y$counts[, seq.int(nsmpls)]), 2)
-        y$samples$norm.factors.default <- edgeR::calcNormFactors(y$counts)
+        # Recalculate normalization factors after filtering out lowly 
+        # expressed genes
+        y$samples$norm.factors.exons <- rep(
+            edgeR::calcNormFactors(y$counts[, seq.int(nsmpls)]), 2)
+        y$samples$norm.factors.introns <- rep(
+            edgeR::calcNormFactors(y$counts[, nsmpls + seq.int(nsmpls)]), 2)
+        y$samples$norm.factors.individual <- edgeR::calcNormFactors(y$counts)
         # y <- edgeR::calcNormFactors(y)
         NLex <- NLex[quantGenes, ]
         NLin <- NLin[quantGenes, ]
     }
 
     # statistical analysis
+    if (sizeFactor == "exon") {
+        y$samples$lib.size <- y$samples$lib.size.exons
+        y$samples$norm.factors <- y$samples$norm.factors.exons
+    } else if (sizeFactor == "intron") {
+        y$samples$lib.size <- y$samples$lib.size.introns
+        y$samples$norm.factors <- y$samples$norm.factors.introns
+    } else {
+        y$samples$lib.size <- y$samples$lib.size.individual
+        y$samples$norm.factors <- y$samples$norm.factors.individual
+    }
     if (any(table(cond) < 2)) {
         warning("Need at least two replicates per condition to perform ",
                 "statistical analysis. 'ExIn' result will be empty.")
         tt.ExIn <- list(table = data.frame())
-
+        contr <- NULL
     } else {
         message("fitting statistical model...", appendLF = FALSE)
-        if (sizeFactor == "exon") {
-            y$samples$lib.size <- y$samples$lib.size.exons
-            y$samples$norm.factors <- y$samples$norm.factors.exons
-        } else {
-            y$samples$lib.size <- y$samples$lib.size.default
-            y$samples$norm.factors <- y$samples$norm.factors.default
-        }
         y <- edgeR::estimateDisp(y, dsgn)
+        if (modelSamples) {
+            contr <- (colnames(dsgn) == "c2.ex") - 
+                (colnames(dsgn) == "c1.ex")
+        } else {
+            contr <- as.numeric(colnames(dsgn) == colnames(dsgn)[ncol(dsgn)])
+        }
         if (statFramework == "QLF") {
             fit <- edgeR::glmQLFit(y, dsgn)
-            if (modelSamples) {
-                tst.ExIn <- edgeR::glmQLFTest(fit, contrast = (colnames(dsgn) == "c2.ex") - 
-                                                  (colnames(dsgn) == "c1.ex"))
-            } else {
-                tst.ExIn <- edgeR::glmQLFTest(fit, coef = ncol(dsgn))
-            }
+            tst.ExIn <- edgeR::glmQLFTest(fit, contrast = contr)
         } else if (statFramework == "LRT") {
             fit <- edgeR::glmFit(y, dsgn)
-            if (modelSamples) {
-                tst.ExIn <- edgeR::glmLRT(fit, contrast = (colnames(dsgn) == "c2.ex") - 
-                                              (colnames(dsgn) == "c1.ex"))
-            } else {
-                tst.ExIn <- edgeR::glmLRT(fit, coef = ncol(dsgn))
-            }
+            tst.ExIn <- edgeR::glmLRT(fit, contrast = contr)
         }
         tt.ExIn <- edgeR::topTags(tst.ExIn, n = nrow(y), sort.by = "none")
         message("done")
     }
 
-    # calculate contrasts
-    message("calculating contrasts...", appendLF = FALSE)
+    # calculate log-fold changes
+    message("calculating log-fold changes...", appendLF = FALSE)
     contrastName <- paste(levels(cond)[2], "-", levels(cond)[1])
     if (effects == "predFC") {
         if (is.null(y$common.dispersion))
@@ -356,10 +368,10 @@ runEISA <- function(cntEx, cntIn, cond, method = NULL,
     } else if (effects == "Gaidatzis2015") {
         i1 <- which(cond == levels(cond)[1])
         i2 <- which(cond == levels(cond)[2])
-        Dex <- rowMeans(NLex[quantGenes, i2, drop = FALSE]) - 
-            rowMeans(NLex[quantGenes, i1, drop = FALSE])
-        Din <- rowMeans(NLin[quantGenes, i2, drop = FALSE]) - 
-            rowMeans(NLin[quantGenes, i1, drop = FALSE])
+        Dex <- rowMeans(NLex[, i2, drop = FALSE]) - 
+            rowMeans(NLex[, i1, drop = FALSE])
+        Din <- rowMeans(NLin[, i2, drop = FALSE]) - 
+            rowMeans(NLin[, i1, drop = FALSE])
         Dex.Din <- Dex - Din
     }
     message("done")
@@ -370,8 +382,12 @@ runEISA <- function(cntEx, cntIn, cond, method = NULL,
                 contrasts = cbind(Dex = Dex, Din = Din, Dex.Din = Dex.Din),
                 DGEList = y,
                 tab.ExIn = tt.ExIn$table,
+                contr.ExIn = contr, 
+                designMatrix = dsgn, 
                 params = list(method = method, modelSamples = modelSamples,
-                              geneSelection = geneSelection, statFramework = statFramework,
-                              effects = effects, pscnt = pscnt, sizeFactor = sizeFactor)))
+                              geneSelection = geneSelection, 
+                              statFramework = statFramework,
+                              effects = effects, pscnt = pscnt, 
+                              sizeFactor = sizeFactor)))
 }
 
