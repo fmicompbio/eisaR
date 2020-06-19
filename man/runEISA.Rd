@@ -15,6 +15,8 @@ runEISA(
   effects = c("predFC", "Gaidatzis2015"),
   pscnt = 2,
   sizeFactor = c("exon", "intron", "individual"),
+  recalcNormFactAfterFilt = TRUE,
+  recalcLibSizeAfterFilt = FALSE,
   ...
 )
 }
@@ -39,7 +41,9 @@ conditions. The contrast will be defined as secondLevel - firstLevel.}
 calculation of contrasts is performed as described in Gaidatzis et al.
 2015, and the statistical analysis is based on \code{\link[edgeR]{glmFit}}
 and \code{\link[edgeR:glmFit]{glmLRT}}. This is done by setting the arguments
-\code{modelSamples}, \code{geneSelection}, \code{effects} and \code{statFramework}
+\code{modelSamples}, \code{geneSelection}, \code{effects}, \code{pscnt},
+\code{statFramework}, \code{sizeFactor}, \code{recalcNormFactAfterFilt}
+and \code{recalcLibSizeAfterFilt}
 to appropriate values (see details), overriding the defaults or any value
 passed to these arguments. If \code{NULL}, the default values of the arguments
 will be used instead (recommended).}
@@ -101,6 +105,14 @@ columns corresponding to intronic counts. If 'intron', the intron-derived
 size factors are used also for the columns corresponding to exonic
 counts. If 'individual', column-wise size factors are calculated.}
 
+\item{recalcNormFactAfterFilt}{Logical, indicating whether normalization
+factors should be recalculated after filtering out lowly
+expressed genes.}
+
+\item{recalcLibSizeAfterFilt}{Logical, indicating whether library
+sizes should be recalculated after filtering out lowly
+expressed genes.}
+
 \item{...}{additional arguments passed to the \code{\link[edgeR]{DGEList}}
 constructor, such as \code{lib.size} or \code{genes}.}
 }
@@ -114,6 +126,10 @@ difference between log2 fold-changes in exons and introns (\code{Dex.Din})}
 \item{DGEList}{\code{\link[edgeR]{DGEList}} object used in model fitting}
 \item{tab.ExIn}{statisical results for differential changes between exonic
 and intronic contrast, an indication for post-transcriptional regulation.}
+\item{contr.ExIn}{contrast vector used for testing the difference between
+exonic and intronic contrast (results in \code{tab.ExIn})}
+\item{designMatrix}{design matrix used for testing the difference between
+exonic and intronic contrast (results in \code{tab.ExIn})}
 \item{params}{a \code{list} with parameter values used to run EISA}
 }
 }
@@ -126,7 +142,9 @@ quantifyable genes, calculate contrasts and their significance).
 Setting \code{method = "Gaidatzis2015"} has precedence over other
 argument values and corresponds to setting:
 \code{modelSamples = FALSE, geneSelection = "Gaidatzis2015",
-  statFramework = "LRT", effects = "Gaidatzis2015", pscnt = 8}.
+  statFramework = "LRT", effects = "Gaidatzis2015", pscnt = 8, 
+  sizeFactor = "individual", recalcNormFactAfterFilt = TRUE, 
+  recalcLibSizeAfterFilt = FALSE}.
 }
 \examples{
 cntEx <- readRDS(system.file("extdata", "Fig3abc_GSE33252_rawcounts_exonic.rds",

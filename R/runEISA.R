@@ -23,7 +23,9 @@
 #'   calculation of contrasts is performed as described in Gaidatzis et al.
 #'   2015, and the statistical analysis is based on \code{\link[edgeR]{glmFit}}
 #'   and \code{\link[edgeR:glmFit]{glmLRT}}. This is done by setting the arguments
-#'   \code{modelSamples}, \code{geneSelection}, \code{effects} and \code{statFramework}
+#'   \code{modelSamples}, \code{geneSelection}, \code{effects}, \code{pscnt},   
+#'   \code{statFramework}, \code{sizeFactor}, \code{recalcNormFactAfterFilt} 
+#'   and \code{recalcLibSizeAfterFilt}
 #'   to appropriate values (see details), overriding the defaults or any value
 #'   passed to these arguments. If \code{NULL}, the default values of the arguments
 #'   will be used instead (recommended).
@@ -78,13 +80,21 @@
 #'   columns corresponding to intronic counts. If 'intron', the intron-derived 
 #'   size factors are used also for the columns corresponding to exonic 
 #'   counts. If 'individual', column-wise size factors are calculated. 
+#' @param recalcNormFactAfterFilt Logical, indicating whether normalization 
+#'   factors should be recalculated after filtering out lowly 
+#'   expressed genes. 
+#' @param recalcLibSizeAfterFilt Logical, indicating whether library 
+#'   sizes should be recalculated after filtering out lowly 
+#'   expressed genes. 
 #' @param ... additional arguments passed to the \code{\link[edgeR]{DGEList}}
 #'   constructor, such as \code{lib.size} or \code{genes}.
 #'
 #' @details Setting \code{method = "Gaidatzis2015"} has precedence over other
 #'   argument values and corresponds to setting:
 #'   \code{modelSamples = FALSE, geneSelection = "Gaidatzis2015",
-#'   statFramework = "LRT", effects = "Gaidatzis2015", pscnt = 8}.
+#'   statFramework = "LRT", effects = "Gaidatzis2015", pscnt = 8, 
+#'   sizeFactor = "individual", recalcNormFactAfterFilt = TRUE, 
+#'   recalcLibSizeAfterFilt = FALSE}.
 #'   
 #' @return a \code{list} with elements \describe{
 #'   \item{fracIn}{fraction intronic counts in each sample}
@@ -95,6 +105,10 @@
 #'   \item{DGEList}{\code{\link[edgeR]{DGEList}} object used in model fitting}
 #'   \item{tab.ExIn}{statisical results for differential changes between exonic
 #'   and intronic contrast, an indication for post-transcriptional regulation.}
+#'   \item{contr.ExIn}{contrast vector used for testing the difference between 
+#'   exonic and intronic contrast (results in \code{tab.ExIn})}
+#'   \item{designMatrix}{design matrix used for testing the difference between 
+#'   exonic and intronic contrast (results in \code{tab.ExIn})}
 #'   \item{params}{a \code{list} with parameter values used to run EISA}
 #' }
 #'
@@ -131,7 +145,9 @@ runEISA <- function(cntEx, cntIn, cond, method = NULL,
                     statFramework = c("QLF", "LRT"),
                     effects = c("predFC", "Gaidatzis2015"),
                     pscnt = 2, 
-                    sizeFactor = c("exon", "intron", "individual"), ...) {
+                    sizeFactor = c("exon", "intron", "individual"), 
+                    recalcNormFactAfterFilt = TRUE, 
+                    recalcLibSizeAfterFilt = FALSE, ...) {
     # check arguments
     # ... count matrices
     if (is(cntEx, "SummarizedExperiment")) {
@@ -197,6 +213,8 @@ runEISA <- function(cntEx, cntIn, cond, method = NULL,
         effects <- "Gaidatzis2015"
         pscnt <- 8
         sizeFactor <- "individual"
+        recalcNormFactAfterFilt <- TRUE
+        recalcLibSizeAfterFilt <- FALSE
     }
     
     # fraction intronic
@@ -283,11 +301,20 @@ runEISA <- function(cntEx, cntIn, cond, method = NULL,
         
         # Recalculate normalization factors after filtering out lowly 
         # expressed genes
-        y$samples$norm.factors.exons <- rep(
-            edgeR::calcNormFactors(y$counts[, seq.int(nsmpls)]), 2)
-        y$samples$norm.factors.introns <- rep(
-            edgeR::calcNormFactors(y$counts[, nsmpls + seq.int(nsmpls)]), 2)
-        y$samples$norm.factors.individual <- edgeR::calcNormFactors(y$counts)
+        if (recalcNormFactAfterFilt) {
+            y$samples$norm.factors.exons <- rep(
+                edgeR::calcNormFactors(y$counts[, seq.int(nsmpls)]), 2)
+            y$samples$norm.factors.introns <- rep(
+                edgeR::calcNormFactors(y$counts[, nsmpls + seq.int(nsmpls)]), 2)
+            y$samples$norm.factors.individual <- edgeR::calcNormFactors(y$counts)
+        }
+        if (recalcLibSizeAfterFilt) {
+            y$samples$lib.size.exons <- rep(
+                colSums(y$counts[, seq.int(nsmpls)]), 2)
+            y$samples$lib.size.introns <- rep(
+                colSums(y$counts[, nsmpls + seq.int(nsmpls)]), 2)
+            y$samples$lib.size.individual <- colSums(y$counts)
+        }
         # y <- edgeR::calcNormFactors(y)
         NLex <- NLex[quantGenes, ]
         NLin <- NLin[quantGenes, ]
