@@ -30,10 +30,10 @@ regulation of gene expression.
 
 The `eisaR` package contains convenience functions to facilitate the steps in an
 exon-intron split analysis, which consists of:  
-1. preparing the annotation (exonic and gene body coordinate ranges)  
-2. quantifying RNA-seq alignments in exons and introns  
-3. calculating and comparing exonic and intronic changes across conditions  
-4. visualizing the results  
+1. preparing the annotation (exonic and gene body coordinate ranges, section \@ref(annotation))  
+2. quantifying RNA-seq alignments in exons and introns (sections \@ref(align) and \@ref(count))  
+3. calculating and comparing exonic and intronic changes across conditions (section \@ref(convenient))  
+4. visualizing the results (section \@ref(plot))  
 
 For the steps 1. and 2. above, this vignette makes use of Bioconductor annotation and
 the `r Biocpkg("QuasR")` package. It is also possible to obtain count tables for exons and
@@ -146,8 +146,8 @@ exons:
 cntEx <- qCount(proj, regU$exons, orientation = "any")
 cntGb <- qCount(proj, regU$genebodies, orientation = "any")
 cntIn <- cntGb - cntEx
-head(cntEx)
-head(cntIn)
+cntEx
+cntIn
 ```
 
 As mentioned, both alignments and counts can also be obtained using alternative
@@ -204,14 +204,14 @@ below).
 
 * `geneSelection`: How to select detected genes. Possible values are:  
   - `"filterByExpr"` (default): First, counts are normalized using `edgeR::calcNormFactors`,
-    treating intonic and exonic counts as individual samples. Then, the 
+    treating intronic and exonic counts as individual samples. Then, the 
     `edgeR::filterByExpr` function is used with default parameters to select
-    quantifyable genes.
+    quantifiable genes.
   - `"none"`: This will use all the genes provided in the count tables, assuming
-    that an appropriate selection of quantifyable genes has already been done.  
+    that an appropriate selection of quantifiable genes has already been done.  
   - `"Gaidatzis2015"` (`method="Gaidatzis2015"`): First, intronic and exonic counts
     are linearly scaled to the mean library size (estimated as the sum of all intronic
-    or exonic counts, respectively). Then, quantifyable genes are selected as the
+    or exonic counts, respectively). Then, quantifiable genes are selected as the
     genes with counts `x` that fulfill `log2(x + 8) > 5` in both exons and introns.  
     
 * `statFramework`: The framework within `edgeR` that is used for the statistical analysis.
@@ -219,7 +219,7 @@ below).
   - `"QLF"` (default): quasi-likelihood F-test using `edgeR::glmQLFit` and
     `edgeR::glmQLFTest`. This framework is highly recommended as it gives stricter
     error rate control by accounting for the uncertainty in dispersion estimation.  
-  - `"LRT"` (`method="Gaidatzis2015"`): likelyhood ratio test using `edgeR::glmFit`
+  - `"LRT"` (`method="Gaidatzis2015"`): likelihood ratio test using `edgeR::glmFit`
     and `edgeR::glmLRT`.  
   
 * `effects`: How the effects (log2 fold-changes) are calculated. Possible values are:  
@@ -239,7 +239,7 @@ below).
 
 While different values for these arguments typically yield similar results,
 the defaults are often less stringent compared to `method="Gaidatzis2015"` when
-selecting quantifyable genes, but more stringent when calling significant changes
+selecting quantifiable genes, but more stringent when calling significant changes
 (especially with low numbers of replicates).
 
 Here is an illustration of how the results differ `method="Gaidatzis2015"` and
@@ -249,7 +249,7 @@ the defaults:
 res1 <- runEISA(Rex, Rin, cond, method = "Gaidatzis2015")
 res2 <- runEISA(Rex, Rin, cond)
 
-# number of quantifyable genes
+# number of quantifiable genes
 nrow(res1$DGEList)
 nrow(res2$DGEList)
 
@@ -275,17 +275,17 @@ plot(res1$contrasts[ids,"Dex.Din"], res2$contrasts[ids,"Dex.Din"], pch = "*",
 The calculation of the significance of interactions (here whether the fold-changes
 differ between exonic or intronic data) is well defined for experimental designs
 were all samples are independent from one another. Within EISA, this is not the
-case (each sample yields two data points, on for exons and one for introns). That
-results in a dependency between datapoints: If a sample is affected by a problem
-in the experiment, it might at the same time give rise to outliers in both exonic
-and intronic counts.
+case (each sample yields two data points, one for exons and one for introns). That
+results in a dependency between data points: If a sample is affected by a problem
+in the experiment, it might at the same time give rise to outlier values in both
+exonic and intronic counts.
 
 In statistics, such an experimental design is often referred to as a split-plot
 design, and a recommended way to analyze interactions in such experiments would
 be to use a mixed effect model with the plot (in our case, the sample) as a random
 effect. The disadvantage here however would be that available packages for mixed
 effect models are not designed for count data, and we therefore use an alternative
-approach to explicitely model the sample dependency, by introducing a sample
+approach to explicitly model the sample dependency, by introducing a sample
 factor into the design matrix (for `modelSamples=TRUE`). That sample factor is
 nested in the condition factor (no sample can belong to more than one condition),
 and therefore not all coefficients can be estimated. We therefore drop one of
@@ -328,7 +328,7 @@ legend("bottomright", "y = x", bty = "n", lty = 1, col = "gray")
 
 # Visualize EISA results{#plot}
 We can now visualize the results by plotting intronic changes versus exonic
-changes (genes with signficant interactions, which are likely to be post-transcriptionally
+changes (genes with significant interactions, which are likely to be post-transcriptionally
 regulated, are color coded):  
 ```{r plotEISA}
 plotEISA(res)
@@ -336,8 +336,8 @@ plotEISA(res)
 
 # Run EISA step-by-step{#stepwise}
 As an alternative to `runEISA` (section \@ref(convenient)) and `plotEISA`
-(section \@ref(plot)) described above, you can also analyse the data step-by-step
-as described in [@eisa]. This may be preferrable to understand each
+(section \@ref(plot)) described above, you can also analyze the data step-by-step
+as described in [@eisa]. This may be preferable to understand each
 individual step and be able to access intermediate results.
 
 The results obtained in this way are identical to what you get with
@@ -365,7 +365,7 @@ NLex <- log2(Nex + 8)
 NLin <- log2(Nin + 8)
 ```
 
-## Identify quantifyable genes
+## Identify quantifiable genes
 Genes with very low counts in either exons or introns are better removed, as
 they will be too noisy to yield useful results. We use here a fixed cut-off
 on the normalized, log-transformed intron and exonic counts:  
@@ -403,7 +403,7 @@ library(edgeR)
 cnt <- data.frame(Ex = Rex, In = Rin)
 y <- DGEList(counts = cnt, genes = data.frame(ENTREZID = rownames(cnt)))
 
-# select quantifyable genes and normalize
+# select quantifiable genes and normalize
 y <- y[quantGenes, ]
 y <- calcNormFactors(y)
 
@@ -428,7 +428,7 @@ head(tt$table[order(tt$table$FDR, decreasing = FALSE), ])
 
 ## Visualize the results
 Finally, we visualize the results by plotting intronic changes versus exonic
-changes (genes with signficant interactions, which are likely to be post-transcriptionally
+changes (genes with significant interactions, which are likely to be post-transcriptionally
 regulated, are color coded):  
 ```{r plot}
 sig     <- tt$table$FDR < 0.05
