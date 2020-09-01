@@ -73,7 +73,7 @@ and generates a scatterplot of intronic versus exonic changes." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">eisaR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
       </span>
     </div>
 
@@ -141,12 +141,12 @@ and generates a scatterplot of intronic versus exonic changes.</p>
     </div>
 
     <pre class="usage"><span class='fu'>plotEISA</span>(
-  <span class='no'>x</span>,
-  <span class='kw'>contrast</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"ExIn"</span>, <span class='st'>"none"</span>),
-  <span class='kw'>minLfc</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>maxFDR</span> <span class='kw'>=</span> <span class='fl'>0.05</span>,
-  <span class='kw'>genecolors</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"#E41A1C"</span>, <span class='st'>"#497AB3"</span>, <span class='st'>"#222222"</span>),
-  <span class='no'>...</span>
+  <span class='kw'>x</span>,
+  contrast = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"ExIn"</span>, <span class='st'>"none"</span>),
+  minLfc = <span class='kw'>NULL</span>,
+  maxFDR = <span class='fl'>0.05</span>,
+  genecolors = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"#E41A1C"</span>, <span class='st'>"#497AB3"</span>, <span class='st'>"#222222"</span>),
+  <span class='kw'>...</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -180,8 +180,8 @@ genes that are significantly up, down or unchanged.</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>further arguments past to <code><a href='https://rdrr.io/r/base/plot.html'>plot()</a></code>. Parameters that will be set
-automatically unless given in the arguments are:</p><dl'>
+      <td><p>further arguments past to <code><a href='https://rdrr.io/r/graphics/plot.default.html'>plot()</a></code>. Parameters that will be set
+automatically unless given in the arguments are:</p><dl>
 <dt>pch</dt><dd><p>: plot symbol (default: <code>"."</code>)</p></dd>
 <dt>cex</dt><dd><p>: plot symbol expansion factor (default: <code>2</code>)</p></dd>
 <dt>col</dt><dd><p>: plot symbol color (default: according to <code>contrast</code> and <code>genecolors</code>)</p></dd>
@@ -194,9 +194,12 @@ automatically unless given in the arguments are:</p><dl'>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p><code>NULL</code> (invisibly)</p>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Michael Stadler</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>  # see the help for runEISA() for a full example
+    <pre class="examples"><div class='input'>  <span class='co'># see the help for runEISA() for a full example</span>
 
 </div></pre>
   </div>
@@ -214,7 +217,7 @@ automatically unless given in the arguments are:</p><dl'>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.0.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
 </div>
 
       </footer>

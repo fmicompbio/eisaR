@@ -73,7 +73,7 @@ spliced transcripts, unspliced transcripts and introns." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">eisaR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
       </span>
     </div>
 
@@ -141,12 +141,12 @@ spliced transcripts, unspliced transcripts and introns.</p>
     </div>
 
     <pre class="usage"><span class='fu'>getFeatureRanges</span>(
-  <span class='no'>gtf</span>,
-  <span class='kw'>featureType</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"spliced"</span>, <span class='st'>"intron"</span>),
-  <span class='kw'>intronType</span> <span class='kw'>=</span> <span class='st'>"separate"</span>,
-  <span class='kw'>flankLength</span> <span class='kw'>=</span> <span class='fl'>90L</span>,
-  <span class='kw'>joinOverlappingIntrons</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
+  <span class='kw'>gtf</span>,
+  featureType = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"spliced"</span>, <span class='st'>"intron"</span>),
+  intronType = <span class='st'>"separate"</span>,
+  flankLength = <span class='fl'>90L</span>,
+  joinOverlappingIntrons = <span class='fl'>FALSE</span>,
+  verbose = <span class='fl'>TRUE</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -193,19 +193,24 @@ one feature.</p></td>
 one extracted feature. The metadata of this object contains two
 <code>data.frame</code>s mapping corresponding identifiers between the
 different feature types, as well as a list of all features for each type.</p>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Charlotte Soneson</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>  <span class='co'>## Get feature ranges</span>
-  <span class='no'>grl</span> <span class='kw'>&lt;-</span> <span class='fu'>getFeatureRanges</span>(
-    <span class='kw'>gtf</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"extdata/small_example.gtf"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"eisaR"</span>),
-    <span class='kw'>featureType</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"spliced"</span>, <span class='st'>"intron"</span>),
-    <span class='kw'>intronType</span> <span class='kw'>=</span> <span class='st'>"separate"</span>,
-    <span class='kw'>flankLength</span> <span class='kw'>=</span> <span class='fl'>5L</span>,
-    <span class='kw'>joinOverlappingIntrons</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-    <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
-  )</div><div class='output co'>#&gt; <span class='message'>Import genomic features from the file as a GRanges object ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Prepare the 'metadata' data frame ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Make the TxDb object ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>'select()' returned 1:1 mapping between keys and columns</span></div><div class='output co'>#&gt; <span class='message'>Extracting spliced transcript features</span></div><div class='output co'>#&gt; <span class='message'>Extracting introns using the separate approach</span></div><div class='input'>
+  <span class='kw'>grl</span> <span class='op'>&lt;-</span> <span class='fu'>getFeatureRanges</span>(
+    gtf = <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"extdata/small_example.gtf"</span>, package = <span class='st'>"eisaR"</span>),
+    featureType = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"spliced"</span>, <span class='st'>"intron"</span>),
+    intronType = <span class='st'>"separate"</span>,
+    flankLength = <span class='fl'>5L</span>,
+    joinOverlappingIntrons = <span class='fl'>FALSE</span>,
+    verbose = <span class='fl'>TRUE</span>
+  )
+</div><div class='output co'>#&gt; <span class='message'>Import genomic features from the file as a GRanges object ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Prepare the 'metadata' data frame ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Make the TxDb object ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>'select()' returned 1:1 mapping between keys and columns</span></div><div class='output co'>#&gt; <span class='message'>Extracting spliced transcript features</span></div><div class='output co'>#&gt; <span class='message'>Extracting introns using the separate approach</span></div><div class='input'>  
   <span class='co'>## GRangesList</span>
-  <span class='no'>grl</span></div><div class='output co'>#&gt; GRangesList object of length 17:
+  <span class='kw'>grl</span>
+</div><div class='output co'>#&gt; GRangesList object of length 17:
 #&gt; $tx1.3
 #&gt; GRanges object with 1 range and 5 metadata columns:
 #&gt;       seqnames    ranges strand |     exon_id exon_rank transcript_id
@@ -246,9 +251,10 @@ different feature types, as well as a list of all features for each type.</p>
 #&gt;   seqinfo: 2 sequences from an unspecified genome; no seqlengths
 #&gt; 
 #&gt; ...
-#&gt; &lt;14 more elements&gt;</div><div class='input'>
+#&gt; &lt;14 more elements&gt;</div><div class='input'>  
   <span class='co'>## Corresponding transcript/gene IDs</span>
-  <span class='kw pkg'>S4Vectors</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/S4Vectors/man/Annotated-class.html'>metadata</a></span>(<span class='no'>grl</span>)$<span class='no'>corrtx</span></div><div class='output co'>#&gt;   spliced
+  <span class='kw'>S4Vectors</span>::<span class='fu'><a href='https://rdrr.io/pkg/S4Vectors/man/Annotated-class.html'>metadata</a></span>(<span class='kw'>grl</span>)<span class='op'>$</span><span class='kw'>corrtx</span>
+</div><div class='output co'>#&gt;   spliced
 #&gt; 1   tx1.3
 #&gt; 2   tx1.1
 #&gt; 3   tx1.2
@@ -256,28 +262,31 @@ different feature types, as well as a list of all features for each type.</p>
 #&gt; 5 tx2.2-U
 #&gt; 6   tx3.3
 #&gt; 7   tx3.1
-#&gt; 8   tx3.2</div><div class='input'>  <span class='kw pkg'>S4Vectors</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/S4Vectors/man/Annotated-class.html'>metadata</a></span>(<span class='no'>grl</span>)$<span class='no'>corrgene</span></div><div class='output co'>#&gt;   spliced intron
+#&gt; 8   tx3.2</div><div class='input'>  <span class='kw'>S4Vectors</span>::<span class='fu'><a href='https://rdrr.io/pkg/S4Vectors/man/Annotated-class.html'>metadata</a></span>(<span class='kw'>grl</span>)<span class='op'>$</span><span class='kw'>corrgene</span>
+</div><div class='output co'>#&gt;   spliced intron
 #&gt; 1      g1   g1-I
 #&gt; 2    g2-I g2-I-I
-#&gt; 3    g3-U g3-U-I</div><div class='input'>
+#&gt; 3    g3-U g3-U-I</div><div class='input'>  
   <span class='co'>## List of features of different types</span>
-  <span class='kw pkg'>S4Vectors</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/S4Vectors/man/Annotated-class.html'>metadata</a></span>(<span class='no'>grl</span>)$<span class='no'>featurelist</span></div><div class='output co'>#&gt; $spliced
+  <span class='kw'>S4Vectors</span>::<span class='fu'><a href='https://rdrr.io/pkg/S4Vectors/man/Annotated-class.html'>metadata</a></span>(<span class='kw'>grl</span>)<span class='op'>$</span><span class='kw'>featurelist</span>
+</div><div class='output co'>#&gt; $spliced
 #&gt; [1] "tx1.3"   "tx1.1"   "tx1.2"   "tx2.1-I" "tx2.2-U" "tx3.3"   "tx3.1"  
 #&gt; [8] "tx3.2"  
 #&gt; 
 #&gt; $intron
 #&gt; [1] "tx1.1-I"    "tx1.2-I"    "tx1.2-I1"   "tx2.1-I-I"  "tx2.2-U-I" 
 #&gt; [6] "tx2.2-U-I1" "tx3.1-I"    "tx3.2-I"    "tx3.2-I1"  
-#&gt; </div><div class='input'>
+#&gt; </div><div class='input'>  
   <span class='co'>## Get feature sequences</span>
-  <span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/ns-load.html'>requireNamespace</a></span>(<span class='st'>"BSgenome"</span>, <span class='kw'>quietly</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)) {
-    <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>BSgenome</span>)
-    <span class='no'>genome</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>Biostrings</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/Biostrings/man/XStringSet-io.html'>readDNAStringSet</a></span>(
-      <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"extdata/small_example_genome.fa"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"eisaR"</span>))
-    <span class='no'>seqs</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>GenomicFeatures</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/GenomicFeatures/man/extractTranscriptSeqs.html'>extractTranscriptSeqs</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='no'>genome</span>,
-                                                   <span class='kw'>transcripts</span> <span class='kw'>=</span> <span class='no'>grl</span>)
-    <span class='no'>seqs</span>
-  }</div><div class='output co'>#&gt; <span class='message'>Loading required package: BiocGenerics</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: parallel</span></div><div class='output co'>#&gt; <span class='message'></span>
+  <span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/ns-load.html'>requireNamespace</a></span>(<span class='st'>"BSgenome"</span>, quietly = <span class='fl'>TRUE</span>)) {
+    <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'>BSgenome</span>)
+    <span class='kw'>genome</span> <span class='op'>&lt;-</span> <span class='kw'>Biostrings</span>::<span class='fu'><a href='https://rdrr.io/pkg/Biostrings/man/XStringSet-io.html'>readDNAStringSet</a></span>(
+      <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"extdata/small_example_genome.fa"</span>, package = <span class='st'>"eisaR"</span>))
+    <span class='kw'>seqs</span> <span class='op'>&lt;-</span> <span class='kw'>GenomicFeatures</span>::<span class='fu'><a href='https://rdrr.io/pkg/GenomicFeatures/man/extractTranscriptSeqs.html'>extractTranscriptSeqs</a></span>(x = <span class='kw'>genome</span>, 
+                                                   transcripts = <span class='kw'>grl</span>)
+    <span class='kw'>seqs</span>
+  }
+</div><div class='output co'>#&gt; <span class='message'>Loading required package: BiocGenerics</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: parallel</span></div><div class='output co'>#&gt; <span class='message'></span>
 #&gt; <span class='message'>Attaching package: ‘BiocGenerics’</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:parallel’:</span>
 #&gt; <span class='message'></span>
 #&gt; <span class='message'>    clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,</span>
@@ -291,7 +300,7 @@ different feature types, as well as a list of all features for each type.</p>
 #&gt; <span class='message'>    grepl, intersect, is.unsorted, lapply, Map, mapply, match, mget,</span>
 #&gt; <span class='message'>    order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank,</span>
 #&gt; <span class='message'>    rbind, Reduce, rownames, sapply, setdiff, sort, table, tapply,</span>
-#&gt; <span class='message'>    union, unique, unsplit, which, which.max, which.min</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: S4Vectors</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: stats4</span></div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'>    union, unique, unsplit, which.max, which.min</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: S4Vectors</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: stats4</span></div><div class='output co'>#&gt; <span class='message'></span>
 #&gt; <span class='message'>Attaching package: ‘S4Vectors’</span></div><div class='output co'>#&gt; <span class='message'>The following object is masked from ‘package:base’:</span>
 #&gt; <span class='message'></span>
 #&gt; <span class='message'>    expand.grid</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: IRanges</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: GenomeInfoDb</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: GenomicRanges</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: Biostrings</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: XVector</span></div><div class='output co'>#&gt; <span class='message'></span>
@@ -326,7 +335,7 @@ different feature types, as well as a list of all features for each type.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.0.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
 </div>
 
       </footer>

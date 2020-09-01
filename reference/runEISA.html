@@ -74,7 +74,7 @@ quantifyable genes, calculate contrasts and their significance)." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">eisaR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
       </span>
     </div>
 
@@ -143,16 +143,19 @@ quantifyable genes, calculate contrasts and their significance).</p>
     </div>
 
     <pre class="usage"><span class='fu'>runEISA</span>(
-  <span class='no'>cntEx</span>,
-  <span class='no'>cntIn</span>,
-  <span class='no'>cond</span>,
-  <span class='kw'>method</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>modelSamples</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>geneSelection</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"filterByExpr"</span>, <span class='st'>"none"</span>, <span class='st'>"Gaidatzis2015"</span>),
-  <span class='kw'>statFramework</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"QLF"</span>, <span class='st'>"LRT"</span>),
-  <span class='kw'>effects</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"predFC"</span>, <span class='st'>"Gaidatzis2015"</span>),
-  <span class='kw'>pscnt</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-  <span class='no'>...</span>
+  <span class='kw'>cntEx</span>,
+  <span class='kw'>cntIn</span>,
+  <span class='kw'>cond</span>,
+  method = <span class='kw'>NULL</span>,
+  modelSamples = <span class='fl'>TRUE</span>,
+  geneSelection = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"filterByExpr"</span>, <span class='st'>"none"</span>, <span class='st'>"Gaidatzis2015"</span>),
+  statFramework = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"QLF"</span>, <span class='st'>"LRT"</span>),
+  effects = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"predFC"</span>, <span class='st'>"Gaidatzis2015"</span>),
+  pscnt = <span class='fl'>2</span>,
+  sizeFactor = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"exon"</span>, <span class='st'>"intron"</span>, <span class='st'>"individual"</span>),
+  recalcNormFactAfterFilt = <span class='fl'>TRUE</span>,
+  recalcLibSizeAfterFilt = <span class='fl'>FALSE</span>,
+  <span class='kw'>...</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -186,7 +189,9 @@ conditions. The contrast will be defined as secondLevel - firstLevel.</p></td>
 calculation of contrasts is performed as described in Gaidatzis et al.
 2015, and the statistical analysis is based on <code><a href='https://rdrr.io/pkg/edgeR/man/glmfit.html'>glmFit</a></code>
 and <code><a href='https://rdrr.io/pkg/edgeR/man/glmfit.html'>glmLRT</a></code>. This is done by setting the arguments
-<code>modelSamples</code>, <code>geneSelection</code>, <code>effects</code> and <code>statFramework</code>
+<code>modelSamples</code>, <code>geneSelection</code>, <code>effects</code>, <code>pscnt</code>,
+<code>statFramework</code>, <code>sizeFactor</code>, <code>recalcNormFactAfterFilt</code>
+and <code>recalcLibSizeAfterFilt</code>
 to appropriate values (see details), overriding the defaults or any value
 passed to these arguments. If <code>NULL</code>, the default values of the arguments
 will be used instead (recommended).</p></td>
@@ -196,14 +201,14 @@ will be used instead (recommended).</p></td>
       <td><p>Whether to include a sample identifier in the design matrix
 of the statistical model. If <code>TRUE</code>, potential sample effects
 that affect both exonic and intronic counts of that sample will be taken
-into account, which could result in higher sensitivity (default: FALSE).</p></td>
+into account, which could result in higher sensitivity (default: <code>TRUE</code>).</p></td>
     </tr>
     <tr>
       <th>geneSelection</th>
       <td><p>Controls how to select quantifyable genes. One of the
-following:</p><dl'>
+following:</p><dl>
 <dt><code>"filterByExpr"</code>: </dt><dd><p>(default) First, counts are normalized using
-<code><a href='https://rdrr.io/pkg/edgeR/man/calcNormFactors.html'>calcNormFactors</a></code>, treating intonic and exonic counts
+<code><a href='https://rdrr.io/pkg/edgeR/man/calcNormFactors.html'>calcNormFactors</a></code>, treating intronic and exonic counts
 as individual samples. Then, <code><a href='https://rdrr.io/pkg/edgeR/man/filterByExpr.html'>filterByExpr</a></code> is used
 with default parameters to select quantifyable genes.</p></dd>
 <dt><code>"none"</code>: </dt><dd><p>This will use all the genes provided in the count
@@ -220,12 +225,12 @@ selected as the genes with counts <code>x</code> that fulfill
     <tr>
       <th>statFramework</th>
       <td><p>Selects the framework within <code>edgeR</code> that is used
-for the statistical analysis. One of:</p><dl'>
+for the statistical analysis. One of:</p><dl>
 <dt><code>"QLF"</code>: </dt><dd><p>(default) Quasi-likelihood F-test using
 <code><a href='https://rdrr.io/pkg/edgeR/man/glmQLFTest.html'>glmQLFit</a></code> and <code><a href='https://rdrr.io/pkg/edgeR/man/glmQLFTest.html'>glmQLFTest</a></code>. This
 framework is highly recommended as it gives stricter error rate control
 by accounting for the uncertainty in dispersion estimation.</p></dd>
-<dt><code>"LRT"</code>: </dt><dd><p>Likelyhood ratio test using <code><a href='https://rdrr.io/pkg/edgeR/man/glmfit.html'>glmFit</a></code>
+<dt><code>"LRT"</code>: </dt><dd><p>Likelihood ratio test using <code><a href='https://rdrr.io/pkg/edgeR/man/glmfit.html'>glmFit</a></code>
 and <code><a href='https://rdrr.io/pkg/edgeR/man/glmfit.html'>glmLRT</a></code></p></dd>.
 
 </dl></td>
@@ -233,7 +238,7 @@ and <code><a href='https://rdrr.io/pkg/edgeR/man/glmfit.html'>glmLRT</a></code><
     <tr>
       <th>effects</th>
       <td><p>How the effects (contrasts or log2 fold-changes) are calculated.
-One of:</p><dl'>
+One of:</p><dl>
 <dt><code>"predFC"</code>: </dt><dd><p>(default) Fold-changes are calculated using
 the fitted model with <code><a href='https://rdrr.io/pkg/edgeR/man/predFC.html'>predFC</a></code> with
 <code>prior.count = pscnt</code>. Please note that if a sample factor is
@@ -256,6 +261,26 @@ and <code>effects = "Gaidatzis2015"</code>, or else used in <code>cpm(..., prior
 and <code>predFC(..., prior.count = pscnt)</code>.</p></td>
     </tr>
     <tr>
+      <th>sizeFactor</th>
+      <td><p>How the size factors are calculated in the analysis.
+If 'exon' (default), the exon-derived size factors are used also for the
+columns corresponding to intronic counts. If 'intron', the intron-derived
+size factors are used also for the columns corresponding to exonic
+counts. If 'individual', column-wise size factors are calculated.</p></td>
+    </tr>
+    <tr>
+      <th>recalcNormFactAfterFilt</th>
+      <td><p>Logical, indicating whether normalization
+factors should be recalculated after filtering out lowly
+expressed genes.</p></td>
+    </tr>
+    <tr>
+      <th>recalcLibSizeAfterFilt</th>
+      <td><p>Logical, indicating whether library
+sizes should be recalculated after filtering out lowly
+expressed genes.</p></td>
+    </tr>
+    <tr>
       <th>...</th>
       <td><p>additional arguments passed to the <code><a href='https://rdrr.io/pkg/edgeR/man/DGEList.html'>DGEList</a></code>
 constructor, such as <code>lib.size</code> or <code>genes</code>.</p></td>
@@ -264,7 +289,7 @@ constructor, such as <code>lib.size</code> or <code>genes</code>.</p></td>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a <code>list</code> with elements</p><dl'>
+    <p>a <code>list</code> with elements</p><dl>
 <dt>fracIn</dt><dd><p>fraction intronic counts in each sample</p></dd>
 <dt>contrastName</dt><dd><p>contrast name</p></dd>
 <dt>contrasts</dt><dd><p>contrast matrix for quantifyable genes, with average log2
@@ -273,6 +298,10 @@ difference between log2 fold-changes in exons and introns (<code>Dex.Din</code>)
 <dt>DGEList</dt><dd><p><code><a href='https://rdrr.io/pkg/edgeR/man/DGEList.html'>DGEList</a></code> object used in model fitting</p></dd>
 <dt>tab.ExIn</dt><dd><p>statisical results for differential changes between exonic
 and intronic contrast, an indication for post-transcriptional regulation.</p></dd>
+<dt>contr.ExIn</dt><dd><p>contrast vector used for testing the difference between
+exonic and intronic contrast (results in <code>tab.ExIn</code>)</p></dd>
+<dt>designMatrix</dt><dd><p>design matrix used for testing the difference between
+exonic and intronic contrast (results in <code>tab.ExIn</code>)</p></dd>
 <dt>params</dt><dd><p>a <code>list</code> with parameter values used to run EISA</p></dd>
 
 </dl>
@@ -282,7 +311,9 @@ and intronic contrast, an indication for post-transcriptional regulation.</p></d
     <p>Setting <code>method = "Gaidatzis2015"</code> has precedence over other
 argument values and corresponds to setting:
 <code>modelSamples = FALSE, geneSelection = "Gaidatzis2015",
-  statFramework = "LRT", effects = "Gaidatzis2015", pscnt = 8</code>.</p>
+  statFramework = "LRT", effects = "Gaidatzis2015", pscnt = 8, 
+  sizeFactor = "individual", recalcNormFactAfterFilt = TRUE, 
+  recalcLibSizeAfterFilt = FALSE</code>.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Analysis of intronic and exonic reads in RNA-seq data characterizes
@@ -296,14 +327,19 @@ Nature Biotechnology, 2015 Jul;33(7):722-9. doi: 10.1038/nbt.3269.</p>
 <code><a href='https://rdrr.io/pkg/edgeR/man/filterByExpr.html'>filterByExpr</a></code> for gene selection,
 <code><a href='https://rdrr.io/pkg/edgeR/man/glmfit.html'>glmFit</a></code> and <code><a href='https://rdrr.io/pkg/edgeR/man/glmQLFTest.html'>glmQLFit</a></code> for statistical
 analysis.</p></div>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Michael Stadler</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>cntEx</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/readRDS.html'>readRDS</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"extdata"</span>, <span class='st'>"Fig3abc_GSE33252_rawcounts_exonic.rds"</span>,
-                             <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"eisaR"</span>))[,-<span class='fl'>1</span>]
-<span class='no'>cntIn</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/readRDS.html'>readRDS</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"extdata"</span>, <span class='st'>"Fig3abc_GSE33252_rawcounts_intronic.rds"</span>,
-                             <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"eisaR"</span>))[,-<span class='fl'>1</span>]
-<span class='no'>cond</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"ES"</span>,<span class='st'>"ES"</span>,<span class='st'>"TN"</span>,<span class='st'>"TN"</span>))
-<span class='no'>res</span> <span class='kw'>&lt;-</span> <span class='fu'>runEISA</span>(<span class='no'>cntEx</span>, <span class='no'>cntIn</span>, <span class='no'>cond</span>)</div><div class='output co'>#&gt; <span class='message'>filtering quantifyable genes...</span></div><div class='output co'>#&gt; <span class='message'>keeping 11034 from 20288 (54.4%)</span></div><div class='output co'>#&gt; <span class='message'>fitting statistical model...</span></div><div class='output co'>#&gt; <span class='message'>done</span></div><div class='output co'>#&gt; <span class='message'>calculating contrasts...</span></div><div class='output co'>#&gt; <span class='message'>done</span></div><div class='input'><span class='fu'><a href='plotEISA.html'>plotEISA</a></span>(<span class='no'>res</span>)</div><div class='output co'>#&gt; <span class='message'>identified 131 genes to highlight</span></div><div class='img'><img src='runEISA-1.png' alt='' width='700' height='433' /></div><div class='input'>
+    <pre class="examples"><div class='input'><span class='kw'>cntEx</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/readRDS.html'>readRDS</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"extdata"</span>, <span class='st'>"Fig3abc_GSE33252_rawcounts_exonic.rds"</span>,
+                             package = <span class='st'>"eisaR"</span>))[,<span class='op'>-</span><span class='fl'>1</span>]
+<span class='kw'>cntIn</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/readRDS.html'>readRDS</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"extdata"</span>, <span class='st'>"Fig3abc_GSE33252_rawcounts_intronic.rds"</span>,
+                             package = <span class='st'>"eisaR"</span>))[,<span class='op'>-</span><span class='fl'>1</span>]
+<span class='kw'>cond</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"ES"</span>,<span class='st'>"ES"</span>,<span class='st'>"TN"</span>,<span class='st'>"TN"</span>))
+<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'>runEISA</span>(<span class='kw'>cntEx</span>, <span class='kw'>cntIn</span>, <span class='kw'>cond</span>)
+</div><div class='output co'>#&gt; <span class='message'>filtering quantifyable genes...</span></div><div class='output co'>#&gt; <span class='message'>keeping 11759 from 20288 (58%)</span></div><div class='output co'>#&gt; <span class='message'>fitting statistical model...</span></div><div class='output co'>#&gt; <span class='message'>done</span></div><div class='output co'>#&gt; <span class='message'>calculating log-fold changes...</span></div><div class='output co'>#&gt; <span class='message'>done</span></div><div class='input'><span class='fu'><a href='plotEISA.html'>plotEISA</a></span>(<span class='kw'>res</span>)
+</div><div class='output co'>#&gt; <span class='message'>identified 114 genes to highlight</span></div><div class='img'><img src='runEISA-1.png' alt='' width='700' height='433' /></div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -320,7 +356,7 @@ analysis.</p></div>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.0.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
 </div>
 
       </footer>
