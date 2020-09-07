@@ -16,8 +16,9 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - { os: windows-latest, r: 'release', rtools: '40', bioc: 'devel', deploy: 'no', args: "--no-manual"}
-          - { os: macOS-latest, r: 'release', rtools: '40', bioc: 'devel', deploy: 'yes', args: "--no-manual"}
+          - { os: windows-latest, r: 'release', bioc: 'devel', deploy: 'no'}
+          - { os: macOS-latest, r: 'release', bioc: 'devel', deploy: 'yes'}
+          - { os: ubuntu-latest, r: 'release', image: 'bioconductor/bioconductor_docker:devel', deploy: 'no'}
 
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
@@ -29,9 +30,10 @@ jobs:
 
       - name: setup R
         uses: r-lib/actions/setup-r@master
+        if: matrix.config.image == null
         with:
           r-version: ${{ matrix.config.r }}
-          rtools-version: ${{ matrix.config.rtools }}
+          # rtools-version: ${{ matrix.config.rtools }}
 
       - name: R version
         run: Rscript -e 'R.version'
@@ -72,8 +74,19 @@ jobs:
         shell: Rscript {0}
 
       - name: Check
-        run: rcmdcheck::rcmdcheck(args = "--no-manual", error_on = "warning", check_dir = "check")
+        run: rcmdcheck::rcmdcheck(args = "--no-manual", error_on = "error", check_dir = "check")
         shell: Rscript {0}
+
+      - name: BiocCheck
+        run: |
+          BiocManager::install("BiocCheck")
+          BiocCheck::BiocCheck(".")
+        shell: Rscript {0}
+
+      - name: Show testthat output
+        if: always()
+        run: find check -name 'testthat.Rout*' -exec cat '{}' \; || true
+        shell: bash
 
       - name: Upload check results
         if: failure()
@@ -89,13 +102,19 @@ jobs:
           covr::codecov(token = "${{secrets.CODECOV_TOKEN}}")
         shell: Rscript {0}
 
+      # - name: Deploy
+      #   if: github.event_name == 'push' && github.ref == 'refs/heads/master' && matrix.config.deploy == 'yes'
+      #   run: |
+      #     R CMD INSTALL .
+      #     Rscript -e "install.packages(c('remotes', 'BiocManager'), Ncpu = 2L)"
+      #     Rscript -e "BiocManager::install(c('GenomicFiles', 'BSgenome', 'GenomeInfoDbData'), Ncpu = 2L)"
+      #     Rscript -e "install.packages('Rcpp', repos='https://rcppcore.github.io/drat', Ncpu = 2L)"
+      #     Rscript -e "remotes::install_dev('pkgdown'); pkgdown::deploy_to_branch(new_process = FALSE)"
+
       - name: Deploy
         if: github.event_name == 'push' && github.ref == 'refs/heads/master' && matrix.config.deploy == 'yes'
         run: |
           R CMD INSTALL .
-          Rscript -e "install.packages(c('remotes', 'BiocManager'), Ncpu = 2L)"
-          Rscript -e "BiocManager::install(c('GenomicFiles', 'BSgenome', 'GenomeInfoDbData'), Ncpu = 2L)"
-          Rscript -e "install.packages('Rcpp', repos='https://rcppcore.github.io/drat', Ncpu = 2L)"
           Rscript -e "remotes::install_dev('pkgdown'); pkgdown::deploy_to_branch(new_process = FALSE)"
 
 
