@@ -35,26 +35,40 @@ jobs:
           r-version: ${{ matrix.config.r }}
           # rtools-version: ${{ matrix.config.rtools }}
 
-      - name: R version
-        run: Rscript -e 'R.version'
-
       - name: setup Pandoc
         uses: r-lib/actions/setup-pandoc@master
 
+      # - name: Query dependencies
+      #   run: |
+      #     install.packages(c('remotes', 'BiocManager'), Ncpu = 2L)
+      #     BiocManager::install(version = "${{ matrix.config.bioc }}", ask = FALSE)
+      #     saveRDS(remotes::dev_package_deps(dependencies = TRUE, repos = c(getOption('repos'), BiocManager::repositories())), "depends.Rds", version = 2)
+      #   shell: Rscript {0}
+
+      - name: Install remotes
+        run: |
+          install.packages('remotes')
+        shell: Rscript {0}
+
+      - name: Set BiocManager version
+        if: matrix.config.image == null
+        run: |
+          install.packages('BiocManager')
+          BiocManager::install(version = "${{ matrix.config.bioc }}", ask = FALSE)
+        shell: Rscript {0}
+
       - name: Query dependencies
         run: |
-          install.packages(c('remotes', 'BiocManager'), Ncpu = 2L)
-          BiocManager::install(version = "${{ matrix.config.bioc }}", ask = FALSE)
-          saveRDS(remotes::dev_package_deps(dependencies = TRUE, repos = c(getOption('repos'), BiocManager::repositories())), "depends.Rds", version = 2)
+          saveRDS(remotes::dev_package_deps(dependencies = TRUE, repos = c(getOption('repos'), BiocManager::repositories())), 'depends.Rds', version = 2)
         shell: Rscript {0}
 
       - name: Cache R packages
-        if: runner.os != 'Windows'
+        if: runner.os != 'Windows' && matrix.config.image == null
         uses: actions/cache@v1
         with:
           path: ${{ env.R_LIBS_USER }}
-          key: ${{ runner.os }}-r-${{ matrix.config.r }}-${{ hashFiles('depends.Rds') }}
-          restore-keys: ${{ runner.os }}-r-${{ matrix.config.r }}-
+          key: ${{ runner.os }}-r-${{ matrix.config.r }}-bioc-${{ matrix.config.bioc }}-${{ hashFiles('depends.Rds') }}
+          restore-keys: ${{ runner.os }}-r-${{ matrix.config.r }}-bioc-${{ matrix.config.bioc }}-
 
       - name: Install system dependencies
         if: runner.os == 'Linux'
@@ -65,12 +79,27 @@ jobs:
           sysreqs=$(Rscript -e "cat(sysreqs::sysreq_commands('DESCRIPTION'))")
           sudo -s eval "$sysreqs"
 
+#      - name: Install R package dependencies
+#         run: |
+#           BiocManager::install(c('GenomicFiles', 'BSgenome', 'GenomeInfoDbData'), Ncpu = 2L)
+#           install.packages("Rcpp", repos="https://rcppcore.github.io/drat", Ncpu = 2L)
+#           remotes::install_deps(dependencies = TRUE, repos = c(getOption('repos'), BiocManager::repositories()), Ncpu = 2L)
+#           remotes::install_cran("rcmdcheck", Ncpu = 2L)
+#         shell: Rscript {0}
+
       - name: Install R package dependencies
         run: |
-          BiocManager::install(c('GenomicFiles', 'BSgenome', 'GenomeInfoDbData'), Ncpu = 2L)
-          install.packages("Rcpp", repos="https://rcppcore.github.io/drat", Ncpu = 2L)
-          remotes::install_deps(dependencies = TRUE, repos = c(getOption('repos'), BiocManager::repositories()), Ncpu = 2L)
-          remotes::install_cran("rcmdcheck", Ncpu = 2L)
+          local_deps <- remotes::local_package_deps(dependencies = TRUE)
+          deps <- remotes::dev_package_deps(dependencies = TRUE, repos = BiocManager::repositories())
+          BiocManager::install(local_deps[local_deps %in% deps$package[deps$diff != 0]], Ncpu = 2L)
+          remotes::install_cran('rcmdcheck', Ncpu = 2L)
+        shell: Rscript {0}
+
+      - name: Session info
+        run: |
+          options(width = 100)
+          pkgs <- installed.packages()[, "Package"]
+          sessioninfo::session_info(pkgs, include_base = TRUE)
         shell: Rscript {0}
 
       - name: Check
