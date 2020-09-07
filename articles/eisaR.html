@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">eisaR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.2</span>
       </span>
     </div>
 
@@ -91,7 +91,7 @@
       <h1 data-toc-skip>Using eisaR for Exon-Intron Split Analysis (EISA)</h1>
                         <h4 class="author">Michael Stadler</h4>
             
-            <h4 class="date">2020-09-04</h4>
+            <h4 class="date">2020-09-07</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/fmicompbio/eisaR/blob/master/vignettes/eisaR.Rmd"><code>vignettes/eisaR.Rmd</code></a></small>
       <div class="hidden name"><code>eisaR.Rmd</code></div>
@@ -218,9 +218,9 @@
 <span class="co">#&gt; Testing the compute nodes...OK</span>
 <span class="co">#&gt; Loading QuasR on the compute nodes...OK</span>
 <span class="co">#&gt; Available cores:</span>
-<span class="co">#&gt; Mac-1655.local: 1</span>
+<span class="co">#&gt; Mac-1780.local: 1</span>
 <span class="co">#&gt; Performing genomic alignments for 4 samples. See progress in the log file:</span>
-<span class="co">#&gt; /Users/runner/work/eisaR/eisaR/vignettes/QuasR_log_138e48a6b9eb.txt</span>
+<span class="co">#&gt; /Users/runner/work/eisaR/eisaR/vignettes/QuasR_log_158b51ceb428.txt</span>
 <span class="co">#&gt; Genomic alignments have been created successfully</span>
 <span class="fu"><a href="https://rdrr.io/pkg/QuasR/man/alignmentStats.html">alignmentStats</a></span>(<span class="kw">proj</span>)
 <span class="co">#&gt;                seqlength mapped unmapped</span>
@@ -257,7 +257,7 @@
 <div id="load-full-count-tables" class="section level2">
 <h2 class="hasAnchor">
 <a href="#load-full-count-tables" class="anchor"></a>Load full count tables</h2>
-<p>The above example only contains very few genes. For the rest of the vignette, we will use count tables from a real RNA-seq experiment that are provided in the <code>eisaR</code> package. The counts correspond to the rawdata used in Figure 3a of <span class="citation">(Gaidatzis et al. 2015)</span> and are also available online from the <a href="https://fmicompbio.github.io/projects/EISA/EISA.html">supplementary material</a>:</p>
+<p>The above example only contains very few genes. For the rest of the vignette, we will use count tables from a real RNA-seq experiment that are provided in the <code>eisaR</code> package. The counts correspond to the raw data used in Figure 3a of <span class="citation">(Gaidatzis et al. 2015)</span> and are also available online from the <a href="https://fmicompbio.github.io/projects/EISA/EISA.html">supplementary material</a>:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit">
 <span class="kw">cntEx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">"extdata"</span>,
                              <span class="st">"Fig3abc_GSE33252_rawcounts_exonic.rds"</span>,
@@ -289,22 +289,21 @@
 <div id="alternative-implementations-of-eisa" class="section level2">
 <h2 class="hasAnchor">
 <a href="#alternative-implementations-of-eisa" class="anchor"></a>Alternative implementations of EISA</h2>
-<p>There are five arguments in <code>runEISA</code> (<code>modelSamples</code>, <code>geneSelection</code>, <code>effects</code>, <code>statFramework</code> and <code>pscnt</code>) that control gene filtering, calculation of contrasts and the statistical method used, summarized in the bullet list below.</p>
-<p>The default values of these arguments correspond to the currently recommended way of running EISA. You can also run EISA exactly as it was described in <span class="citation">(Gaidatzis et al. 2015)</span>, by setting <code>method = "Gaidatzis2015"</code>. This will override the values of the five other arguments and set them according to the published algorithm (as indicated below).</p>
+<p>There are six arguments in <code>runEISA</code> (<code>modelSamples</code>, <code>geneSelection</code>, <code>effects</code>, <code>statFramework</code>, <code>pscnt</code> and <code>sizeFactor</code>) that control gene filtering, calculation of contrasts and the statistical method used, summarized in the bullet list below.</p>
+<p>The default values of these arguments correspond to the currently recommended way of running EISA. You can also run EISA exactly as it was described in <span class="citation">(Gaidatzis et al. 2015)</span>, by setting <code>method = "Gaidatzis2015"</code>. This will override the values of the six other arguments and set them according to the published algorithm (as indicated below).</p>
 <ul>
 <li>
-<code>modelSamples</code>: Account for individual samples in statistical model? Possible values are:
+<p><code>modelSamples</code>: Account for individual samples in statistical model? Possible values are:</p>
 <ul>
 <li>
-<code>FALSE</code> (default and <code>method="Gaidatzis2015"</code>): use a model of the form <code>~ condition * region</code><br>
+<code>FALSE</code> (<code>method="Gaidatzis2015"</code>): use a model of the form <code>~ condition * region</code><br>
 </li>
 <li>
-<code>TRUE</code>: use a model of the form <code>~ sample + condition * region</code>
-</li>
+<code>TRUE</code> (default): use a model adjusting for the baseline differences among samples, and with condition-specific region effects (similar to the model described in section 3.5 of the <em><a href="https://bioconductor.org/packages/3.12/edgeR">edgeR</a></em> user guide)</li>
 </ul>
 </li>
 <li>
-<code>geneSelection</code>: How to select detected genes. Possible values are:
+<p><code>geneSelection</code>: How to select detected genes. Possible values are:</p>
 <ul>
 <li>
 <code>"filterByExpr"</code> (default): First, counts are normalized using <code><a href="https://rdrr.io/pkg/edgeR/man/calcNormFactors.html">edgeR::calcNormFactors</a></code>, treating intronic and exonic counts as individual samples. Then, the <code><a href="https://rdrr.io/pkg/edgeR/man/filterByExpr.html">edgeR::filterByExpr</a></code> function is used with default parameters to select quantifiable genes.</li>
@@ -316,7 +315,7 @@
 </ul>
 </li>
 <li>
-<code>statFramework</code>: The framework within <code>edgeR</code> that is used for the statistical analysis. Possible values are:
+<p><code>statFramework</code>: The framework within <code>edgeR</code> that is used for the statistical analysis. Possible values are:</p>
 <ul>
 <li>
 <code>"QLF"</code> (default): quasi-likelihood F-test using <code><a href="https://rdrr.io/pkg/edgeR/man/glmQLFTest.html">edgeR::glmQLFit</a></code> and <code><a href="https://rdrr.io/pkg/edgeR/man/glmQLFTest.html">edgeR::glmQLFTest</a></code>. This framework is highly recommended as it gives stricter error rate control by accounting for the uncertainty in dispersion estimation.<br>
@@ -326,7 +325,7 @@
 </ul>
 </li>
 <li>
-<code>effects</code>: How the effects (log2 fold-changes) are calculated. Possible values are:
+<p><code>effects</code>: How the effects (log2 fold-changes) are calculated. Possible values are:</p>
 <ul>
 <li>
 <code>"predFC"</code> (default): Fold-changes are calculated using the fitted model with <code><a href="https://rdrr.io/pkg/edgeR/man/predFC.html">edgeR::predFC</a></code> and the value provided to <code>pscnt</code>. Please note that if a sample factor is included in the statistical model (<code>modelSamples=TRUE</code>), effects cannot be obtained from that model. In that case, effects are obtained from a simpler model without sample effects.</li>
@@ -334,11 +333,21 @@
 <code>"Gaidatzis2015"</code> (<code>method="Gaidatzis2015"</code>): Fold-changes are calculated using the formula <code><a href="https://rdrr.io/r/base/Log.html">log2((x + pscnt)/(y + pscnt))</a></code>. If <code>pscnt</code> is not set to 8, <code>runEISA</code> will warn that this deviates from the method used in Gaidatzis et al., 2015.</li>
 </ul>
 </li>
+<li><p><code>pscnt</code>: The pseudocount that is added to normalized counts before log transformation. For <code>geneSelection="Gaidatzis2015"</code>, <code>pscnt</code> is used both in gene selection as well as in the calculation of log2 fold-changes. Otherwise, <code>pscnt</code> is only used in the calculation of log2 fold-changes in <code><a href="https://rdrr.io/pkg/edgeR/man/predFC.html">edgeR::predFC(, prior.count = pscnt)</a></code>.</p></li>
 <li>
-<code>pscnt</code>: The pseudocount that is added to normalized counts before log transformation. For <code>geneSelection="Gaidatzis2015"</code>, <code>pscnt</code> is used both in gene selection as well as in the calculation of log2 fold-changes. Otherwise, <code>pscnt</code> is only used in the calculation of log2 fold-changes in <code><a href="https://rdrr.io/pkg/edgeR/man/predFC.html">edgeR::predFC(, prior.count = pscnt)</a></code>.</li>
+<p><code>sizeFactor</code>: How size factors (TMM normalization factors and library sizes) are calculated and used within <code>eisaR</code>:</p>
+<ul>
+<li>
+<code>"exon"</code> (default): Size factors are calculated for exonic counts and reused for the corresponding intronic counts.</li>
+<li>
+<code>"intron"</code>: Size factors are calculated for intronic counts and reused for the corresponding exonic counts.</li>
+<li>
+<code>"individual"</code> (<code>method="Gaidatzis2015"</code>): Size factors are calculated independently for exonic and intronic counts.</li>
+</ul>
+</li>
 </ul>
 <p>While different values for these arguments typically yield similar results, the defaults are often less stringent compared to <code>method="Gaidatzis2015"</code> when selecting quantifiable genes, but more stringent when calling significant changes (especially with low numbers of replicates).</p>
-<p>Here is an illustration of how the results differ <code>method="Gaidatzis2015"</code> and the defaults:</p>
+<p>Here is an illustration of how the results differ between <code>method="Gaidatzis2015"</code> and the defaults:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit">
 <span class="kw">res1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/runEISA.html">runEISA</a></span>(<span class="kw">Rex</span>, <span class="kw">Rin</span>, <span class="kw">cond</span>, method = <span class="st">"Gaidatzis2015"</span>)
 <span class="co">#&gt; setting parameters according to Gaidatzis et al., 2015</span>
@@ -377,8 +386,8 @@
 <span class="fu"><a href="https://rdrr.io/r/stats/cor.html">cor</a></span>(<span class="kw">res1</span><span class="op">$</span><span class="kw">contrasts</span>[<span class="kw">ids</span>,<span class="st">"Dex.Din"</span>], <span class="kw">res2</span><span class="op">$</span><span class="kw">contrasts</span>[<span class="kw">ids</span>,<span class="st">"Dex.Din"</span>])
 <span class="co">#&gt; [1] 0.9673152</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span>(<span class="kw">res1</span><span class="op">$</span><span class="kw">contrasts</span>[<span class="kw">ids</span>,<span class="st">"Dex.Din"</span>], <span class="kw">res2</span><span class="op">$</span><span class="kw">contrasts</span>[<span class="kw">ids</span>,<span class="st">"Dex.Din"</span>], pch = <span class="st">"*"</span>,
-     xlab = <span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="kw">Delta</span>, <span class="st">"exon"</span>, <span class="op">-</span> <span class="kw">Delta</span>, <span class="st">"intron for method='Gaidatzis2015'"</span>)),
-     ylab = <span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="kw">Delta</span>, <span class="st">"exon"</span>, <span class="op">-</span> <span class="kw">Delta</span>, <span class="st">"intron for default parameters"</span>)))
+     xlab = <span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="kw">Delta</span>, <span class="st">"exon"</span>, <span class="op">-</span><span class="kw">Delta</span>, <span class="st">"intron for method='Gaidatzis2015'"</span>)),
+     ylab = <span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="kw">Delta</span>, <span class="st">"exon"</span>, <span class="op">-</span><span class="kw">Delta</span>, <span class="st">"intron for default parameters"</span>)))
 </pre></div>
 <p><img src="eisaR_files/figure-html/compare-1.png" width="700"></p>
 </div>
@@ -386,7 +395,7 @@
 <h2 class="hasAnchor">
 <a href="#on-the-estimation-of-interactions-in-a-split-plot-design-experiment" class="anchor"></a>On the estimation of interactions in a split-plot design experiment</h2>
 <p>The calculation of the significance of interactions (here whether the fold-changes differ between exonic or intronic data) is well defined for experimental designs were all samples are independent from one another. Within EISA, this is not the case (each sample yields two data points, one for exons and one for introns). That results in a dependency between data points: If a sample is affected by a problem in the experiment, it might at the same time give rise to outlier values in both exonic and intronic counts.</p>
-<p>In statistics, such an experimental design is often referred to as a split-plot design, and a recommended way to analyze interactions in such experiments would be to use a mixed effect model with the plot (in our case, the sample) as a random effect. The disadvantage here however would be that available packages for mixed effect models are not designed for count data, and we therefore use an alternative approach to explicitly model the sample dependency, by introducing a sample factor into the design matrix (for <code>modelSamples=TRUE</code>). That sample factor is nested in the condition factor (no sample can belong to more than one condition), and therefore not all coefficients can be estimated. We therefore drop one of the columns of the design matrix (identified by <code><a href="https://rdrr.io/pkg/limma/man/isfullrank.html">limma::nonEstimable</a></code>).</p>
+<p>In statistics, such an experimental design is often referred to as a split-plot design, and a recommended way to analyze interactions in such experiments would be to use a mixed effect model with the plot (in our case, the sample) as a random effect. The disadvantage here however would be that available packages for mixed effect models are not designed for count data, and we therefore use an alternative approach to explicitly model the sample dependency, by introducing sample-specific columns into the design matrix (for <code>modelSamples=TRUE</code>). That sample factor is nested in the condition factor (no sample can belong to more than one condition). Thus, we are in the situation described in section 3.5 (‘Comparisons both between and within subjects’) of the <em><a href="https://bioconductor.org/packages/3.12/edgeR">edgeR</a></em> user guide, and we use the approach described there to define a design matrix with sample-specific baseline effects as well as condition-specific region effects.</p>
 <p>This has no impact on the effects (the log2 fold-changes of <code>modelSamples=TRUE</code> and <code>modelSamples=FALSE</code> are nearly identical). However, in the presence of sample effects, <code>modelSamples=TRUE</code> increases the sensitivity of detecting genes with significant interactions. Here is a comparison of the EISA results with and without accounting for the sample in the model:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit">
 <span class="kw">res3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/runEISA.html">runEISA</a></span>(<span class="kw">Rex</span>, <span class="kw">Rin</span>, <span class="kw">cond</span>, modelSamples = <span class="fl">FALSE</span>)
@@ -427,7 +436,7 @@
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span>(<span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log10</a></span>(<span class="kw">res3</span><span class="op">$</span><span class="kw">tab.ExIn</span>[<span class="kw">ids</span>, <span class="st">"FDR"</span>]), <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log10</a></span>(<span class="kw">res4</span><span class="op">$</span><span class="kw">tab.ExIn</span>[<span class="kw">ids</span>, <span class="st">"FDR"</span>]), pch = <span class="st">"*"</span>,
      xlab = <span class="st">"-log10(FDR) for modelSamples=FALSE"</span>,
      ylab = <span class="st">"-log10(FDR) for modelSamples=TRUE"</span>)
-<span class="fu"><a href="https://rdrr.io/r/graphics/abline.html">abline</a></span>(a=<span class="fl">0</span>, b=<span class="fl">1</span>, col=<span class="st">"gray"</span>)
+<span class="fu"><a href="https://rdrr.io/r/graphics/abline.html">abline</a></span>(a = <span class="fl">0</span>, b = <span class="fl">1</span>, col = <span class="st">"gray"</span>)
 <span class="fu"><a href="https://rdrr.io/r/graphics/legend.html">legend</a></span>(<span class="st">"bottomright"</span>, <span class="st">"y = x"</span>, bty = <span class="st">"n"</span>, lty = <span class="fl">1</span>, col = <span class="st">"gray"</span>)
 </pre></div>
 <p><img src="eisaR_files/figure-html/modelSamples-2.png" width="700"></p>
@@ -622,11 +631,11 @@
 <span class="co">#&gt; [8] methods   base     </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; other attached packages:</span>
-<span class="co">#&gt;  [1] edgeR_3.31.4           limma_3.45.12          QuasR_1.29.4          </span>
-<span class="co">#&gt;  [4] Rbowtie_1.29.1         rtracklayer_1.49.5     GenomicFeatures_1.41.2</span>
-<span class="co">#&gt;  [7] AnnotationDbi_1.51.3   Biobase_2.49.0         GenomicRanges_1.41.6  </span>
-<span class="co">#&gt; [10] GenomeInfoDb_1.25.10   IRanges_2.23.10        S4Vectors_0.27.12     </span>
-<span class="co">#&gt; [13] BiocGenerics_0.35.4    eisaR_1.1.1            BiocStyle_2.17.0      </span>
+<span class="co">#&gt;  [1] edgeR_3.31.4           limma_3.45.13          QuasR_1.29.5          </span>
+<span class="co">#&gt;  [4] Rbowtie_1.29.1         rtracklayer_1.49.5     GenomicFeatures_1.41.3</span>
+<span class="co">#&gt;  [7] AnnotationDbi_1.51.3   Biobase_2.49.1         GenomicRanges_1.41.6  </span>
+<span class="co">#&gt; [10] GenomeInfoDb_1.25.11   IRanges_2.23.10        S4Vectors_0.27.12     </span>
+<span class="co">#&gt; [13] BiocGenerics_0.35.4    eisaR_1.1.2            BiocStyle_2.17.0      </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; loaded via a namespace (and not attached):</span>
 <span class="co">#&gt;  [1] httr_1.4.2                  splines_4.0.2              </span>
@@ -667,7 +676,7 @@
 <span class="co">#&gt; [71] dplyr_1.0.2                 bit_4.0.4                  </span>
 <span class="co">#&gt; [73] rprojroot_1.3-2             ragg_0.3.1                 </span>
 <span class="co">#&gt; [75] desc_1.2.0                  stringi_1.4.6              </span>
-<span class="co">#&gt; [77] Rcpp_1.0.5.2                png_0.1-7                  </span>
+<span class="co">#&gt; [77] Rcpp_1.0.5                  png_0.1-7                  </span>
 <span class="co">#&gt; [79] vctrs_0.3.4                 dbplyr_1.4.4               </span>
 <span class="co">#&gt; [81] tidyselect_1.1.0            xfun_0.16</span>
 </pre></div>
