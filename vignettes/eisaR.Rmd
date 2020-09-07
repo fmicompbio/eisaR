@@ -158,7 +158,7 @@ rows and columns in both tables).
 ## Load full count tables
 The above example only contains very few genes. For the rest of the vignette,
 we will use count tables from a real RNA-seq experiment that are provided in the
-`eisaR` package. The counts correspond to the rawdata used in Figure 3a of [@eisa]
+`eisaR` package. The counts correspond to the raw data used in Figure 3a of [@eisa]
 and are also available online from the [supplementary material](https://fmicompbio.github.io/projects/EISA/EISA.html): 
 
 ```{r loadcounts}
@@ -188,19 +188,20 @@ res <- runEISA(Rex, Rin, cond)
 ```
 
 ## Alternative implementations of EISA
-There are five arguments in `runEISA` (`modelSamples`, `geneSelection`, `effects`,
-`statFramework` and `pscnt`) that control gene filtering, calculation of contrasts
-and the statistical method used, summarized in the bullet list below.
+There are six arguments in `runEISA` (`modelSamples`, `geneSelection`, `effects`,
+`statFramework`, `pscnt` and `sizeFactor`) that control gene filtering, 
+calculation of contrasts and the statistical method used, summarized in the 
+bullet list below.
 
 The default values of these arguments correspond to the currently recommended way
 of running EISA. You can also run EISA exactly as it was described in [@eisa], by
-setting `method = "Gaidatzis2015"`. This will override the values of the five
+setting `method = "Gaidatzis2015"`. This will override the values of the six
 other arguments and set them according to the published algorithm (as indicated
 below). 
 
 * `modelSamples`: Account for individual samples in statistical model? Possible values are:  
-  - `FALSE` (default and `method="Gaidatzis2015"`): use a model of the form `~ condition * region`  
-  - `TRUE`: use a model of the form `~ sample + condition * region`  
+  - `FALSE` (`method="Gaidatzis2015"`): use a model of the form `~ condition * region`  
+  - `TRUE` (default): use a model adjusting for the baseline differences among samples, and with condition-specific region effects (similar to the model described in section 3.5 of the `r Biocpkg("edgeR")` user guide)  
 
 * `geneSelection`: How to select detected genes. Possible values are:  
   - `"filterByExpr"` (default): First, counts are normalized using `edgeR::calcNormFactors`,
@@ -237,12 +238,21 @@ below).
   in the calculation of log2 fold-changes. Otherwise, `pscnt` is only used in the calculation
   of log2 fold-changes in `edgeR::predFC(, prior.count = pscnt)`.
 
+* `sizeFactor`: How size factors (TMM normalization factors and library sizes) 
+are calculated and used within `eisaR`:
+  - `"exon"` (default): Size factors are calculated for exonic counts and 
+  reused for the corresponding intronic counts.
+  - `"intron"`: Size factors are calculated for intronic counts and 
+  reused for the corresponding exonic counts.
+  - `"individual"` (`method="Gaidatzis2015"`): Size factors are calculated 
+  independently for exonic and intronic counts. 
+
 While different values for these arguments typically yield similar results,
 the defaults are often less stringent compared to `method="Gaidatzis2015"` when
 selecting quantifiable genes, but more stringent when calling significant changes
 (especially with low numbers of replicates).
 
-Here is an illustration of how the results differ `method="Gaidatzis2015"` and
+Here is an illustration of how the results differ between `method="Gaidatzis2015"` and
 the defaults:  
 
 ```{r compare}
@@ -267,8 +277,8 @@ cor(res1$contrasts[ids,"Dex"], res2$contrasts[ids,"Dex"])
 cor(res1$contrasts[ids,"Din"], res2$contrasts[ids,"Din"])
 cor(res1$contrasts[ids,"Dex.Din"], res2$contrasts[ids,"Dex.Din"])
 plot(res1$contrasts[ids,"Dex.Din"], res2$contrasts[ids,"Dex.Din"], pch = "*",
-     xlab = expression(paste(Delta, "exon", - Delta, "intron for method='Gaidatzis2015'")),
-     ylab = expression(paste(Delta, "exon", - Delta, "intron for default parameters")))
+     xlab = expression(paste(Delta, "exon", -Delta, "intron for method='Gaidatzis2015'")),
+     ylab = expression(paste(Delta, "exon", -Delta, "intron for default parameters")))
 ```
 
 ## On the estimation of interactions in a split-plot design experiment
@@ -285,11 +295,13 @@ design, and a recommended way to analyze interactions in such experiments would
 be to use a mixed effect model with the plot (in our case, the sample) as a random
 effect. The disadvantage here however would be that available packages for mixed
 effect models are not designed for count data, and we therefore use an alternative
-approach to explicitly model the sample dependency, by introducing a sample
-factor into the design matrix (for `modelSamples=TRUE`). That sample factor is
-nested in the condition factor (no sample can belong to more than one condition),
-and therefore not all coefficients can be estimated. We therefore drop one of
-the columns of the design matrix (identified by `limma::nonEstimable`).
+approach to explicitly model the sample dependency, by introducing sample-specific 
+columns into the design matrix (for `modelSamples=TRUE`). That sample factor is
+nested in the condition factor (no sample can belong to more than one condition). 
+Thus, we are in the situation described in section 3.5 ('Comparisons both between and 
+within subjects') of the `r Biocpkg("edgeR")` user guide, and we use the approach 
+described there to define a design matrix with sample-specific baseline effects 
+as well as condition-specific region effects.
 
 This has no impact on the effects (the log2 fold-changes of `modelSamples=TRUE`
 and `modelSamples=FALSE` are nearly identical). However, in the presence of sample effects,
@@ -321,7 +333,7 @@ plot(res3$contrasts[ids, 3], res4$contrasts[ids, 3], pch = "*",
 plot(-log10(res3$tab.ExIn[ids, "FDR"]), -log10(res4$tab.ExIn[ids, "FDR"]), pch = "*",
      xlab = "-log10(FDR) for modelSamples=FALSE",
      ylab = "-log10(FDR) for modelSamples=TRUE")
-abline(a=0, b=1, col="gray")
+abline(a = 0, b = 1, col = "gray")
 legend("bottomright", "y = x", bty = "n", lty = 1, col = "gray")
 ```
 
