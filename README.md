@@ -1,3 +1,5 @@
+<img src="inst/www/eisaR.png" align="right" alt="" width="120" />
+
 # `eisaR`: Exon-Intron Split Analysis (EISA) in R
 
 <br>
