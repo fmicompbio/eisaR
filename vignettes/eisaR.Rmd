@@ -22,7 +22,7 @@ knitr::opts_chunk$set(
 ```
 
 # Introduction
-Exon-Intron Split Analysis has been described in [@eisa]. It consists of separately
+Exon-Intron Split Analysis has been described by @eisa. It consists of separately
 quantifying exonic and intronic alignments in RNA-seq data, in order to measure
 changes in mature RNA and pre-mRNA reads across different experimental conditions.
 We have shown that this allows quantification of transcriptional and post-transcriptional
@@ -112,7 +112,10 @@ export(regS$genebodies, "hg19sub_genebodies_stranded.gtf")
 For this example we will use the `r Biocpkg("QuasR")` package for indexing and
 alignment of short reads, and a small RNA-seq dataset that is contained in that
 package. As mentioned, it is also possible to align or also quantify your reads
-using an alternative aligner/counter, and skip over these steps.
+using an alternative aligner/counter, and skip over these steps. For more 
+details about the syntax, we refer to the documentation and vignette of the 
+`r Biocpkg("QuasR")` package. 
+
 
 ## Align reads{#align}
 Let's first copy the sample data from the `r Biocpkg("QuasR")` package to the
@@ -124,13 +127,16 @@ file.copy(system.file(package = "QuasR", "extdata"), ".", recursive = TRUE)
 ```
 
 We next align the reads to a mini-genome (fasta file `extdata/hg19sub.fa`) using
-`qAlign`:  
+`qAlign`. The `sampleFile` specifies the samples we want to use, and the paths 
+to the respective fastq files. 
 
 ```{r align}
-sampleFile <- "extdata/samples_chip_single.txt"
-genomeFile <- "extdata/hg19sub.fa"
+sampleFile <- "extdata/samples_rna_single.txt"
+## Display the structure of the sampleFile
+read.delim(sampleFile)
 
-proj <- qAlign(sampleFile = "extdata/samples_rna_single.txt", 
+## Perform the alignment
+proj <- qAlign(sampleFile = sampleFile, 
                genome = "extdata/hg19sub.fa",
                aligner = "Rhisat2", splicedAlignment = TRUE)
 alignmentStats(proj)
@@ -158,7 +164,7 @@ rows and columns in both tables).
 ## Load full count tables
 The above example only contains very few genes. For the rest of the vignette,
 we will use count tables from a real RNA-seq experiment that are provided in the
-`eisaR` package. The counts correspond to the raw data used in Figure 3a of [@eisa]
+`eisaR` package. The counts correspond to the raw data used in Figure 3a of @eisa
 and are also available online from the [supplementary material](https://fmicompbio.github.io/projects/EISA/EISA.html): 
 
 ```{r loadcounts}
@@ -194,7 +200,7 @@ calculation of contrasts and the statistical method used, summarized in the
 bullet list below.
 
 The default values of these arguments correspond to the currently recommended way
-of running EISA. You can also run EISA exactly as it was described in [@eisa], by
+of running EISA. You can also run EISA exactly as it was described by @eisa, by
 setting `method = "Gaidatzis2015"`. This will override the values of the six
 other arguments and set them according to the published algorithm (as indicated
 below). 
@@ -284,7 +290,7 @@ plot(res1$contrasts[ids,"Dex.Din"], res2$contrasts[ids,"Dex.Din"], pch = "*",
 ## On the estimation of interactions in a split-plot design experiment
 The calculation of the significance of interactions (here whether the fold-changes
 differ between exonic or intronic data) is well defined for experimental designs
-were all samples are independent from one another. Within EISA, this is not the
+where all samples are independent from one another. Within EISA, this is not the
 case (each sample yields two data points, one for exons and one for introns). That
 results in a dependency between data points: If a sample is affected by a problem
 in the experiment, it might at the same time give rise to outlier values in both
@@ -349,7 +355,7 @@ plotEISA(res)
 # Run EISA step-by-step{#stepwise}
 As an alternative to `runEISA` (section \@ref(convenient)) and `plotEISA`
 (section \@ref(plot)) described above, you can also analyze the data step-by-step
-as described in [@eisa]. This may be preferable to understand each
+as described in @eisa. This may be preferable to understand each
 individual step and be able to access intermediate results.
 
 The results obtained in this way are identical to what you get with
@@ -359,6 +365,7 @@ skip the rest of the vignette.
 ## Normalization
 Normalization is performed separately on exonic and intronic counts, assuming
 that varying exon over intron ratios between samples are of technical origin.
+
 ```{r normalization}
 # remove column "width"
 Rex <- cntEx[,colnames(cntEx) != "width"]
