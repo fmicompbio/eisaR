@@ -76,19 +76,13 @@ the GTF file." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">eisaR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/eisaR.html">Get started</a>
 </li>
 <li>
@@ -146,7 +140,7 @@ aggregate all features belonging to the same gene as a "gene" entry in
 the GTF file.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>exportToGtf</span>(<span class='kw'>grl</span>, <span class='kw'>filepath</span>)</pre>
+    <pre class="usage"><span class='fu'>exportToGtf</span><span class='op'>(</span><span class='va'>grl</span>, <span class='va'>filepath</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -171,17 +165,17 @@ the GTF file.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>  <span class='co'>## Get feature ranges</span>
-  <span class='kw'>grl</span> <span class='op'>&lt;-</span> <span class='fu'><a href='getFeatureRanges.html'>getFeatureRanges</a></span>(
-    gtf = <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"extdata/small_example.gtf"</span>, package = <span class='st'>"eisaR"</span>),
-    featureType = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"spliced"</span>, <span class='st'>"intron"</span>),
-    intronType = <span class='st'>"separate"</span>,
-    flankLength = <span class='fl'>5L</span>,
-    joinOverlappingIntrons = <span class='fl'>FALSE</span>,
-    verbose = <span class='fl'>TRUE</span>
-  )
+  <span class='va'>grl</span> <span class='op'>&lt;-</span> <span class='fu'><a href='getFeatureRanges.html'>getFeatureRanges</a></span><span class='op'>(</span>
+    gtf <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"extdata/small_example.gtf"</span>, package <span class='op'>=</span> <span class='st'>"eisaR"</span><span class='op'>)</span>,
+    featureType <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"spliced"</span>, <span class='st'>"intron"</span><span class='op'>)</span>,
+    intronType <span class='op'>=</span> <span class='st'>"separate"</span>,
+    flankLength <span class='op'>=</span> <span class='fl'>5L</span>,
+    joinOverlappingIntrons <span class='op'>=</span> <span class='cn'>FALSE</span>,
+    verbose <span class='op'>=</span> <span class='cn'>TRUE</span>
+  <span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'>Import genomic features from the file as a GRanges object ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Prepare the 'metadata' data frame ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Make the TxDb object ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>'select()' returned 1:1 mapping between keys and columns</span></div><div class='output co'>#&gt; <span class='message'>Extracting spliced transcript features</span></div><div class='output co'>#&gt; <span class='message'>Extracting introns using the separate approach</span></div><div class='input'>  
   <span class='co'>## Export GTF</span>
-  <span class='fu'>exportToGtf</span>(grl = <span class='kw'>grl</span>, filepath = <span class='fu'><a href='https://rdrr.io/r/base/file.path.html'>file.path</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/tempfile.html'>tempdir</a></span>(), <span class='st'>"exported.gtf"</span>))
+  <span class='fu'>exportToGtf</span><span class='op'>(</span>grl <span class='op'>=</span> <span class='va'>grl</span>, filepath <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/file.path.html'>file.path</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/tempfile.html'>tempdir</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='st'>"exported.gtf"</span><span class='op'>)</span><span class='op'>)</span>
 
 </div></pre>
   </div>
@@ -199,7 +193,7 @@ the GTF file.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>
