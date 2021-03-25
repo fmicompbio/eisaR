@@ -35,15 +35,15 @@
 #'   and how to create them, e.g. from \code{.gtf} files.
 #'
 #' @examples
-#' txdb <- AnnotationDbi::loadDb(system.file("extdata", "hg19sub.sqlite", package = "eisaR"))
-#' regL <- getRegionsFromTxDb(txdb)
-#' lengths(regL)
+#' if (requireNamespace("AnnotationDbi", quietly = TRUE)) {
+#'     txdb <- AnnotationDbi::loadDb(system.file("extdata", "hg19sub.sqlite", package = "eisaR"))
+#'     regL <- getRegionsFromTxDb(txdb)
+#'     lengths(regL)
+#' }
 #'
 #' @import GenomicRanges
-#' @import GenomicFeatures
 #' @importFrom S4Vectors elementNROWS runLength
 #' @importFrom IRanges IRanges
-#' @importFrom AnnotationDbi loadDb
 #'
 #' @export
 getRegionsFromTxDb <- function(txdb, exonExt = 10L, strandedData = TRUE) {
@@ -51,6 +51,12 @@ getRegionsFromTxDb <- function(txdb, exonExt = 10L, strandedData = TRUE) {
     stopifnot(inherits(txdb, "TxDb") || inherits(txdb, "EnsDb"))
     stopifnot(is.numeric(exonExt) && length(exonExt) == 1L)
     stopifnot(is.logical(strandedData) && length(strandedData) == 1L)
+    for (pkg in c("GenomicFeatures", "AnnotationDbi")) {
+        if (!requireNamespace(pkg, quietly = TRUE)) {
+            stop("getFeatureRanges() requires installing the Bioconductor package '",
+                 pkg, "' using BiocManager::install(\"", pkg, "\")")
+        }
+    }
     if (!requireNamespace("GenomicFeatures", quietly = TRUE)) {
         stop("getRegionsFromTxDb() requires installing the Bioconductor package 'GenomicFeatures'",
              " using BiocManager::install(\"GenomicFeatures\")")
