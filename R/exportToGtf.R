@@ -17,7 +17,6 @@
 #' 
 #' @return Does not return anything, generates a GTF file
 #' 
-#' @importFrom rtracklayer export
 #' @importFrom BiocGenerics sort unlist
 #' @importFrom S4Vectors split
 #' 
@@ -38,6 +37,11 @@
 exportToGtf <- function(grl, filepath) {
     if (!is(grl, "GRangesList")) {
         stop("'grl' must be a GRangesList")
+    }
+    
+    if (!requireNamespace("rtracklayer", quietly = TRUE)) {
+        stop("exportToGtf() requires installing the Bioconductor package 'rtracklayer'",
+             " using BiocManager::install(\"rtracklayer\")")
     }
     
     ## "Exons" (individual exons for spliced transcripts, unspliced transcripts
