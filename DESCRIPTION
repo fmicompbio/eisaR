@@ -1,6 +1,6 @@
 Package: eisaR
 Title: Exon-Intron Split Analysis (EISA) in R
-Version: 1.3.0
+Version: 1.3.1
 Authors@R: c(person("Michael", "Stadler", email = "michael.stadler@fmi.ch", role = c("aut", "cre")),
              person("Dimos", "Gaidatzis", email = "dimosthenis.gaidatzis@fmi.ch", role = "aut"),
              person("Lukas", "Burger", email = "lukas.burger@fmi.ch", role = "aut"),
@@ -33,7 +33,8 @@ Suggests:
     Biostrings,
     BSgenome,
     BSgenome.Hsapiens.UCSC.hg38,
-    ensembldb
+    ensembldb,
+    rtracklayer
 VignetteBuilder: knitr
 Imports: 
     graphics,
@@ -48,7 +49,6 @@ Imports:
     methods,
     SummarizedExperiment,
     BiocGenerics,
-    rtracklayer,
     utils
 URL: https://github.com/fmicompbio/eisaR
 BugReports: https://github.com/fmicompbio/eisaR/issues
