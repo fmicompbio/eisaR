@@ -29,7 +29,6 @@
 #'   different feature types, as well as a list of all features for each type.
 #' 
 #' @importFrom GenomicRanges GRangesList reduce
-#' @importFrom AnnotationDbi select
 #' @importFrom BiocGenerics unlist relist setdiff
 #' @importFrom S4Vectors mcols metadata
 #' 
@@ -55,7 +54,8 @@
 #'   S4Vectors::metadata(grl)$featurelist
 #'   
 #'   ## Get feature sequences
-#'   if (requireNamespace("BSgenome", quietly = TRUE)) {
+#'   if (requireNamespace("BSgenome", quietly = TRUE) &&
+#'       requireNamespace("GenomicFeatures", quietly = TRUE)) {
 #'     library(BSgenome)
 #'     genome <- Biostrings::readDNAStringSet(
 #'       system.file("extdata/small_example_genome.fa", package = "eisaR"))
@@ -75,9 +75,11 @@ getFeatureRanges <- function(
     ## --------------------------------------------------------------------- ##
     ## Pre-flight checks
     ## --------------------------------------------------------------------- ##
-    if (!requireNamespace("GenomicFeatures", quietly = TRUE)) {
-        stop("getFeatureRanges() requires installing the Bioconductor package 'GenomicFeatures'",
-             " using BiocManager::install(\"GenomicFeatures\")")
+    for (pkg in c("GenomicFeatures", "AnnotationDbi")) {
+        if (!requireNamespace(pkg, quietly = TRUE)) {
+            stop("getFeatureRanges() requires installing the Bioconductor package '",
+                 pkg, "' using BiocManager::install(\"", pkg, "\")")
+        }
     }
     if (length(gtf) != 1 || !is.character(gtf) || !file.exists(gtf)) {
         stop("'gtf' must be a character scalar providing ", 

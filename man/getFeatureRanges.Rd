@@ -67,7 +67,8 @@ spliced transcripts, unspliced transcripts and introns.
   S4Vectors::metadata(grl)$featurelist
   
   ## Get feature sequences
-  if (requireNamespace("BSgenome", quietly = TRUE)) {
+  if (requireNamespace("BSgenome", quietly = TRUE) &&
+      requireNamespace("GenomicFeatures", quietly = TRUE)) {
     library(BSgenome)
     genome <- Biostrings::readDNAStringSet(
       system.file("extdata/small_example_genome.fa", package = "eisaR"))
