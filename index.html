@@ -23,6 +23,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -35,7 +37,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">eisaR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.1</span>
       </span>
     </div>
 
@@ -69,7 +71,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/fmicompbio/eisaR">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fas fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -95,23 +97,23 @@
 <h2 class="hasAnchor">
 <a href="#overview" class="anchor"></a>Overview</h2>
 <p>Exon-intron split analysis (<code>EISA</code>) uses ordinary RNA-seq data to measure changes in mature RNA and pre-mRNA reads across different experimental conditions to quantify transcriptional and post-transcriptional regulation of gene expression.</p>
-<p>For details see Gaidatzis et al., Nat Biotechnol 2015. doi: 10.1038/nbt.3269.<br><code>eisaR</code> implements the major steps of EISA in R. In addition, it contains functionality for extracting spliced and unspliced transcript sequences, as well as intron sequences (with similar options as the <a href="https://github.com/BUStools/BUSpaRse">BUSpaRse</a>) package), from an annotated genome. These sequences can be indexed and used, e.g., for quantification in preparation for RNA velocity estimation.</p>
+<p>For details see Gaidatzis et al., Nat Biotechnol 2015. doi: 10.1038/nbt.3269.<br><code>eisaR</code> implements the major steps of EISA in R. In addition, it contains functionality for extracting spliced and unspliced transcript sequences, as well as intron sequences (with similar options as the <a href="https://github.com/BUStools/BUSpaRse" class="external-link">BUSpaRse</a>) package), from an annotated genome. These sequences can be indexed and used, e.g., for quantification in preparation for RNA velocity estimation.</p>
 <p>Developed by:</p>
 <ul>
-<li><a href="https://github.com/mbstadler">Michael Stadler</a></li>
+<li><a href="https://github.com/mbstadler" class="external-link">Michael Stadler</a></li>
 <li>Dimos Gaidatzis</li>
-<li><a href="https://github.com/LukasBurger">Lukas Burger</a></li>
-<li><a href="https://github.com/csoneson">Charlotte Soneson</a></li>
+<li><a href="https://github.com/LukasBurger" class="external-link">Lukas Burger</a></li>
+<li><a href="https://github.com/csoneson" class="external-link">Charlotte Soneson</a></li>
 </ul>
 <p>Also a big “thank you” for contributions to:</p>
 <ul>
-<li><a href="https://github.com/federicomarini">Federico Marini</a></li>
+<li><a href="https://github.com/federicomarini" class="external-link">Federico Marini</a></li>
 </ul>
 </div>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
-<p>To install <code>eisaR</code> from Bioconductor, you will need at least R 4.0 and Bioconductor 3.11, which is available on April 28, 2020. Then use the following within R (see also <a href="https://bioconductor.org/packages/eisaR/">eisaR download page</a>):</p>
+<p>To install <code>eisaR</code> from Bioconductor, you will need at least R 4.0 and Bioconductor 3.11, which is available on April 28, 2020. Then use the following within R (see also <a href="https://bioconductor.org/packages/eisaR/" class="external-link">eisaR download page</a>):</p>
 <pre><code># BiocManager is needed to install Bioconductor packages
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
@@ -123,7 +125,7 @@ BiocManager::install("eisaR")</code></pre>
 <h2 class="hasAnchor">
 <a href="#functionality" class="anchor"></a>Functionality</h2>
 <p>All you need is RNA-seq data from at least two conditions (e.g. wildtype and mutant). The <code>eisaR</code> package contains convenience functions to facilitate the steps in an exon-intron split analysis, which consists of:</p>
-<ol>
+<ol style="list-style-type: decimal">
 <li>preparing the annotation (exonic and gene body coordinate ranges)<br>
 </li>
 <li>quantifying RNA-seq alignments in exons and introns<br>
@@ -132,16 +134,16 @@ BiocManager::install("eisaR")</code></pre>
 </li>
 <li>visualizing the results</li>
 </ol>
-<p>For the steps 1. and 2. above, this <code>eisaR</code> vignette makes use of Bioconductor annotation and the <a href="https://bioconductor.org/packages/QuasR/">QuasR</a> package. It is also possible to obtain count tables for exons and introns using some other pipeline or approach, and directly start with step 3.</p>
+<p>For the steps 1. and 2. above, this <code>eisaR</code> vignette makes use of Bioconductor annotation and the <a href="https://bioconductor.org/packages/QuasR/" class="external-link">QuasR</a> package. It is also possible to obtain count tables for exons and introns using some other pipeline or approach, and directly start with step 3.</p>
 </div>
 <div id="reference" class="section level2">
 <h2 class="hasAnchor">
 <a href="#reference" class="anchor"></a>Reference</h2>
 <p><code>EISA</code> has been described in:</p>
 <p>“Analysis of intronic and exonic reads in RNA-seq data characterizes transcriptional and post-transcriptional regulation.”<br>
-Gaidatzis D., Burger L., Florescu M. and Stadler, M.B.<br><em>Nat Biotechnol.</em> <strong>2015</strong>; 33(7):722-9. <a href="https://www.ncbi.nlm.nih.gov/pubmed/26098447">PubMed: 26098447</a>, <a href="https://doi.org/10.1038/nbt.3269">doi: 10.1038/nbt.3269</a></p>
+Gaidatzis D., Burger L., Florescu M. and Stadler, M.B.<br><em>Nat Biotechnol.</em> <strong>2015</strong>; 33(7):722-9. <a href="https://www.ncbi.nlm.nih.gov/pubmed/26098447" class="external-link">PubMed: 26098447</a>, <a href="https://doi.org/10.1038/nbt.3269" class="external-link">doi: 10.1038/nbt.3269</a></p>
 <p>The functionality for extracting spliced and unspliced transcript sequences, as well as intron sequences, for use in RNA velocity analysis, has been described in:</p>
-<p>“Preprocessing choices affect RNA velocity results for droplet scRNA-seq data.” Soneson C., Srivastava A., Patro R. and Stadler, M.B. <em>bioRxiv</em> <strong>2020</strong>. <a href="https://www.biorxiv.org/content/10.1101/2020.03.13.990069v1">bioRxiv</a>, <a href="https://doi.org/10.1101/2020.03.13.990069">doi: 10.1101/2020.03.13.990069</a></p>
+<p>“Preprocessing choices affect RNA velocity results for droplet scRNA-seq data.” Soneson C., Srivastava A., Patro R. and Stadler, M.B. <em>bioRxiv</em> <strong>2020</strong>. <a href="https://www.biorxiv.org/content/10.1101/2020.03.13.990069v1" class="external-link">bioRxiv</a>, <a href="https://doi.org/10.1101/2020.03.13.990069" class="external-link">doi: 10.1101/2020.03.13.990069</a></p>
 </div>
 <div id="software-status" class="section level2">
 <h2 class="hasAnchor">
@@ -163,20 +165,20 @@ Gaidatzis D., Burger L., Florescu M. and Stadler, M.B.<br><em>Nat Biotechnol.</e
 <tr class="odd">
 <td align="center">GitHub Actions</td>
 <td align="center">Linux/Windows/macOS</td>
-<td align="center"><a href="https://github.com/fmicompbio/eisaR/actions"><img src="https://github.com/fmicompbio/eisaR/workflows/R-CMD-check/badge.svg" alt="R build status"></a></td>
-<td align="center"><a href="https://codecov.io/github/fmicompbio/eisaR"><img src="https://codecov.io/github/fmicompbio/eisaR/coverage.svg?branch=master" alt="Codecov.io coverage status"></a></td>
+<td align="center"><a href="https://github.com/fmicompbio/eisaR/actions" class="external-link"><img src="https://github.com/fmicompbio/eisaR/workflows/R-CMD-check/badge.svg" alt="R build status"></a></td>
+<td align="center"><a href="https://codecov.io/github/fmicompbio/eisaR" class="external-link"><img src="https://codecov.io/github/fmicompbio/eisaR/coverage.svg?branch=master" alt="Codecov.io coverage status"></a></td>
 </tr>
 <tr class="even">
-<td align="center">Bioc (<a href="http://bioconductor.org/packages/devel/bioc/html/eisaR.html"><em>devel</em></a>)</td>
+<td align="center">Bioc (<a href="http://bioconductor.org/packages/devel/bioc/html/eisaR.html" class="external-link"><em>devel</em></a>)</td>
 <td align="center">Multiple</td>
-<td align="center"><a href="http://bioconductor.org/checkResults/devel/bioc-LATEST/eisaR"><img src="http://bioconductor.org/shields/build/devel/bioc/eisaR.svg" alt="Bioconductor-devel Build Status"></a></td>
-<td align="center"><a href="https://codecov.io/github/fmicompbio/eisaR"><img src="https://codecov.io/github/fmicompbio/eisaR/coverage.svg?branch=master" alt="Codecov.io coverage status"></a></td>
+<td align="center"><a href="http://bioconductor.org/checkResults/devel/bioc-LATEST/eisaR" class="external-link"><img src="http://bioconductor.org/shields/build/devel/bioc/eisaR.svg" alt="Bioconductor-devel Build Status"></a></td>
+<td align="center"><a href="https://codecov.io/github/fmicompbio/eisaR" class="external-link"><img src="https://codecov.io/github/fmicompbio/eisaR/coverage.svg?branch=master" alt="Codecov.io coverage status"></a></td>
 </tr>
 <tr class="odd">
-<td align="center">Bioc (<a href="http://bioconductor.org/packages/release/bioc/html/eisaR.html"><em>release</em></a>)</td>
+<td align="center">Bioc (<a href="http://bioconductor.org/packages/release/bioc/html/eisaR.html" class="external-link"><em>release</em></a>)</td>
 <td align="center">Multiple</td>
-<td align="center"><a href="http://bioconductor.org/checkResults/release/bioc-LATEST/eisaR"><img src="http://bioconductor.org/shields/build/release/bioc/eisaR.svg" alt="Bioconductor-release Build Status"></a></td>
-<td align="center"><a href="https://codecov.io/github/fmicompbio/eisaR"><img src="https://codecov.io/github/fmicompbio/eisaR/coverage.svg?branch=master" alt="Codecov.io coverage status"></a></td>
+<td align="center"><a href="http://bioconductor.org/checkResults/release/bioc-LATEST/eisaR" class="external-link"><img src="http://bioconductor.org/shields/build/release/bioc/eisaR.svg" alt="Bioconductor-release Build Status"></a></td>
+<td align="center"><a href="https://codecov.io/github/fmicompbio/eisaR" class="external-link"><img src="https://codecov.io/github/fmicompbio/eisaR/coverage.svg?branch=master" alt="Codecov.io coverage status"></a></td>
 </tr>
 </tbody>
 </table>
@@ -187,7 +189,7 @@ Gaidatzis D., Burger L., Florescu M. and Stadler, M.B.<br><em>Nat Biotechnol.</e
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
-<h2>Links</h2>
+<h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
 <li>Download from BIOC at <br><a href="https://www.bioconductor.org/packages/eisaR">https://​www.bioconductor.org/​packages/​eisaR</a>
 </li>
@@ -197,20 +199,24 @@ Gaidatzis D., Burger L., Florescu M. and Stadler, M.B.<br><em>Nat Biotechnol.</e
 </li>
 </ul>
 </div>
+
 <div class="license">
-<h2>License</h2>
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li><a href="https://www.r-project.org/Licenses/GPL-3">GPL-3</a></li>
 </ul>
 </div>
+
+
 <div class="citation">
-<h2>Citation</h2>
+<h2 data-toc-skip>Citation</h2>
 <ul class="list-unstyled">
 <li><a href="authors.html">Citing eisaR</a></li>
 </ul>
 </div>
+
 <div class="developers">
-<h2>Developers</h2>
+<h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
 <li>
 <a href="https://github.com/mbstadler">Michael Stadler</a> <br><small class="roles"> Author, maintainer </small>  </li>
@@ -222,16 +228,20 @@ Gaidatzis D., Burger L., Florescu M. and Stadler, M.B.<br><em>Nat Biotechnol.</e
 </ul>
 </div>
 
+
+
   </div>
 </div>
 
 
       <footer><div class="copyright">
-  <p>Developed by <a href="https://github.com/mbstadler">Michael Stadler</a>, Dimos Gaidatzis, <a href="https://github.com/LukasBurger">Lukas Burger</a>, <a href="https://csoneson.github.io">Charlotte Soneson</a>.</p>
+  <p></p>
+<p>Developed by <a href="https://github.com/mbstadler" class="external-link">Michael Stadler</a>, Dimos Gaidatzis, <a href="https://github.com/LukasBurger" class="external-link">Lukas Burger</a>, <a href="https://csoneson.github.io" class="external-link">Charlotte Soneson</a>.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9001.</p>
 </div>
 
       </footer>
@@ -239,6 +249,8 @@ Gaidatzis D., Burger L., Florescu M. and Stadler, M.B.<br><em>Nat Biotechnol.</e
 
   
 
+
+  
 
   </body>
 </html>

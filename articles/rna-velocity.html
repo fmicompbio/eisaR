@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">eisaR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.1</span>
       </span>
     </div>
 
@@ -64,8 +66,8 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/fmicompbio/eisaR">
-    <span class="fa fa-github fa-lg"></span>
+  <a href="https://github.com/fmicompbio/eisaR" class="external-link">
+    <span class="fas fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -83,11 +85,11 @@
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Generating reference files for spliced and unspliced abundance estimation with alignment-free methods</h1>
-                        <h4 class="author">Charlotte Soneson</h4>
+                        <h4 data-toc-skip class="author">Charlotte Soneson</h4>
             
-            <h4 class="date">2020-11-26</h4>
+            <h4 data-toc-skip class="date">2021-03-25</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/fmicompbio/eisaR/blob/master/vignettes/rna-velocity.Rmd"><code>vignettes/rna-velocity.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/fmicompbio/eisaR/blob/master/vignettes/rna-velocity.Rmd" class="external-link"><code>vignettes/rna-velocity.Rmd</code></a></small>
       <div class="hidden name"><code>rna-velocity.Rmd</code></div>
 
     </div>
@@ -97,20 +99,20 @@
 <div id="introduction" class="section level1">
 <h1 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h1>
-<p>In this vignette, we show how to prepare reference files for estimating abundances of spliced and unspliced abundances with alignment-free methods (e.g., <a href="https://salmon.readthedocs.io/en/latest/salmon.html">Salmon</a>, <a href="https://salmon.readthedocs.io/en/latest/alevin.html">alevin</a> or <a href="https://pachterlab.github.io/kallisto/">kallisto</a>). Such abundances are used as input, e.g., for estimation of RNA velocity in single-cell data.</p>
+<p>In this vignette, we show how to prepare reference files for estimating abundances of spliced and unspliced abundances with alignment-free methods (e.g., <a href="https://salmon.readthedocs.io/en/latest/salmon.html" class="external-link">Salmon</a>, <a href="https://salmon.readthedocs.io/en/latest/alevin.html" class="external-link">alevin</a> or <a href="https://pachterlab.github.io/kallisto/" class="external-link">kallisto</a>). Such abundances are used as input, e.g., for estimation of RNA velocity in single-cell data.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/fmicompbio/eisaR">eisaR</a></span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/fmicompbio/eisaR" class="external-link">eisaR</a></span><span class="op">)</span></code></pre></div>
 </div>
 <div id="generate-feature-ranges" class="section level1">
 <h1 class="hasAnchor">
 <a href="#generate-feature-ranges" class="anchor"></a>Generate feature ranges</h1>
-<p>The first step is to generate a <code>GRangesList</code> object containing the genomic ranges for the features of interest (spliced transcripts, and either unspliced transcripts or intron sequences). This is done using the <code><a href="../reference/getFeatureRanges.html">getFeatureRanges()</a></code> function, based on a reference GTF file. Here, we exemplify this with a small subset of a GTF file from <a href="https://www.gencodegenes.org/human/release_28.html">Gencode release 28</a>. We extract genomic ranges for spliced transcript and introns, where the latter are defined for each transcript separately (using the same terminology as in the <em><a href="https://bioconductor.org/packages/3.13/BUSpaRse">BUSpaRse</a></em> package). For each intron, a flanking sequence of 50 nt is added on each side to accommodate reads mapping across an exon/intron boundary.</p>
+<p>The first step is to generate a <code>GRangesList</code> object containing the genomic ranges for the features of interest (spliced transcripts, and either unspliced transcripts or intron sequences). This is done using the <code><a href="../reference/getFeatureRanges.html">getFeatureRanges()</a></code> function, based on a reference GTF file. Here, we exemplify this with a small subset of a GTF file from <a href="https://www.gencodegenes.org/human/release_28.html" class="external-link">Gencode release 28</a>. We extract genomic ranges for spliced transcript and introns, where the latter are defined for each transcript separately (using the same terminology as in the <em><a href="https://bioconductor.org/packages/3.13/BUSpaRse" class="external-link">BUSpaRse</a></em> package). For each intron, a flanking sequence of 50 nt is added on each side to accommodate reads mapping across an exon/intron boundary.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">gtf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata/gencode.v28.annotation.sub.gtf"</span>, 
+<code class="sourceCode R"><span class="va">gtf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/gencode.v28.annotation.sub.gtf"</span>, 
                    package <span class="op">=</span> <span class="st">"eisaR"</span><span class="op">)</span>
 <span class="va">grl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getFeatureRanges.html">getFeatureRanges</a></span><span class="op">(</span>
   gtf <span class="op">=</span> <span class="va">gtf</span>,
-  featureType <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"spliced"</span>, <span class="st">"intron"</span><span class="op">)</span>, 
+  featureType <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"spliced"</span>, <span class="st">"intron"</span><span class="op">)</span>, 
   intronType <span class="op">=</span> <span class="st">"separate"</span>, 
   flankLength <span class="op">=</span> <span class="fl">50L</span>, 
   joinOverlappingIntrons <span class="op">=</span> <span class="cn">FALSE</span>, 
@@ -184,7 +186,7 @@
 <span class="co">#&gt; &lt;892 more elements&gt;</span></code></pre></div>
 <p>The <code>metadata</code> slot of the <code>GRangesList</code> object contains a list of the feature IDs for each type of feature:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="fu">S4Vectors</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Annotated-class.html">metadata</a></span><span class="op">(</span><span class="va">grl</span><span class="op">)</span><span class="op">$</span><span class="va">featurelist</span>, <span class="va">head</span><span class="op">)</span>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu">S4Vectors</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Annotated-class.html" class="external-link">metadata</a></span><span class="op">(</span><span class="va">grl</span><span class="op">)</span><span class="op">$</span><span class="va">featurelist</span>, <span class="va">head</span><span class="op">)</span>
 <span class="co">#&gt; $spliced</span>
 <span class="co">#&gt; [1] "ENST00000456328.2" "ENST00000450305.2" "ENST00000473358.1"</span>
 <span class="co">#&gt; [4] "ENST00000469289.1" "ENST00000607096.1" "ENST00000606857.1"</span>
@@ -195,7 +197,7 @@
 <span class="co">#&gt; [5] "ENST00000450305.2-I2" "ENST00000450305.2-I3"</span></code></pre></div>
 <p>As we can see, the intron IDs are identified by a <code>-I</code> suffix. Each feature is further annotated to a gene ID. For the intronic features, the corresponding gene ID also bears the <code>-I</code> suffix appended to the original gene ID. Having separate gene IDs for spliced transcripts and introns allows, for example, joint quantification of spliced and unspliced versions of a gene with alevin. Adding a suffix rather than defining a completely new gene ID allows us to easily match corresponding spliced and unspliced feature IDs. To further simplify the latter, the metadata of the <code>GRangesList</code> object returned by <code><a href="../reference/getFeatureRanges.html">getFeatureRanges()</a></code> contains <code>data.frame</code>s matching the corresponding gene IDs (as well as transcript IDs, if unspliced transcripts are extracted):</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fu">S4Vectors</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Annotated-class.html">metadata</a></span><span class="op">(</span><span class="va">grl</span><span class="op">)</span><span class="op">$</span><span class="va">corrgene</span><span class="op">)</span>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">S4Vectors</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Annotated-class.html" class="external-link">metadata</a></span><span class="op">(</span><span class="va">grl</span><span class="op">)</span><span class="op">$</span><span class="va">corrgene</span><span class="op">)</span>
 <span class="co">#&gt;             spliced              intron</span>
 <span class="co">#&gt; 1 ENSG00000223972.5 ENSG00000223972.5-I</span>
 <span class="co">#&gt; 2 ENSG00000243485.5 ENSG00000243485.5-I</span>
@@ -207,13 +209,13 @@
 <div id="extract-feature-sequences" class="section level1">
 <h1 class="hasAnchor">
 <a href="#extract-feature-sequences" class="anchor"></a>Extract feature sequences</h1>
-<p>Once the genomic ranges of the features of interest are extracted, we can obtain the nucleotide sequences using the <code>extractTranscriptSeqs()</code> function from the <em><a href="https://bioconductor.org/packages/3.13/GenomicFeatures">GenomicFeatures</a></em> package. In addition to the ranges, this requires the genome sequence. This can be obtained, for example, from the corresponding BSgenome package, or from an external FASTA file.</p>
+<p>Once the genomic ranges of the features of interest are extracted, we can obtain the nucleotide sequences using the <code>extractTranscriptSeqs()</code> function from the <em><a href="https://bioconductor.org/packages/3.13/GenomicFeatures" class="external-link">GenomicFeatures</a></em> package. In addition to the ranges, this requires the genome sequence. This can be obtained, for example, from the corresponding BSgenome package, or from an external FASTA file.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/message.html">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="op">{</span>
-  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/BSgenome">BSgenome</a></span><span class="op">)</span>
-  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">BSgenome.Hsapiens.UCSC.hg38</span><span class="op">)</span>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="op">{</span>
+  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/BSgenome" class="external-link">BSgenome</a></span><span class="op">)</span>
+  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">BSgenome.Hsapiens.UCSC.hg38</span><span class="op">)</span>
 <span class="op">}</span><span class="op">)</span>
-<span class="va">seqs</span> <span class="op">&lt;-</span> <span class="fu">GenomicFeatures</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/GenomicFeatures/man/extractTranscriptSeqs.html">extractTranscriptSeqs</a></span><span class="op">(</span>
+<span class="va">seqs</span> <span class="op">&lt;-</span> <span class="fu">GenomicFeatures</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/GenomicFeatures/man/extractTranscriptSeqs.html" class="external-link">extractTranscriptSeqs</a></span><span class="op">(</span>
   x <span class="op">=</span> <span class="va">BSgenome.Hsapiens.UCSC.hg38</span>, 
   transcripts <span class="op">=</span> <span class="va">grl</span>
 <span class="op">)</span>
@@ -236,11 +238,11 @@
 <div id="generate-an-expanded-gtf-file" class="section level1">
 <h1 class="hasAnchor">
 <a href="#generate-an-expanded-gtf-file" class="anchor"></a>Generate an expanded GTF file</h1>
-<p>In addition to extracting feature sequences, we can also export a GTF file with the full set of features. This is useful, for example, in order to generate a linked transcriptome for later import of estimated abundances with <em><a href="https://bioconductor.org/packages/3.13/tximeta">tximeta</a></em>.</p>
+<p>In addition to extracting feature sequences, we can also export a GTF file with the full set of features. This is useful, for example, in order to generate a linked transcriptome for later import of estimated abundances with <em><a href="https://bioconductor.org/packages/3.13/tximeta" class="external-link">tximeta</a></em>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/exportToGtf.html">exportToGtf</a></span><span class="op">(</span>
   <span class="va">grl</span>, 
-  filepath <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"exported.gtf"</span><span class="op">)</span>
+  filepath <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"exported.gtf"</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
 <p>In the exported GTF file, each entry of <code>grl</code> will correspond to a “transcript” feature, and each individual range corresponds to an “exon” feature. In addition, each gene is represented as a “gene” feature.</p>
 </div>
@@ -250,7 +252,7 @@
 <p>Finally, we can export a <code>data.frame</code> (or a tab-separated test file) providing a conversion table between “transcript” and “gene” identifiers. This is needed to aggregate the transcript-level abundance estimates from alignment-free methods such as <em>Salmon</em> and <em>kallisto</em> to the gene level.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getTx2Gene.html">getTx2Gene</a></span><span class="op">(</span><span class="va">grl</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span>
 <span class="co">#&gt;                       transcript_id           gene_id</span>
 <span class="co">#&gt; ENST00000456328.2 ENST00000456328.2 ENSG00000223972.5</span>
 <span class="co">#&gt; ENST00000450305.2 ENST00000450305.2 ENSG00000223972.5</span>
@@ -258,7 +260,7 @@
 <span class="co">#&gt; ENST00000469289.1 ENST00000469289.1 ENSG00000243485.5</span>
 <span class="co">#&gt; ENST00000607096.1 ENST00000607096.1 ENSG00000284332.1</span>
 <span class="co">#&gt; ENST00000606857.1 ENST00000606857.1 ENSG00000268020.3</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">tail</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span>
 <span class="co">#&gt;                               transcript_id              gene_id</span>
 <span class="co">#&gt; ENST00000304952.10-I1 ENST00000304952.10-I1 ENSG00000188290.10-I</span>
 <span class="co">#&gt; ENST00000304952.10-I2 ENST00000304952.10-I2 ENSG00000188290.10-I</span>
@@ -271,8 +273,8 @@
 <h1 class="hasAnchor">
 <a href="#session-info" class="anchor"></a>Session info</h1>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; R Under development (unstable) (2020-11-25 r79505)</span>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span>
+<span class="co">#&gt; R Under development (unstable) (2021-03-24 r80111)</span>
 <span class="co">#&gt; Platform: x86_64-apple-darwin17.0 (64-bit)</span>
 <span class="co">#&gt; Running under: macOS Catalina 10.15.7</span>
 <span class="co">#&gt; </span>
@@ -289,58 +291,64 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; other attached packages:</span>
 <span class="co">#&gt;  [1] BSgenome.Hsapiens.UCSC.hg38_1.4.3</span>
-<span class="co">#&gt;  [2] BSgenome_1.59.1                  </span>
-<span class="co">#&gt;  [3] rtracklayer_1.51.0               </span>
-<span class="co">#&gt;  [4] Biostrings_2.59.0                </span>
-<span class="co">#&gt;  [5] XVector_0.31.0                   </span>
-<span class="co">#&gt;  [6] GenomicRanges_1.43.0             </span>
-<span class="co">#&gt;  [7] GenomeInfoDb_1.27.1              </span>
-<span class="co">#&gt;  [8] IRanges_2.25.2                   </span>
-<span class="co">#&gt;  [9] S4Vectors_0.29.3                 </span>
-<span class="co">#&gt; [10] BiocGenerics_0.37.0              </span>
-<span class="co">#&gt; [11] eisaR_1.3.0                      </span>
+<span class="co">#&gt;  [2] BSgenome_1.59.2                  </span>
+<span class="co">#&gt;  [3] rtracklayer_1.51.5               </span>
+<span class="co">#&gt;  [4] Biostrings_2.59.2                </span>
+<span class="co">#&gt;  [5] XVector_0.31.1                   </span>
+<span class="co">#&gt;  [6] GenomicRanges_1.43.3             </span>
+<span class="co">#&gt;  [7] GenomeInfoDb_1.27.8              </span>
+<span class="co">#&gt;  [8] IRanges_2.25.6                   </span>
+<span class="co">#&gt;  [9] S4Vectors_0.29.9                 </span>
+<span class="co">#&gt; [10] BiocGenerics_0.37.1              </span>
+<span class="co">#&gt; [11] eisaR_1.3.1                      </span>
 <span class="co">#&gt; [12] BiocStyle_2.19.1                 </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; loaded via a namespace (and not attached):</span>
-<span class="co">#&gt;  [1] MatrixGenerics_1.3.0        Biobase_2.51.0             </span>
-<span class="co">#&gt;  [3] httr_1.4.2                  edgeR_3.33.0               </span>
-<span class="co">#&gt;  [5] bit64_4.0.5                 assertthat_0.2.1           </span>
-<span class="co">#&gt;  [7] askpass_1.1                 BiocManager_1.30.10        </span>
-<span class="co">#&gt;  [9] BiocFileCache_1.15.1        blob_1.2.1                 </span>
-<span class="co">#&gt; [11] GenomeInfoDbData_1.2.4      Rsamtools_2.7.0            </span>
-<span class="co">#&gt; [13] yaml_2.2.1                  progress_1.2.2             </span>
-<span class="co">#&gt; [15] lattice_0.20-41             pillar_1.4.7               </span>
-<span class="co">#&gt; [17] RSQLite_2.2.1               limma_3.47.1               </span>
-<span class="co">#&gt; [19] glue_1.4.2                  digest_0.6.27              </span>
-<span class="co">#&gt; [21] htmltools_0.5.0             Matrix_1.2-18              </span>
-<span class="co">#&gt; [23] XML_3.99-0.5                pkgconfig_2.0.3            </span>
-<span class="co">#&gt; [25] biomaRt_2.47.1              bookdown_0.21              </span>
-<span class="co">#&gt; [27] zlibbioc_1.37.0             purrr_0.3.4                </span>
-<span class="co">#&gt; [29] BiocParallel_1.25.1         tibble_3.0.4               </span>
-<span class="co">#&gt; [31] openssl_1.4.3               generics_0.1.0             </span>
-<span class="co">#&gt; [33] ellipsis_0.3.1              SummarizedExperiment_1.21.0</span>
-<span class="co">#&gt; [35] GenomicFeatures_1.43.2      magrittr_2.0.1             </span>
-<span class="co">#&gt; [37] crayon_1.3.4                memoise_1.1.0              </span>
-<span class="co">#&gt; [39] evaluate_0.14               fs_1.5.0                   </span>
-<span class="co">#&gt; [41] xml2_1.3.2                  textshaping_0.2.1          </span>
-<span class="co">#&gt; [43] tools_4.1.0                 prettyunits_1.1.1          </span>
-<span class="co">#&gt; [45] hms_0.5.3                   lifecycle_0.2.0            </span>
-<span class="co">#&gt; [47] matrixStats_0.57.0          stringr_1.4.0              </span>
-<span class="co">#&gt; [49] locfit_1.5-9.4              DelayedArray_0.17.3        </span>
-<span class="co">#&gt; [51] AnnotationDbi_1.53.0        compiler_4.1.0             </span>
-<span class="co">#&gt; [53] pkgdown_1.6.1.9000          systemfonts_0.3.2          </span>
-<span class="co">#&gt; [55] rlang_0.4.9                 grid_4.1.0                 </span>
-<span class="co">#&gt; [57] RCurl_1.98-1.2              rappdirs_0.3.1             </span>
-<span class="co">#&gt; [59] bitops_1.0-6                rmarkdown_2.5              </span>
-<span class="co">#&gt; [61] DBI_1.1.0                   curl_4.3                   </span>
-<span class="co">#&gt; [63] R6_2.5.0                    GenomicAlignments_1.27.1   </span>
-<span class="co">#&gt; [65] knitr_1.30                  dplyr_1.0.2                </span>
-<span class="co">#&gt; [67] bit_4.0.4                   filelock_1.0.2             </span>
-<span class="co">#&gt; [69] rprojroot_2.0.2             ragg_0.4.0                 </span>
-<span class="co">#&gt; [71] desc_1.2.0                  stringi_1.5.3              </span>
-<span class="co">#&gt; [73] Rcpp_1.0.5                  vctrs_0.3.5                </span>
-<span class="co">#&gt; [75] dbplyr_2.0.0                tidyselect_1.1.0           </span>
-<span class="co">#&gt; [77] xfun_0.19</span></code></pre></div>
+<span class="co">#&gt;  [1] bitops_1.0-6                matrixStats_0.58.0         </span>
+<span class="co">#&gt;  [3] fs_1.5.0                    bit64_4.0.5                </span>
+<span class="co">#&gt;  [5] filelock_1.0.2              progress_1.2.2             </span>
+<span class="co">#&gt;  [7] httr_1.4.2                  rprojroot_2.0.2            </span>
+<span class="co">#&gt;  [9] tools_4.1.0                 bslib_0.2.4                </span>
+<span class="co">#&gt; [11] utf8_1.2.1                  R6_2.5.0                   </span>
+<span class="co">#&gt; [13] DBI_1.1.1                   tidyselect_1.1.0           </span>
+<span class="co">#&gt; [15] prettyunits_1.1.1           bit_4.0.4                  </span>
+<span class="co">#&gt; [17] curl_4.3                    compiler_4.1.0             </span>
+<span class="co">#&gt; [19] textshaping_0.3.3           Biobase_2.51.0             </span>
+<span class="co">#&gt; [21] xml2_1.3.2                  desc_1.3.0                 </span>
+<span class="co">#&gt; [23] DelayedArray_0.17.9         bookdown_0.21              </span>
+<span class="co">#&gt; [25] sass_0.3.1                  askpass_1.1                </span>
+<span class="co">#&gt; [27] rappdirs_0.3.3              pkgdown_1.6.1.9001         </span>
+<span class="co">#&gt; [29] systemfonts_1.0.1           stringr_1.4.0              </span>
+<span class="co">#&gt; [31] digest_0.6.27               Rsamtools_2.7.1            </span>
+<span class="co">#&gt; [33] rmarkdown_2.7               pkgconfig_2.0.3            </span>
+<span class="co">#&gt; [35] htmltools_0.5.1.1           MatrixGenerics_1.3.1       </span>
+<span class="co">#&gt; [37] limma_3.47.10               dbplyr_2.1.0               </span>
+<span class="co">#&gt; [39] fastmap_1.1.0               rlang_0.4.10               </span>
+<span class="co">#&gt; [41] RSQLite_2.2.4               jquerylib_0.1.3            </span>
+<span class="co">#&gt; [43] BiocIO_1.1.2                generics_0.1.0             </span>
+<span class="co">#&gt; [45] jsonlite_1.7.2              BiocParallel_1.25.5        </span>
+<span class="co">#&gt; [47] dplyr_1.0.5                 RCurl_1.98-1.3             </span>
+<span class="co">#&gt; [49] magrittr_2.0.1              GenomeInfoDbData_1.2.4     </span>
+<span class="co">#&gt; [51] Matrix_1.3-2                Rcpp_1.0.6                 </span>
+<span class="co">#&gt; [53] fansi_0.4.2                 lifecycle_1.0.0            </span>
+<span class="co">#&gt; [55] edgeR_3.33.3                stringi_1.5.3              </span>
+<span class="co">#&gt; [57] yaml_2.2.1                  SummarizedExperiment_1.21.1</span>
+<span class="co">#&gt; [59] zlibbioc_1.37.0             BiocFileCache_1.15.1       </span>
+<span class="co">#&gt; [61] grid_4.1.0                  blob_1.2.1                 </span>
+<span class="co">#&gt; [63] crayon_1.4.1                lattice_0.20-41            </span>
+<span class="co">#&gt; [65] GenomicFeatures_1.43.7      hms_1.0.0                  </span>
+<span class="co">#&gt; [67] KEGGREST_1.31.1             locfit_1.5-9.4             </span>
+<span class="co">#&gt; [69] knitr_1.31                  pillar_1.5.1               </span>
+<span class="co">#&gt; [71] rjson_0.2.20                biomaRt_2.47.5             </span>
+<span class="co">#&gt; [73] XML_3.99-0.6                glue_1.4.2                 </span>
+<span class="co">#&gt; [75] evaluate_0.14               BiocManager_1.30.10        </span>
+<span class="co">#&gt; [77] png_0.1-7                   vctrs_0.3.6                </span>
+<span class="co">#&gt; [79] openssl_1.4.3               purrr_0.3.4                </span>
+<span class="co">#&gt; [81] assertthat_0.2.1            cachem_1.0.4               </span>
+<span class="co">#&gt; [83] xfun_0.22                   restfulr_0.0.13            </span>
+<span class="co">#&gt; [85] ragg_1.1.2                  tibble_3.1.0               </span>
+<span class="co">#&gt; [87] GenomicAlignments_1.27.2    AnnotationDbi_1.53.1       </span>
+<span class="co">#&gt; [89] memoise_2.0.0               ellipsis_0.3.1</span></code></pre></div>
 </div>
   </div>
 
@@ -355,11 +363,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by <a href="https://github.com/mbstadler">Michael Stadler</a>, Dimos Gaidatzis, <a href="https://github.com/LukasBurger">Lukas Burger</a>, <a href="https://csoneson.github.io">Charlotte Soneson</a>.</p>
+  <p></p>
+<p>Developed by <a href="https://github.com/mbstadler" class="external-link external-link">Michael Stadler</a>, Dimos Gaidatzis, <a href="https://github.com/LukasBurger" class="external-link external-link">Lukas Burger</a>, <a href="https://csoneson.github.io" class="external-link external-link">Charlotte Soneson</a>.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link external-link">pkgdown</a> 1.6.1.9001.</p>
 </div>
 
       </footer>
@@ -367,6 +377,8 @@
 
   
 
+
+  
 
   </body>
 </html>
