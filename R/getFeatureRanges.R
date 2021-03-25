@@ -28,7 +28,6 @@
 #'   \code{data.frame}s mapping corresponding identifiers between the 
 #'   different feature types, as well as a list of all features for each type.
 #' 
-#' @importFrom GenomicFeatures makeTxDbFromGFF exonsBy
 #' @importFrom GenomicRanges GRangesList reduce
 #' @importFrom AnnotationDbi select
 #' @importFrom BiocGenerics unlist relist setdiff
@@ -76,6 +75,10 @@ getFeatureRanges <- function(
     ## --------------------------------------------------------------------- ##
     ## Pre-flight checks
     ## --------------------------------------------------------------------- ##
+    if (!requireNamespace("GenomicFeatures", quietly = TRUE)) {
+        stop("getFeatureRanges() requires installing the Bioconductor package 'GenomicFeatures'",
+             " using BiocManager::install(\"GenomicFeatures\")")
+    }
     if (length(gtf) != 1 || !is.character(gtf) || !file.exists(gtf)) {
         stop("'gtf' must be a character scalar providing ", 
              "the path to an existing file.")

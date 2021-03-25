@@ -51,7 +51,11 @@ getRegionsFromTxDb <- function(txdb, exonExt = 10L, strandedData = TRUE) {
     stopifnot(inherits(txdb, "TxDb") || inherits(txdb, "EnsDb"))
     stopifnot(is.numeric(exonExt) && length(exonExt) == 1L)
     stopifnot(is.logical(strandedData) && length(strandedData) == 1L)
-
+    if (!requireNamespace("GenomicFeatures", quietly = TRUE)) {
+        stop("getRegionsFromTxDb() requires installing the Bioconductor package 'GenomicFeatures'",
+             " using BiocManager::install(\"GenomicFeatures\")")
+    }
+    
     # get exons and extend by exonExt on both sides
     message("extracting exon coordinates")
     exL <- GenomicFeatures::exonsBy(txdb, by = "gene")
