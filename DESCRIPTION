@@ -34,6 +34,7 @@ Suggests:
     BSgenome,
     BSgenome.Hsapiens.UCSC.hg38,
     ensembldb,
+    AnnotationDbi,
     GenomicFeatures,
     rtracklayer
 VignetteBuilder: knitr
@@ -43,7 +44,6 @@ Imports:
     GenomicRanges,
     S4Vectors,
     IRanges,
-    AnnotationDbi,
     limma,
     edgeR,
     methods,
