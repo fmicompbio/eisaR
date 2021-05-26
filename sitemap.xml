@@ -1,7 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://fmicompbio.github.io/eisaR/404.html</loc>
+  </url>
+  <url>
+    <loc>https://fmicompbio.github.io/eisaR/articles/eisaR.html</loc>
+  </url>
+  <url>
+    <loc>https://fmicompbio.github.io/eisaR/articles/index.html</loc>
+  </url>
+  <url>
+    <loc>https://fmicompbio.github.io/eisaR/articles/rna-velocity.html</loc>
+  </url>
+  <url>
+    <loc>https://fmicompbio.github.io/eisaR/authors.html</loc>
+  </url>
+  <url>
     <loc>https://fmicompbio.github.io/eisaR/index.html</loc>
+  </url>
+  <url>
+    <loc>https://fmicompbio.github.io/eisaR/news/index.html</loc>
   </url>
   <url>
     <loc>https://fmicompbio.github.io/eisaR/reference/eisaR-package.html</loc>
@@ -19,15 +37,12 @@
     <loc>https://fmicompbio.github.io/eisaR/reference/getTx2Gene.html</loc>
   </url>
   <url>
+    <loc>https://fmicompbio.github.io/eisaR/reference/index.html</loc>
+  </url>
+  <url>
     <loc>https://fmicompbio.github.io/eisaR/reference/plotEISA.html</loc>
   </url>
   <url>
     <loc>https://fmicompbio.github.io/eisaR/reference/runEISA.html</loc>
-  </url>
-  <url>
-    <loc>https://fmicompbio.github.io/eisaR/articles/eisaR.html</loc>
-  </url>
-  <url>
-    <loc>https://fmicompbio.github.io/eisaR/articles/rna-velocity.html</loc>
   </url>
 </urlset>

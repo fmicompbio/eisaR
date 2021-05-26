@@ -37,7 +37,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">eisaR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.5.1</span>
       </span>
     </div>
 
@@ -91,11 +91,11 @@
 <p><img src="inst/www/eisaR.png" align="right" alt="" width="120"></p>
 <div id="eisar-exon-intron-split-analysis-eisa-in-r" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
-<a href="#eisar-exon-intron-split-analysis-eisa-in-r" class="anchor"></a><code>eisaR</code>: Exon-Intron Split Analysis (EISA) in R</h1></div>
+<a href="#eisar-exon-intron-split-analysis-eisa-in-r" class="anchor" aria-hidden="true"></a><code>eisaR</code>: Exon-Intron Split Analysis (EISA) in R</h1></div>
 <p><br></p>
 <div id="overview" class="section level2">
 <h2 class="hasAnchor">
-<a href="#overview" class="anchor"></a>Overview</h2>
+<a href="#overview" class="anchor" aria-hidden="true"></a>Overview</h2>
 <p>Exon-intron split analysis (<code>EISA</code>) uses ordinary RNA-seq data to measure changes in mature RNA and pre-mRNA reads across different experimental conditions to quantify transcriptional and post-transcriptional regulation of gene expression.</p>
 <p>For details see Gaidatzis et al., Nat Biotechnol 2015. doi: 10.1038/nbt.3269.<br><code>eisaR</code> implements the major steps of EISA in R. In addition, it contains functionality for extracting spliced and unspliced transcript sequences, as well as intron sequences (with similar options as the <a href="https://github.com/BUStools/BUSpaRse" class="external-link">BUSpaRse</a>) package), from an annotated genome. These sequences can be indexed and used, e.g., for quantification in preparation for RNA velocity estimation.</p>
 <p>Developed by:</p>
@@ -112,7 +112,7 @@
 </div>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h2>
+<a href="#installation" class="anchor" aria-hidden="true"></a>Installation</h2>
 <p>To install <code>eisaR</code> from Bioconductor, you will need at least R 4.0 and Bioconductor 3.11, which is available on April 28, 2020. Then use the following within R (see also <a href="https://bioconductor.org/packages/eisaR/" class="external-link">eisaR download page</a>):</p>
 <pre><code># BiocManager is needed to install Bioconductor packages
 if (!requireNamespace("BiocManager", quietly = TRUE))
@@ -123,7 +123,7 @@ BiocManager::install("eisaR")</code></pre>
 </div>
 <div id="functionality" class="section level2">
 <h2 class="hasAnchor">
-<a href="#functionality" class="anchor"></a>Functionality</h2>
+<a href="#functionality" class="anchor" aria-hidden="true"></a>Functionality</h2>
 <p>All you need is RNA-seq data from at least two conditions (e.g. wildtype and mutant). The <code>eisaR</code> package contains convenience functions to facilitate the steps in an exon-intron split analysis, which consists of:</p>
 <ol style="list-style-type: decimal">
 <li>preparing the annotation (exonic and gene body coordinate ranges)<br>
@@ -138,7 +138,7 @@ BiocManager::install("eisaR")</code></pre>
 </div>
 <div id="reference" class="section level2">
 <h2 class="hasAnchor">
-<a href="#reference" class="anchor"></a>Reference</h2>
+<a href="#reference" class="anchor" aria-hidden="true"></a>Reference</h2>
 <p><code>EISA</code> has been described in:</p>
 <p>“Analysis of intronic and exonic reads in RNA-seq data characterizes transcriptional and post-transcriptional regulation.”<br>
 Gaidatzis D., Burger L., Florescu M. and Stadler, M.B.<br><em>Nat Biotechnol.</em> <strong>2015</strong>; 33(7):722-9. <a href="https://www.ncbi.nlm.nih.gov/pubmed/26098447" class="external-link">PubMed: 26098447</a>, <a href="https://doi.org/10.1038/nbt.3269" class="external-link">doi: 10.1038/nbt.3269</a></p>
@@ -147,7 +147,7 @@ Gaidatzis D., Burger L., Florescu M. and Stadler, M.B.<br><em>Nat Biotechnol.</e
 </div>
 <div id="software-status" class="section level2">
 <h2 class="hasAnchor">
-<a href="#software-status" class="anchor"></a>Software status</h2>
+<a href="#software-status" class="anchor" aria-hidden="true"></a>Software status</h2>
 <table class="table">
 <colgroup>
 <col width="25%">

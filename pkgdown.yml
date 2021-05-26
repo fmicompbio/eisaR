@@ -1,10 +1,10 @@
 pandoc: 2.7.3
 pkgdown: 1.6.1.9001
-pkgdown_sha: 9a5a8f5cd29bb06616c1452d1b9b5cab7cebf7c2
+pkgdown_sha: 3b870d0efcfcf92a42aa881d58c3462cdbb110a8
 articles:
   eisaR: eisaR.html
   rna-velocity: rna-velocity.html
-last_built: 2021-03-25T15:59Z
+last_built: 2021-05-26T16:54Z
 urls:
   reference: https://fmicompbio.github.io/eisaR/reference
   article: https://fmicompbio.github.io/eisaR/articles

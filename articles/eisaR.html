@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">eisaR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.5.1</span>
       </span>
     </div>
 
@@ -87,7 +87,7 @@
       <h1 data-toc-skip>Using eisaR for Exon-Intron Split Analysis (EISA)</h1>
                         <h4 data-toc-skip class="author">Michael Stadler</h4>
             
-            <h4 data-toc-skip class="date">2021-03-25</h4>
+            <h4 data-toc-skip class="date">2021-05-26</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/fmicompbio/eisaR/blob/master/vignettes/eisaR.Rmd" class="external-link"><code>vignettes/eisaR.Rmd</code></a></small>
       <div class="hidden name"><code>eisaR.Rmd</code></div>
@@ -98,18 +98,18 @@
     
 <div id="introduction" class="section level1">
 <h1 class="hasAnchor">
-<a href="#introduction" class="anchor"></a>Introduction</h1>
+<a href="#introduction" class="anchor" aria-hidden="true"></a>Introduction</h1>
 <p>Exon-Intron Split Analysis has been described by <span class="citation">Gaidatzis et al. (2015)</span>. It consists of separately quantifying exonic and intronic alignments in RNA-seq data, in order to measure changes in mature RNA and pre-mRNA reads across different experimental conditions. We have shown that this allows quantification of transcriptional and post-transcriptional regulation of gene expression.</p>
 <p>The <code>eisaR</code> package contains convenience functions to facilitate the steps in an exon-intron split analysis, which consists of:<br>
 1. preparing the annotation (exonic and gene body coordinate ranges, section @ref(annotation))<br>
 2. quantifying RNA-seq alignments in exons and introns (sections @ref(align) and @ref(count))<br>
 3. calculating and comparing exonic and intronic changes across conditions (section @ref(convenient))<br>
 4. visualizing the results (section @ref(plot))</p>
-<p>For the steps 1. and 2. above, this vignette makes use of Bioconductor annotation and the <em><a href="https://bioconductor.org/packages/3.13/QuasR" class="external-link">QuasR</a></em> package. It is also possible to obtain count tables for exons and introns using some other pipeline or approach, and directly start with step 3.</p>
+<p>For the steps 1. and 2. above, this vignette makes use of Bioconductor annotation and the <em><a href="https://bioconductor.org/packages/3.14/QuasR" class="external-link">QuasR</a></em> package. It is also possible to obtain count tables for exons and introns using some other pipeline or approach, and directly start with step 3.</p>
 </div>
 <div id="installation" class="section level1">
 <h1 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h1>
+<a href="#installation" class="anchor" aria-hidden="true"></a>Installation</h1>
 <p>To install the <code>eisaR</code> package, start R and enter:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># BiocManager is needed to install Bioconductor packages</span>
@@ -121,11 +121,11 @@
 </div>
 <div id="annotation" class="section level1">
 <h1 class="hasAnchor">
-<a href="#annotation" class="anchor"></a>Preparing the annotation</h1>
-<p>As mentioned, <code>eisaR</code> uses gene annotations from Bioconductor. They are provided in the form of <code>TxDb</code> or <code>EnsDb</code> objects, e.g. via packages such as <em><a href="https://bioconductor.org/packages/3.13/TxDb.Mmusculus.UCSC.mm10.knownGene" class="external-link">TxDb.Mmusculus.UCSC.mm10.knownGene</a></em> or <em><a href="https://bioconductor.org/packages/3.13/EnsDb.Hsapiens.v86" class="external-link">EnsDb.Hsapiens.v86</a></em>. You can see available annotations using the following code:</p>
+<a href="#annotation" class="anchor" aria-hidden="true"></a>Preparing the annotation</h1>
+<p>As mentioned, <code>eisaR</code> uses gene annotations from Bioconductor. They are provided in the form of <code>TxDb</code> or <code>EnsDb</code> objects, e.g. via packages such as <em><a href="https://bioconductor.org/packages/3.14/TxDb.Mmusculus.UCSC.mm10.knownGene" class="external-link">TxDb.Mmusculus.UCSC.mm10.knownGene</a></em> or <em><a href="https://bioconductor.org/packages/3.14/EnsDb.Hsapiens.v86" class="external-link">EnsDb.Hsapiens.v86</a></em>. You can see available annotations using the following code:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>pkgs &lt;-<span class="st"> </span><span class="kw">c</span>(BiocManager<span class="op">::</span><span class="kw">available</span>(<span class="st">"TxDb"</span>)</span>
 <span id="cb2-2"><a href="#cb2-2"></a>          BiocManager<span class="op">::</span><span class="kw">available</span>(<span class="st">"EnsDb"</span>))</span></code></pre></div>
-<p>If you would like to use an alternative source of gene annotations, you might still be able to use <code>eisaR</code> by first converting your annotations into a <code>TxDb</code> or an <code>EnsDb</code> (for creating a <code>TxDb</code> see <code>makeTxDb</code> in the <em><a href="https://bioconductor.org/packages/3.13/GenomicFeatures" class="external-link">GenomicFeatures</a></em> package, for creating an <code>EnsDb</code> see <code>makeEnsembldbPackage</code> in the <em><a href="https://bioconductor.org/packages/3.13/ensembldb" class="external-link">ensembldb</a></em> package).</p>
+<p>If you would like to use an alternative source of gene annotations, you might still be able to use <code>eisaR</code> by first converting your annotations into a <code>TxDb</code> or an <code>EnsDb</code> (for creating a <code>TxDb</code> see <code>makeTxDb</code> in the <em><a href="https://bioconductor.org/packages/3.14/GenomicFeatures" class="external-link">GenomicFeatures</a></em> package, for creating an <code>EnsDb</code> see <code>makeEnsembldbPackage</code> in the <em><a href="https://bioconductor.org/packages/3.14/ensembldb" class="external-link">ensembldb</a></em> package).</p>
 <p>For this example, <code>eisaR</code> contains a small <code>TxDb</code> to illustrate how regions are extracted. We will load it from a file. Alternatively, the object would be loaded using <code><a href="https://rdrr.io/r/base/library.html" class="external-link">library(...)</a></code>, for example using <code><a href="https://rdrr.io/r/base/library.html" class="external-link">library(TxDb.Mmusculus.UCSC.mm10.knownGene)</a></code>.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># load package</span>
@@ -173,7 +173,7 @@
 <span class="co">#&gt;   -------</span>
 <span class="co">#&gt;   seqinfo: 3 sequences from an unspecified genome</span></code></pre></div>
 <p>As you can see, the filtering procedure removes slightly more genes for unstranded data (<code>strandedData = FALSE</code>), as overlapping genes cannot be discriminated even if they reside on opposite strands.</p>
-<p>You can also export the obtained regions into files. This may be useful if you plan to align and/or quantify reads outside of R. For example, you can use <em><a href="https://bioconductor.org/packages/3.13/rtracklayer" class="external-link">rtracklayer</a></em> to export the regions in <code>regS</code> into <code>.gtf</code> files:</p>
+<p>You can also export the obtained regions into files. This may be useful if you plan to align and/or quantify reads outside of R. For example, you can use <em><a href="https://bioconductor.org/packages/3.14/rtracklayer" class="external-link">rtracklayer</a></em> to export the regions in <code>regS</code> into <code>.gtf</code> files:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">rtracklayer</span><span class="op">)</span>
 <span class="fu">export</span><span class="op">(</span><span class="va">regS</span><span class="op">$</span><span class="va">exons</span>, <span class="st">"hg19sub_exons_stranded.gtf"</span><span class="op">)</span>
@@ -181,12 +181,12 @@
 </div>
 <div id="quantify-rna-seq-alignments-in-exons-and-introns" class="section level1">
 <h1 class="hasAnchor">
-<a href="#quantify-rna-seq-alignments-in-exons-and-introns" class="anchor"></a>Quantify RNA-seq alignments in exons and introns</h1>
-<p>For this example we will use the <em><a href="https://bioconductor.org/packages/3.13/QuasR" class="external-link">QuasR</a></em> package for indexing and alignment of short reads, and a small RNA-seq dataset that is contained in that package. As mentioned, it is also possible to align or also quantify your reads using an alternative aligner/counter, and skip over these steps. For more details about the syntax, we refer to the documentation and vignette of the <em><a href="https://bioconductor.org/packages/3.13/QuasR" class="external-link">QuasR</a></em> package.</p>
+<a href="#quantify-rna-seq-alignments-in-exons-and-introns" class="anchor" aria-hidden="true"></a>Quantify RNA-seq alignments in exons and introns</h1>
+<p>For this example we will use the <em><a href="https://bioconductor.org/packages/3.14/QuasR" class="external-link">QuasR</a></em> package for indexing and alignment of short reads, and a small RNA-seq dataset that is contained in that package. As mentioned, it is also possible to align or also quantify your reads using an alternative aligner/counter, and skip over these steps. For more details about the syntax, we refer to the documentation and vignette of the <em><a href="https://bioconductor.org/packages/3.14/QuasR" class="external-link">QuasR</a></em> package.</p>
 <div id="align" class="section level2">
 <h2 class="hasAnchor">
-<a href="#align" class="anchor"></a>Align reads</h2>
-<p>Let’s first copy the sample data from the <em><a href="https://bioconductor.org/packages/3.13/QuasR" class="external-link">QuasR</a></em> package to the current working directory, all contained in a folder named <code>extdata</code>:</p>
+<a href="#align" class="anchor" aria-hidden="true"></a>Align reads</h2>
+<p>Let’s first copy the sample data from the <em><a href="https://bioconductor.org/packages/3.14/QuasR" class="external-link">QuasR</a></em> package to the current working directory, all contained in a folder named <code>extdata</code>:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">QuasR</span><span class="op">)</span>
 <span class="co">#&gt; Loading required package: Rbowtie</span>
@@ -216,9 +216,9 @@
 <span class="co">#&gt; Testing the compute nodes...OK</span>
 <span class="co">#&gt; Loading QuasR on the compute nodes...OK</span>
 <span class="co">#&gt; Available cores:</span>
-<span class="co">#&gt; Mac-1616686651981.local: 1</span>
+<span class="co">#&gt; Mac-1622046811422.local: 1</span>
 <span class="co">#&gt; Performing genomic alignments for 4 samples. See progress in the log file:</span>
-<span class="co">#&gt; /Users/runner/work/eisaR/eisaR/vignettes/QuasR_log_1cd5fc4a085.txt</span>
+<span class="co">#&gt; /Users/runner/work/eisaR/eisaR/vignettes/QuasR_log_12d03c5296aa.txt</span>
 <span class="co">#&gt; Genomic alignments have been created successfully</span>
 <span class="fu"><a href="https://rdrr.io/pkg/QuasR/man/alignmentStats.html" class="external-link">alignmentStats</a></span><span class="op">(</span><span class="va">proj</span><span class="op">)</span>
 <span class="co">#&gt;                seqlength mapped unmapped</span>
@@ -227,7 +227,7 @@
 </div>
 <div id="count" class="section level2">
 <h2 class="hasAnchor">
-<a href="#count" class="anchor"></a>Count alignments in exons and gene bodies</h2>
+<a href="#count" class="anchor" aria-hidden="true"></a>Count alignments in exons and gene bodies</h2>
 <p>Alignments in exons and gene bodies can now be counted using <code>qCount</code> and the <code>regU</code> that we have generated earlier (assuming that the data is unstranded). Intronic counts can then be obtained from the difference between gene bodies and exons:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cntEx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QuasR/man/qCount.html" class="external-link">qCount</a></span><span class="op">(</span><span class="va">proj</span>, <span class="va">regU</span><span class="op">$</span><span class="va">exons</span>, orientation <span class="op">=</span> <span class="st">"any"</span><span class="op">)</span>
@@ -252,7 +252,7 @@
 </div>
 <div id="load-full-count-tables" class="section level2">
 <h2 class="hasAnchor">
-<a href="#load-full-count-tables" class="anchor"></a>Load full count tables</h2>
+<a href="#load-full-count-tables" class="anchor" aria-hidden="true"></a>Load full count tables</h2>
 <p>The above example only contains very few genes. For the rest of the vignette, we will use count tables from a real RNA-seq experiment that are provided in the <code>eisaR</code> package. The counts correspond to the raw data used in Figure 3a of <span class="citation">Gaidatzis et al. (2015)</span> and are also available online from the <a href="https://fmicompbio.github.io/projects/EISA/EISA.html" class="external-link">supplementary material</a>:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cntEx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>,
@@ -265,15 +265,15 @@
 </div>
 <div id="convenient" class="section level1">
 <h1 class="hasAnchor">
-<a href="#convenient" class="anchor"></a>Run EISA conveniently</h1>
+<a href="#convenient" class="anchor" aria-hidden="true"></a>Run EISA conveniently</h1>
 <p>All the further steps in exon-intron split analysis can now be performed using a single function <code>runEISA</code>. If you prefer to perform the analysis step-by-step, you can skip now to section @ref(stepwise).</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># remove "width" column</span>
-<span class="va">Rex</span> <span class="op">&lt;-</span> <span class="va">cntEx</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">cntEx</span><span class="op">)</span> <span class="op">!=</span> <span class="st">"width"</span><span class="op">]</span>
-<span class="va">Rin</span> <span class="op">&lt;-</span> <span class="va">cntIn</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">cntIn</span><span class="op">)</span> <span class="op">!=</span> <span class="st">"width"</span><span class="op">]</span>
+<span class="va">Rex</span> <span class="op">&lt;-</span> <span class="va">cntEx</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">cntEx</span><span class="op">)</span> <span class="op">!=</span> <span class="st">"width"</span><span class="op">]</span>
+<span class="va">Rin</span> <span class="op">&lt;-</span> <span class="va">cntIn</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">cntIn</span><span class="op">)</span> <span class="op">!=</span> <span class="st">"width"</span><span class="op">]</span>
 
 <span class="co"># create condition factor (contrast will be TN - ES)</span>
-<span class="va">cond</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ES"</span>, <span class="st">"ES"</span>, <span class="st">"TN"</span>, <span class="st">"TN"</span><span class="op">)</span><span class="op">)</span>
+<span class="va">cond</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ES"</span>, <span class="st">"ES"</span>, <span class="st">"TN"</span>, <span class="st">"TN"</span><span class="op">)</span><span class="op">)</span>
 
 <span class="co"># run EISA</span>
 <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/runEISA.html">runEISA</a></span><span class="op">(</span><span class="va">Rex</span>, <span class="va">Rin</span>, <span class="va">cond</span><span class="op">)</span>
@@ -282,7 +282,7 @@
 <span class="co">#&gt; calculating log-fold changes...done</span></code></pre></div>
 <div id="alternative-implementations-of-eisa" class="section level2">
 <h2 class="hasAnchor">
-<a href="#alternative-implementations-of-eisa" class="anchor"></a>Alternative implementations of EISA</h2>
+<a href="#alternative-implementations-of-eisa" class="anchor" aria-hidden="true"></a>Alternative implementations of EISA</h2>
 <p>There are six arguments in <code>runEISA</code> (<code>modelSamples</code>, <code>geneSelection</code>, <code>effects</code>, <code>statFramework</code>, <code>pscnt</code> and <code>sizeFactor</code>) that control gene filtering, calculation of contrasts and the statistical method used, summarized in the bullet list below.</p>
 <p>The default values of these arguments correspond to the currently recommended way of running EISA. You can also run EISA exactly as it was described by <span class="citation">Gaidatzis et al. (2015)</span>, by setting <code>method = "Gaidatzis2015"</code>. This will override the values of the six other arguments and set them according to the published algorithm (as indicated below).</p>
 <ul>
@@ -293,7 +293,7 @@
 <code>FALSE</code> (<code>method="Gaidatzis2015"</code>): use a model of the form <code>~ condition * region</code><br>
 </li>
 <li>
-<code>TRUE</code> (default): use a model adjusting for the baseline differences among samples, and with condition-specific region effects (similar to the model described in section 3.5 of the <em><a href="https://bioconductor.org/packages/3.13/edgeR" class="external-link">edgeR</a></em> user guide)</li>
+<code>TRUE</code> (default): use a model adjusting for the baseline differences among samples, and with condition-specific region effects (similar to the model described in section 3.5 of the <em><a href="https://bioconductor.org/packages/3.14/edgeR" class="external-link">edgeR</a></em> user guide)</li>
 </ul>
 </li>
 <li>
@@ -324,10 +324,10 @@
 <li>
 <code>"predFC"</code> (default): Fold-changes are calculated using the fitted model with <code><a href="https://rdrr.io/pkg/edgeR/man/predFC.html" class="external-link">edgeR::predFC</a></code> and the value provided to <code>pscnt</code>. Please note that if a sample factor is included in the statistical model (<code>modelSamples=TRUE</code>), effects cannot be obtained from that model. In that case, effects are obtained from a simpler model without sample effects.</li>
 <li>
-<code>"Gaidatzis2015"</code> (<code>method="Gaidatzis2015"</code>): Fold-changes are calculated using the formula <code><a href="https://rdrr.io/r/base/Log.html" class="external-link">log2((x + pscnt)/(y + pscnt))</a></code>. If <code>pscnt</code> is not set to 8, <code>runEISA</code> will warn that this deviates from the method used in Gaidatzis et al., 2015.</li>
+<code>"Gaidatzis2015"</code> (<code>method="Gaidatzis2015"</code>): Fold-changes are calculated using the formula <code>log2((x + pscnt)/(y + pscnt))</code>. If <code>pscnt</code> is not set to 8, <code>runEISA</code> will warn that this deviates from the method used in Gaidatzis et al., 2015.</li>
 </ul>
 </li>
-<li><p><code>pscnt</code>: The pseudocount that is added to normalized counts before log transformation. For <code>geneSelection="Gaidatzis2015"</code>, <code>pscnt</code> is used both in gene selection as well as in the calculation of log2 fold-changes. Otherwise, <code>pscnt</code> is only used in the calculation of log2 fold-changes in <code><a href="https://rdrr.io/pkg/edgeR/man/predFC.html" class="external-link">edgeR::predFC(, prior.count = pscnt)</a></code>.</p></li>
+<li><p><code>pscnt</code>: The pseudocount that is added to normalized counts before log transformation. For <code>geneSelection="Gaidatzis2015"</code>, <code>pscnt</code> is used both in gene selection as well as in the calculation of log2 fold-changes. Otherwise, <code>pscnt</code> is only used in the calculation of log2 fold-changes in <code>edgeR::predFC(, prior.count = pscnt)</code>.</p></li>
 <li>
 <p><code>sizeFactor</code>: How size factors (TMM normalization factors and library sizes) are calculated and used within <code>eisaR</code>:</p>
 <ul>
@@ -354,9 +354,9 @@
 <span class="co">#&gt; calculating log-fold changes...done</span>
 
 <span class="co"># number of quantifiable genes</span>
-<span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">res1</span><span class="op">$</span><span class="va">DGEList</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">res1</span><span class="op">$</span><span class="va">DGEList</span><span class="op">)</span>
 <span class="co">#&gt; [1] 8481</span>
-<span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">res2</span><span class="op">$</span><span class="va">DGEList</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">res2</span><span class="op">$</span><span class="va">DGEList</span><span class="op">)</span>
 <span class="co">#&gt; [1] 11759</span>
 
 <span class="co"># number of genes with significant post-transcriptional regulation</span>
@@ -366,13 +366,13 @@
 <span class="co">#&gt; [1] 114</span>
 
 <span class="co"># method="Gaidatzis2015" results contain most of default results</span>
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">res2</span><span class="op">$</span><span class="va">contrasts</span><span class="op">)</span><span class="op">[</span><span class="va">res2</span><span class="op">$</span><span class="va">tab.ExIn</span><span class="op">$</span><span class="va">FDR</span> <span class="op">&lt;</span> <span class="fl">0.05</span><span class="op">]</span> <span class="op">%in%</span>
-        <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">res1</span><span class="op">$</span><span class="va">contrasts</span><span class="op">)</span><span class="op">[</span><span class="va">res1</span><span class="op">$</span><span class="va">tab.ExIn</span><span class="op">$</span><span class="va">FDR</span> <span class="op">&lt;</span> <span class="fl">0.05</span><span class="op">]</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">res2</span><span class="op">$</span><span class="va">contrasts</span><span class="op">)</span><span class="op">[</span><span class="va">res2</span><span class="op">$</span><span class="va">tab.ExIn</span><span class="op">$</span><span class="va">FDR</span> <span class="op">&lt;</span> <span class="fl">0.05</span><span class="op">]</span> <span class="op"><a href="https://rdrr.io/pkg/BiocGenerics/man/match.html" class="external-link">%in%</a></span>
+        <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">res1</span><span class="op">$</span><span class="va">contrasts</span><span class="op">)</span><span class="op">[</span><span class="va">res1</span><span class="op">$</span><span class="va">tab.ExIn</span><span class="op">$</span><span class="va">FDR</span> <span class="op">&lt;</span> <span class="fl">0.05</span><span class="op">]</span><span class="op">)</span>
 <span class="co">#&gt;    Mode   FALSE    TRUE </span>
 <span class="co">#&gt; logical      35      79</span>
 
 <span class="co"># comparison of deltas</span>
-<span class="va">ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">intersect</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">res1</span><span class="op">$</span><span class="va">DGEList</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">res2</span><span class="op">$</span><span class="va">DGEList</span><span class="op">)</span><span class="op">)</span>
+<span class="va">ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/setops-methods.html" class="external-link">intersect</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">res1</span><span class="op">$</span><span class="va">DGEList</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">res2</span><span class="op">$</span><span class="va">DGEList</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">res1</span><span class="op">$</span><span class="va">contrasts</span><span class="op">[</span><span class="va">ids</span>,<span class="st">"Dex"</span><span class="op">]</span>, <span class="va">res2</span><span class="op">$</span><span class="va">contrasts</span><span class="op">[</span><span class="va">ids</span>,<span class="st">"Dex"</span><span class="op">]</span><span class="op">)</span>
 <span class="co">#&gt; [1] 0.9897309</span>
 <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">res1</span><span class="op">$</span><span class="va">contrasts</span><span class="op">[</span><span class="va">ids</span>,<span class="st">"Din"</span><span class="op">]</span>, <span class="va">res2</span><span class="op">$</span><span class="va">contrasts</span><span class="op">[</span><span class="va">ids</span>,<span class="st">"Din"</span><span class="op">]</span><span class="op">)</span>
@@ -380,15 +380,15 @@
 <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">res1</span><span class="op">$</span><span class="va">contrasts</span><span class="op">[</span><span class="va">ids</span>,<span class="st">"Dex.Din"</span><span class="op">]</span>, <span class="va">res2</span><span class="op">$</span><span class="va">contrasts</span><span class="op">[</span><span class="va">ids</span>,<span class="st">"Dex.Din"</span><span class="op">]</span><span class="op">)</span>
 <span class="co">#&gt; [1] 0.9673152</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">res1</span><span class="op">$</span><span class="va">contrasts</span><span class="op">[</span><span class="va">ids</span>,<span class="st">"Dex.Din"</span><span class="op">]</span>, <span class="va">res2</span><span class="op">$</span><span class="va">contrasts</span><span class="op">[</span><span class="va">ids</span>,<span class="st">"Dex.Din"</span><span class="op">]</span>, pch <span class="op">=</span> <span class="st">"*"</span>,
-     xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">Delta</span>, <span class="st">"exon"</span>, <span class="op">-</span><span class="va">Delta</span>, <span class="st">"intron for method='Gaidatzis2015'"</span><span class="op">)</span><span class="op">)</span>,
-     ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">Delta</span>, <span class="st">"exon"</span>, <span class="op">-</span><span class="va">Delta</span>, <span class="st">"intron for default parameters"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+     xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">Delta</span>, <span class="st">"exon"</span>, <span class="op">-</span><span class="va">Delta</span>, <span class="st">"intron for method='Gaidatzis2015'"</span><span class="op">)</span><span class="op">)</span>,
+     ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">Delta</span>, <span class="st">"exon"</span>, <span class="op">-</span><span class="va">Delta</span>, <span class="st">"intron for default parameters"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="eisaR_files/figure-html/compare-1.png" width="700"></p>
 </div>
 <div id="on-the-estimation-of-interactions-in-a-split-plot-design-experiment" class="section level2">
 <h2 class="hasAnchor">
-<a href="#on-the-estimation-of-interactions-in-a-split-plot-design-experiment" class="anchor"></a>On the estimation of interactions in a split-plot design experiment</h2>
+<a href="#on-the-estimation-of-interactions-in-a-split-plot-design-experiment" class="anchor" aria-hidden="true"></a>On the estimation of interactions in a split-plot design experiment</h2>
 <p>The calculation of the significance of interactions (here whether the fold-changes differ between exonic or intronic data) is well defined for experimental designs where all samples are independent from one another. Within EISA, this is not the case (each sample yields two data points, one for exons and one for introns). That results in a dependency between data points: If a sample is affected by a problem in the experiment, it might at the same time give rise to outlier values in both exonic and intronic counts.</p>
-<p>In statistics, such an experimental design is often referred to as a split-plot design, and a recommended way to analyze interactions in such experiments would be to use a mixed effect model with the plot (in our case, the sample) as a random effect. The disadvantage here however would be that available packages for mixed effect models are not designed for count data, and we therefore use an alternative approach to explicitly model the sample dependency, by introducing sample-specific columns into the design matrix (for <code>modelSamples=TRUE</code>). That sample factor is nested in the condition factor (no sample can belong to more than one condition). Thus, we are in the situation described in section 3.5 (‘Comparisons both between and within subjects’) of the <em><a href="https://bioconductor.org/packages/3.13/edgeR" class="external-link">edgeR</a></em> user guide, and we use the approach described there to define a design matrix with sample-specific baseline effects as well as condition-specific region effects.</p>
+<p>In statistics, such an experimental design is often referred to as a split-plot design, and a recommended way to analyze interactions in such experiments would be to use a mixed effect model with the plot (in our case, the sample) as a random effect. The disadvantage here however would be that available packages for mixed effect models are not designed for count data, and we therefore use an alternative approach to explicitly model the sample dependency, by introducing sample-specific columns into the design matrix (for <code>modelSamples=TRUE</code>). That sample factor is nested in the condition factor (no sample can belong to more than one condition). Thus, we are in the situation described in section 3.5 (‘Comparisons both between and within subjects’) of the <em><a href="https://bioconductor.org/packages/3.14/edgeR" class="external-link">edgeR</a></em> user guide, and we use the approach described there to define a design matrix with sample-specific baseline effects as well as condition-specific region effects.</p>
 <p>This has no impact on the effects (the log2 fold-changes of <code>modelSamples=TRUE</code> and <code>modelSamples=FALSE</code> are nearly identical). However, in the presence of sample effects, <code>modelSamples=TRUE</code> increases the sensitivity of detecting genes with significant interactions. Here is a comparison of the EISA results with and without accounting for the sample in the model:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">res3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/runEISA.html">runEISA</a></span><span class="op">(</span><span class="va">Rex</span>, <span class="va">Rin</span>, <span class="va">cond</span>, modelSamples <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
@@ -399,7 +399,7 @@
 <span class="co">#&gt; filtering quantifyable genes...keeping 11759 from 20288 (58%)</span>
 <span class="co">#&gt; fitting statistical model...done</span>
 <span class="co">#&gt; calculating log-fold changes...done</span>
-<span class="va">ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">intersect</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">res3</span><span class="op">$</span><span class="va">contrasts</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">res4</span><span class="op">$</span><span class="va">contrasts</span><span class="op">)</span><span class="op">)</span>
+<span class="va">ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/setops-methods.html" class="external-link">intersect</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">res3</span><span class="op">$</span><span class="va">contrasts</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">res4</span><span class="op">$</span><span class="va">contrasts</span><span class="op">)</span><span class="op">)</span>
 
 <span class="co"># number of genes with significant post-transcriptional regulation</span>
 <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">res3</span><span class="op">$</span><span class="va">tab.ExIn</span><span class="op">$</span><span class="va">FDR</span> <span class="op">&lt;</span> <span class="fl">0.05</span><span class="op">)</span>
@@ -409,8 +409,8 @@
 
 <span class="co"># modelSamples=TRUE results are a super-set of</span>
 <span class="co"># modelSamples=FALSE results</span>
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">res3</span><span class="op">$</span><span class="va">contrasts</span><span class="op">)</span><span class="op">[</span><span class="va">res3</span><span class="op">$</span><span class="va">tab.ExIn</span><span class="op">$</span><span class="va">FDR</span> <span class="op">&lt;</span> <span class="fl">0.05</span><span class="op">]</span> <span class="op">%in%</span>
-        <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">res4</span><span class="op">$</span><span class="va">contrasts</span><span class="op">)</span><span class="op">[</span><span class="va">res4</span><span class="op">$</span><span class="va">tab.ExIn</span><span class="op">$</span><span class="va">FDR</span> <span class="op">&lt;</span> <span class="fl">0.05</span><span class="op">]</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">res3</span><span class="op">$</span><span class="va">contrasts</span><span class="op">)</span><span class="op">[</span><span class="va">res3</span><span class="op">$</span><span class="va">tab.ExIn</span><span class="op">$</span><span class="va">FDR</span> <span class="op">&lt;</span> <span class="fl">0.05</span><span class="op">]</span> <span class="op"><a href="https://rdrr.io/pkg/BiocGenerics/man/match.html" class="external-link">%in%</a></span>
+        <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">res4</span><span class="op">$</span><span class="va">contrasts</span><span class="op">)</span><span class="op">[</span><span class="va">res4</span><span class="op">$</span><span class="va">tab.ExIn</span><span class="op">$</span><span class="va">FDR</span> <span class="op">&lt;</span> <span class="fl">0.05</span><span class="op">]</span><span class="op">)</span>
 <span class="co">#&gt;    Mode    TRUE </span>
 <span class="co">#&gt; logical       6</span>
 
@@ -435,7 +435,7 @@
 </div>
 <div id="plot" class="section level1">
 <h1 class="hasAnchor">
-<a href="#plot" class="anchor"></a>Visualize EISA results</h1>
+<a href="#plot" class="anchor" aria-hidden="true"></a>Visualize EISA results</h1>
 <p>We can now visualize the results by plotting intronic changes versus exonic changes (genes with significant interactions, which are likely to be post-transcriptionally regulated, are color coded):</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/plotEISA.html">plotEISA</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span>
@@ -444,27 +444,27 @@
 </div>
 <div id="stepwise" class="section level1">
 <h1 class="hasAnchor">
-<a href="#stepwise" class="anchor"></a>Run EISA step-by-step</h1>
+<a href="#stepwise" class="anchor" aria-hidden="true"></a>Run EISA step-by-step</h1>
 <p>As an alternative to <code>runEISA</code> (section @ref(convenient)) and <code>plotEISA</code> (section @ref(plot)) described above, you can also analyze the data step-by-step as described in <span class="citation">Gaidatzis et al. (2015)</span>. This may be preferable to understand each individual step and be able to access intermediate results.</p>
-<p>The results obtained in this way are identical to what you get with <code><a href="../reference/runEISA.html">runEISA(..., method = "Gaidatzis2015")</a></code>, so if you are happy with <code>runEISA</code> you can skip the rest of the vignette.</p>
+<p>The results obtained in this way are identical to what you get with <code>runEISA(..., method = "Gaidatzis2015")</code>, so if you are happy with <code>runEISA</code> you can skip the rest of the vignette.</p>
 <div id="normalization" class="section level2">
 <h2 class="hasAnchor">
-<a href="#normalization" class="anchor"></a>Normalization</h2>
+<a href="#normalization" class="anchor" aria-hidden="true"></a>Normalization</h2>
 <p>Normalization is performed separately on exonic and intronic counts, assuming that varying exon over intron ratios between samples are of technical origin.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># remove column "width"</span>
-<span class="va">Rex</span> <span class="op">&lt;-</span> <span class="va">cntEx</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">cntEx</span><span class="op">)</span> <span class="op">!=</span> <span class="st">"width"</span><span class="op">]</span>
-<span class="va">Rin</span> <span class="op">&lt;-</span> <span class="va">cntIn</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">cntIn</span><span class="op">)</span> <span class="op">!=</span> <span class="st">"width"</span><span class="op">]</span>
+<span class="va">Rex</span> <span class="op">&lt;-</span> <span class="va">cntEx</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">cntEx</span><span class="op">)</span> <span class="op">!=</span> <span class="st">"width"</span><span class="op">]</span>
+<span class="va">Rin</span> <span class="op">&lt;-</span> <span class="va">cntIn</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">cntIn</span><span class="op">)</span> <span class="op">!=</span> <span class="st">"width"</span><span class="op">]</span>
 <span class="va">Rall</span> <span class="op">&lt;-</span> <span class="va">Rex</span> <span class="op">+</span> <span class="va">Rin</span>
-<span class="va">fracIn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">colSums</a></span><span class="op">(</span><span class="va">Rin</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">colSums</a></span><span class="op">(</span><span class="va">Rall</span><span class="op">)</span>
+<span class="va">fracIn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/colSums.html" class="external-link">colSums</a></span><span class="op">(</span><span class="va">Rin</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/colSums.html" class="external-link">colSums</a></span><span class="op">(</span><span class="va">Rall</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fracIn</span><span class="op">)</span>
 <span class="co">#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. </span>
 <span class="co">#&gt;  0.2696  0.2977  0.3105  0.3459  0.3587  0.4929</span>
 
 <span class="co"># scale counts to the mean library size,</span>
 <span class="co"># separately for exons and introns</span>
-<span class="va">Nex</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">Rex</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">colSums</a></span><span class="op">(</span><span class="va">Rex</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">colSums</a></span><span class="op">(</span><span class="va">Rex</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-<span class="va">Nin</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">Rin</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">colSums</a></span><span class="op">(</span><span class="va">Rin</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">colSums</a></span><span class="op">(</span><span class="va">Rin</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+<span class="va">Nex</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/t.html" class="external-link">t</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">Rex</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/colSums.html" class="external-link">colSums</a></span><span class="op">(</span><span class="va">Rex</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/colSums.html" class="external-link">colSums</a></span><span class="op">(</span><span class="va">Rex</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+<span class="va">Nin</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/t.html" class="external-link">t</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">Rin</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/colSums.html" class="external-link">colSums</a></span><span class="op">(</span><span class="va">Rin</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/colSums.html" class="external-link">colSums</a></span><span class="op">(</span><span class="va">Rin</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 
 <span class="co"># log transform (add a pseudocount of 8)</span>
 <span class="va">NLex</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log2</a></span><span class="op">(</span><span class="va">Nex</span> <span class="op">+</span> <span class="fl">8</span><span class="op">)</span>
@@ -472,22 +472,22 @@
 </div>
 <div id="identify-quantifiable-genes" class="section level2">
 <h2 class="hasAnchor">
-<a href="#identify-quantifiable-genes" class="anchor"></a>Identify quantifiable genes</h2>
+<a href="#identify-quantifiable-genes" class="anchor" aria-hidden="true"></a>Identify quantifiable genes</h2>
 <p>Genes with very low counts in either exons or introns are better removed, as they will be too noisy to yield useful results. We use here a fixed cut-off on the normalized, log-transformed intron and exonic counts:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">quantGenes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">Rex</span><span class="op">)</span><span class="op">[</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowMeans</a></span><span class="op">(</span><span class="va">NLex</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">5.0</span> <span class="op">&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowMeans</a></span><span class="op">(</span><span class="va">NLin</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">5.0</span> <span class="op">]</span>
+<code class="sourceCode R"><span class="va">quantGenes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">Rex</span><span class="op">)</span><span class="op">[</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/colSums.html" class="external-link">rowMeans</a></span><span class="op">(</span><span class="va">NLex</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">5.0</span> <span class="op">&amp;</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/colSums.html" class="external-link">rowMeans</a></span><span class="op">(</span><span class="va">NLin</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">5.0</span> <span class="op">]</span>
 <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">quantGenes</span><span class="op">)</span>
 <span class="co">#&gt; [1] 8481</span></code></pre></div>
 </div>
 <div id="calculate-delta-i-delta-e-and-delta-e---delta-i" class="section level2">
 <h2 class="hasAnchor">
-<a href="#calculate-delta-i-delta-e-and-delta-e---delta-i" class="anchor"></a>Calculate <span class="math inline">\(\Delta I\)</span>, <span class="math inline">\(\Delta E\)</span> and <span class="math inline">\(\Delta E - \Delta I\)</span>
+<a href="#calculate-delta-i-delta-e-and-delta-e---delta-i" class="anchor" aria-hidden="true"></a>Calculate <span class="math inline">\(\Delta I\)</span>, <span class="math inline">\(\Delta E\)</span> and <span class="math inline">\(\Delta E - \Delta I\)</span>
 </h2>
 <p>The count tables were obtained from a total RNA-seq experiments in mouse embryonic stem (MmES) cells and derived terminal neurons (MmTN), with two replicates for each condition.</p>
 <p>We will now calculate the changes between neurons and ES cells in introns (<span class="math inline">\(\Delta I\)</span>), in exons (<span class="math inline">\(\Delta E\)</span>), and the difference between the two (<span class="math inline">\(\Delta E - \Delta I\)</span>):</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">Dex</span> <span class="op">&lt;-</span> <span class="va">NLex</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"MmTN_RNA_total_a"</span>,<span class="st">"MmTN_RNA_total_b"</span><span class="op">)</span><span class="op">]</span> <span class="op">-</span> <span class="va">NLex</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"MmES_RNA_total_a"</span>,<span class="st">"MmES_RNA_total_b"</span><span class="op">)</span><span class="op">]</span>
-<span class="va">Din</span> <span class="op">&lt;-</span> <span class="va">NLin</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"MmTN_RNA_total_a"</span>,<span class="st">"MmTN_RNA_total_b"</span><span class="op">)</span><span class="op">]</span> <span class="op">-</span> <span class="va">NLin</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"MmES_RNA_total_a"</span>,<span class="st">"MmES_RNA_total_b"</span><span class="op">)</span><span class="op">]</span>
+<code class="sourceCode R"><span class="va">Dex</span> <span class="op">&lt;-</span> <span class="va">NLex</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"MmTN_RNA_total_a"</span>,<span class="st">"MmTN_RNA_total_b"</span><span class="op">)</span><span class="op">]</span> <span class="op">-</span> <span class="va">NLex</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"MmES_RNA_total_a"</span>,<span class="st">"MmES_RNA_total_b"</span><span class="op">)</span><span class="op">]</span>
+<span class="va">Din</span> <span class="op">&lt;-</span> <span class="va">NLin</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"MmTN_RNA_total_a"</span>,<span class="st">"MmTN_RNA_total_b"</span><span class="op">)</span><span class="op">]</span> <span class="op">-</span> <span class="va">NLin</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"MmES_RNA_total_a"</span>,<span class="st">"MmES_RNA_total_b"</span><span class="op">)</span><span class="op">]</span>
 <span class="va">Dex.Din</span> <span class="op">&lt;-</span> <span class="va">Dex</span> <span class="op">-</span> <span class="va">Din</span>
 
 <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">Dex</span><span class="op">[</span><span class="va">quantGenes</span>,<span class="fl">1</span><span class="op">]</span>, <span class="va">Dex</span><span class="op">[</span><span class="va">quantGenes</span>,<span class="fl">2</span><span class="op">]</span><span class="op">)</span>
@@ -500,8 +500,8 @@
 </div>
 <div id="statistical-analysis" class="section level2">
 <h2 class="hasAnchor">
-<a href="#statistical-analysis" class="anchor"></a>Statistical analysis</h2>
-<p>Finally, we use the replicate measurement in the <em><a href="https://bioconductor.org/packages/3.13/edgeR" class="external-link">edgeR</a></em> framework to calculate the significance of the changes:</p>
+<a href="#statistical-analysis" class="anchor" aria-hidden="true"></a>Statistical analysis</h2>
+<p>Finally, we use the replicate measurement in the <em><a href="https://bioconductor.org/packages/3.14/edgeR" class="external-link">edgeR</a></em> framework to calculate the significance of the changes:</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># create DGEList object with exonic and intronic counts</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://bioinf.wehi.edu.au/edgeR" class="external-link">edgeR</a></span><span class="op">)</span>
@@ -512,17 +512,17 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt;     plotMA</span>
 <span class="va">cnt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>Ex <span class="op">=</span> <span class="va">Rex</span>, In <span class="op">=</span> <span class="va">Rin</span><span class="op">)</span>
-<span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/edgeR/man/DGEList.html" class="external-link">DGEList</a></span><span class="op">(</span>counts <span class="op">=</span> <span class="va">cnt</span>, genes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>ENTREZID <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">cnt</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+<span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/edgeR/man/DGEList.html" class="external-link">DGEList</a></span><span class="op">(</span>counts <span class="op">=</span> <span class="va">cnt</span>, genes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>ENTREZID <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">cnt</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 
 <span class="co"># select quantifiable genes and normalize</span>
 <span class="va">y</span> <span class="op">&lt;-</span> <span class="va">y</span><span class="op">[</span><span class="va">quantGenes</span>, <span class="op">]</span>
 <span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/edgeR/man/calcNormFactors.html" class="external-link">calcNormFactors</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span>
 
 <span class="co"># design matrix with interaction term</span>
-<span class="va">region</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ex"</span>,<span class="st">"ex"</span>,<span class="st">"ex"</span>,<span class="st">"ex"</span>,<span class="st">"in"</span>,<span class="st">"in"</span>,<span class="st">"in"</span>,<span class="st">"in"</span><span class="op">)</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"in"</span>, <span class="st">"ex"</span><span class="op">)</span><span class="op">)</span>
-<span class="va">cond</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ES"</span>,<span class="st">"ES"</span>,<span class="st">"TN"</span>,<span class="st">"TN"</span><span class="op">)</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span>
+<span class="va">region</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ex"</span>,<span class="st">"ex"</span>,<span class="st">"ex"</span>,<span class="st">"ex"</span>,<span class="st">"in"</span>,<span class="st">"in"</span>,<span class="st">"in"</span>,<span class="st">"in"</span><span class="op">)</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"in"</span>, <span class="st">"ex"</span><span class="op">)</span><span class="op">)</span>
+<span class="va">cond</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ES"</span>,<span class="st">"ES"</span>,<span class="st">"TN"</span>,<span class="st">"TN"</span><span class="op">)</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span>
 <span class="va">design</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix</a></span><span class="op">(</span><span class="op">~</span> <span class="va">region</span> <span class="op">*</span> <span class="va">cond</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">design</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">cnt</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">design</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">cnt</span><span class="op">)</span>
 <span class="va">design</span>
 <span class="co">#&gt;                     (Intercept) regionex condTN regionex:condTN</span>
 <span class="co">#&gt; Ex.MmES_RNA_total_a           1        1      0               0</span>
@@ -550,8 +550,8 @@
 <span class="va">lrt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/edgeR/man/glmfit.html" class="external-link">glmLRT</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span>
 
 <span class="co"># create results table</span>
-<span class="va">tt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/edgeR/man/topTags.html" class="external-link">topTags</a></span><span class="op">(</span><span class="va">lrt</span>, n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span>, sort.by <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">tt</span><span class="op">$</span><span class="va">table</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">tt</span><span class="op">$</span><span class="va">table</span><span class="op">$</span><span class="va">FDR</span>, decreasing <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>, <span class="op">]</span><span class="op">)</span>
+<span class="va">tt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/edgeR/man/topTags.html" class="external-link">topTags</a></span><span class="op">(</span><span class="va">lrt</span>, n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span>, sort.by <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="va">tt</span><span class="op">$</span><span class="va">table</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">tt</span><span class="op">$</span><span class="va">table</span><span class="op">$</span><span class="va">FDR</span>, decreasing <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>, <span class="op">]</span><span class="op">)</span>
 <span class="co">#&gt;        ENTREZID    logFC   logCPM       LR       PValue          FDR</span>
 <span class="co">#&gt; 14680     14680 6.375699 6.554051 95.79494 1.274210e-22 1.080658e-18</span>
 <span class="co">#&gt; 75209     75209 5.341413 6.400361 85.66167 2.135122e-20 9.053983e-17</span>
@@ -562,7 +562,7 @@
 </div>
 <div id="visualize-the-results" class="section level2">
 <h2 class="hasAnchor">
-<a href="#visualize-the-results" class="anchor"></a>Visualize the results</h2>
+<a href="#visualize-the-results" class="anchor" aria-hidden="true"></a>Visualize the results</h2>
 <p>Finally, we visualize the results by plotting intronic changes versus exonic changes (genes with significant interactions, which are likely to be post-transcriptionally regulated, are color coded):</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sig</span>     <span class="op">&lt;-</span> <span class="va">tt</span><span class="op">$</span><span class="va">table</span><span class="op">$</span><span class="va">FDR</span> <span class="op">&lt;</span> <span class="fl">0.05</span>
@@ -573,33 +573,33 @@
 
 <span class="co"># volcano plot</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">tt</span><span class="op">$</span><span class="va">table</span><span class="op">$</span><span class="va">logFC</span>, <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log10</a></span><span class="op">(</span><span class="va">tt</span><span class="op">$</span><span class="va">table</span><span class="op">$</span><span class="va">FDR</span><span class="op">)</span>, col <span class="op">=</span> <span class="va">cols</span>, pch <span class="op">=</span> <span class="fl">20</span>,
-     xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"RNA change (log2 "</span>,<span class="va">Delta</span>,<span class="st">"exon/"</span>,<span class="va">Delta</span>,<span class="st">"intron)"</span><span class="op">)</span><span class="op">)</span>,
+     xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"RNA change (log2 "</span>,<span class="va">Delta</span>,<span class="st">"exon/"</span>,<span class="va">Delta</span>,<span class="st">"intron)"</span><span class="op">)</span><span class="op">)</span>,
      ylab <span class="op">=</span> <span class="st">"Significance (-log10 FDR)"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>h <span class="op">=</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log10</a></span><span class="op">(</span><span class="fl">0.05</span><span class="op">)</span>, lty <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>v <span class="op">=</span> <span class="fl">0</span>, lty <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/text.html" class="external-link">text</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="st">"usr"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">+</span> <span class="fl">3</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="st">"cxy"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="st">"usr"</span><span class="op">)</span><span class="op">[</span><span class="fl">4</span><span class="op">]</span>, adj <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span>,
+<span class="fu"><a href="https://rdrr.io/r/graphics/text.html" class="external-link">text</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="st">"usr"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">+</span> <span class="fl">3</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="st">"cxy"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="st">"usr"</span><span class="op">)</span><span class="op">[</span><span class="fl">4</span><span class="op">]</span>, adj <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span>,
      labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"n=%d"</span>, <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">sig.dir</span> <span class="op">==</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span>, col <span class="op">=</span> <span class="st">"#497AB3FF"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/text.html" class="external-link">text</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="st">"usr"</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span> <span class="op">-</span> <span class="fl">3</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="st">"cxy"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="st">"usr"</span><span class="op">)</span><span class="op">[</span><span class="fl">4</span><span class="op">]</span>, adj <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,
+<span class="fu"><a href="https://rdrr.io/r/graphics/text.html" class="external-link">text</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="st">"usr"</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span> <span class="op">-</span> <span class="fl">3</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="st">"cxy"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="st">"usr"</span><span class="op">)</span><span class="op">[</span><span class="fl">4</span><span class="op">]</span>, adj <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,
      labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"n=%d"</span>, <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">sig.dir</span> <span class="op">==</span>  <span class="fl">1</span><span class="op">)</span><span class="op">)</span>, col <span class="op">=</span> <span class="st">"#E41A1CFF"</span><span class="op">)</span></code></pre></div>
 <p><img src="eisaR_files/figure-html/plot-1.png" width="700"></p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R">
 <span class="co"># Delta I vs. Delta E</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowMeans</a></span><span class="op">(</span><span class="va">Din</span><span class="op">)</span><span class="op">[</span><span class="va">quantGenes</span><span class="op">]</span>, <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowMeans</a></span><span class="op">(</span><span class="va">Dex</span><span class="op">)</span><span class="op">[</span><span class="va">quantGenes</span><span class="op">]</span>, pch <span class="op">=</span> <span class="fl">20</span>, col <span class="op">=</span> <span class="va">cols</span>,
-     xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">Delta</span>,<span class="st">"intron (log2 TN/ES)"</span><span class="op">)</span><span class="op">)</span>,
-     ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">Delta</span>,<span class="st">"exon (log2 TN/ES)"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"bottomright"</span>, bty <span class="op">=</span> <span class="st">"n"</span>, pch <span class="op">=</span> <span class="fl">20</span>, col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#E41A1CFF"</span>,<span class="st">"#497AB3FF"</span><span class="op">)</span>,
-       legend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"%s (%d)"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Up"</span>,<span class="st">"Down"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">sig.dir</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">sig.dir</span> <span class="op">==</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/colSums.html" class="external-link">rowMeans</a></span><span class="op">(</span><span class="va">Din</span><span class="op">)</span><span class="op">[</span><span class="va">quantGenes</span><span class="op">]</span>, <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/colSums.html" class="external-link">rowMeans</a></span><span class="op">(</span><span class="va">Dex</span><span class="op">)</span><span class="op">[</span><span class="va">quantGenes</span><span class="op">]</span>, pch <span class="op">=</span> <span class="fl">20</span>, col <span class="op">=</span> <span class="va">cols</span>,
+     xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">Delta</span>,<span class="st">"intron (log2 TN/ES)"</span><span class="op">)</span><span class="op">)</span>,
+     ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">Delta</span>,<span class="st">"exon (log2 TN/ES)"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"bottomright"</span>, bty <span class="op">=</span> <span class="st">"n"</span>, pch <span class="op">=</span> <span class="fl">20</span>, col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#E41A1CFF"</span>,<span class="st">"#497AB3FF"</span><span class="op">)</span>,
+       legend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"%s (%d)"</span>, <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Up"</span>,<span class="st">"Down"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">sig.dir</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">sig.dir</span> <span class="op">==</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="eisaR_files/figure-html/plot-2.png" width="700"></p>
 </div>
 </div>
 <div id="session-information" class="section level1">
 <h1 class="hasAnchor">
-<a href="#session-information" class="anchor"></a>Session information</h1>
+<a href="#session-information" class="anchor" aria-hidden="true"></a>Session information</h1>
 <p>The output in this vignette was produced under:</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; R Under development (unstable) (2021-03-24 r80111)</span>
+<span class="co">#&gt; R version 4.1.0 (2021-05-18)</span>
 <span class="co">#&gt; Platform: x86_64-apple-darwin17.0 (64-bit)</span>
 <span class="co">#&gt; Running under: macOS Catalina 10.15.7</span>
 <span class="co">#&gt; </span>
@@ -615,66 +615,66 @@
 <span class="co">#&gt; [8] methods   base     </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; other attached packages:</span>
-<span class="co">#&gt;  [1] edgeR_3.33.3           limma_3.47.10          QuasR_1.31.1          </span>
-<span class="co">#&gt;  [4] Rbowtie_1.31.6         rtracklayer_1.51.5     GenomicFeatures_1.43.7</span>
-<span class="co">#&gt;  [7] AnnotationDbi_1.53.1   Biobase_2.51.0         GenomicRanges_1.43.3  </span>
-<span class="co">#&gt; [10] GenomeInfoDb_1.27.8    IRanges_2.25.6         S4Vectors_0.29.9      </span>
-<span class="co">#&gt; [13] BiocGenerics_0.37.1    eisaR_1.3.1            BiocStyle_2.19.1      </span>
+<span class="co">#&gt;  [1] edgeR_3.35.0           limma_3.49.0           QuasR_1.33.0          </span>
+<span class="co">#&gt;  [4] Rbowtie_1.33.0         rtracklayer_1.53.0     GenomicFeatures_1.45.0</span>
+<span class="co">#&gt;  [7] AnnotationDbi_1.55.0   Biobase_2.53.0         GenomicRanges_1.45.0  </span>
+<span class="co">#&gt; [10] GenomeInfoDb_1.29.0    IRanges_2.27.0         S4Vectors_0.31.0      </span>
+<span class="co">#&gt; [13] BiocGenerics_0.39.0    eisaR_1.5.1            BiocStyle_2.21.0      </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; loaded via a namespace (and not attached):</span>
-<span class="co">#&gt;  [1] bitops_1.0-6                matrixStats_0.58.0         </span>
+<span class="co">#&gt;  [1] bitops_1.0-7                matrixStats_0.58.0         </span>
 <span class="co">#&gt;  [3] fs_1.5.0                    bit64_4.0.5                </span>
 <span class="co">#&gt;  [5] RColorBrewer_1.1-2          filelock_1.0.2             </span>
 <span class="co">#&gt;  [7] progress_1.2.2              httr_1.4.2                 </span>
-<span class="co">#&gt;  [9] rprojroot_2.0.2             GenomicFiles_1.27.0        </span>
-<span class="co">#&gt; [11] tools_4.1.0                 bslib_0.2.4                </span>
+<span class="co">#&gt;  [9] rprojroot_2.0.2             GenomicFiles_1.29.0        </span>
+<span class="co">#&gt; [11] tools_4.1.0                 bslib_0.2.5.1              </span>
 <span class="co">#&gt; [13] utf8_1.2.1                  R6_2.5.0                   </span>
-<span class="co">#&gt; [15] DBI_1.1.1                   tidyselect_1.1.0           </span>
+<span class="co">#&gt; [15] DBI_1.1.1                   tidyselect_1.1.1           </span>
 <span class="co">#&gt; [17] prettyunits_1.1.1           bit_4.0.4                  </span>
-<span class="co">#&gt; [19] curl_4.3                    compiler_4.1.0             </span>
-<span class="co">#&gt; [21] textshaping_0.3.3           xml2_1.3.2                 </span>
-<span class="co">#&gt; [23] desc_1.3.0                  DelayedArray_0.17.9        </span>
-<span class="co">#&gt; [25] bookdown_0.21               sass_0.3.1                 </span>
-<span class="co">#&gt; [27] askpass_1.1                 rappdirs_0.3.3             </span>
-<span class="co">#&gt; [29] pkgdown_1.6.1.9001          Rsamtools_2.7.1            </span>
-<span class="co">#&gt; [31] systemfonts_1.0.1           stringr_1.4.0              </span>
-<span class="co">#&gt; [33] digest_0.6.27               rmarkdown_2.7              </span>
-<span class="co">#&gt; [35] XVector_0.31.1              jpeg_0.1-8.1               </span>
+<span class="co">#&gt; [19] curl_4.3.1                  compiler_4.1.0             </span>
+<span class="co">#&gt; [21] SGSeq_1.27.0                textshaping_0.3.4          </span>
+<span class="co">#&gt; [23] desc_1.3.0                  DelayedArray_0.19.0        </span>
+<span class="co">#&gt; [25] bookdown_0.22               sass_0.4.0                 </span>
+<span class="co">#&gt; [27] rappdirs_0.3.3              pkgdown_1.6.1.9001         </span>
+<span class="co">#&gt; [29] systemfonts_1.0.2           stringr_1.4.0              </span>
+<span class="co">#&gt; [31] digest_0.6.27               Rsamtools_2.9.0            </span>
+<span class="co">#&gt; [33] rmarkdown_2.8               XVector_0.33.0             </span>
+<span class="co">#&gt; [35] Rhisat2_1.9.0               jpeg_0.1-8.1               </span>
 <span class="co">#&gt; [37] pkgconfig_2.0.3             htmltools_0.5.1.1          </span>
-<span class="co">#&gt; [39] MatrixGenerics_1.3.1        highr_0.8                  </span>
-<span class="co">#&gt; [41] BSgenome_1.59.2             dbplyr_2.1.0               </span>
-<span class="co">#&gt; [43] fastmap_1.1.0               rlang_0.4.10               </span>
-<span class="co">#&gt; [45] RSQLite_2.2.4               jquerylib_0.1.3            </span>
-<span class="co">#&gt; [47] BiocIO_1.1.2                generics_0.1.0             </span>
+<span class="co">#&gt; [39] MatrixGenerics_1.5.0        highr_0.9                  </span>
+<span class="co">#&gt; [41] BSgenome_1.61.0             dbplyr_2.1.1               </span>
+<span class="co">#&gt; [43] fastmap_1.1.0               rlang_0.4.11               </span>
+<span class="co">#&gt; [45] RSQLite_2.2.7               jquerylib_0.1.4            </span>
+<span class="co">#&gt; [47] BiocIO_1.3.0                generics_0.1.0             </span>
 <span class="co">#&gt; [49] hwriter_1.3.2               jsonlite_1.7.2             </span>
-<span class="co">#&gt; [51] BiocParallel_1.25.5         dplyr_1.0.5                </span>
-<span class="co">#&gt; [53] VariantAnnotation_1.37.1    RCurl_1.98-1.3             </span>
-<span class="co">#&gt; [55] magrittr_2.0.1              GenomeInfoDbData_1.2.4     </span>
-<span class="co">#&gt; [57] Matrix_1.3-2                Rcpp_1.0.6                 </span>
-<span class="co">#&gt; [59] fansi_0.4.2                 lifecycle_1.0.0            </span>
-<span class="co">#&gt; [61] stringi_1.5.3               yaml_2.2.1                 </span>
-<span class="co">#&gt; [63] SummarizedExperiment_1.21.1 zlibbioc_1.37.0            </span>
-<span class="co">#&gt; [65] BiocFileCache_1.15.1        grid_4.1.0                 </span>
+<span class="co">#&gt; [51] BiocParallel_1.27.0         dplyr_1.0.6                </span>
+<span class="co">#&gt; [53] VariantAnnotation_1.39.0    RCurl_1.98-1.3             </span>
+<span class="co">#&gt; [55] magrittr_2.0.1              GenomeInfoDbData_1.2.6     </span>
+<span class="co">#&gt; [57] Matrix_1.3-3                Rcpp_1.0.6                 </span>
+<span class="co">#&gt; [59] fansi_0.5.0                 lifecycle_1.0.0            </span>
+<span class="co">#&gt; [61] stringi_1.6.2               yaml_2.2.1                 </span>
+<span class="co">#&gt; [63] SummarizedExperiment_1.23.0 zlibbioc_1.39.0            </span>
+<span class="co">#&gt; [65] BiocFileCache_2.1.0         grid_4.1.0                 </span>
 <span class="co">#&gt; [67] blob_1.2.1                  crayon_1.4.1               </span>
-<span class="co">#&gt; [69] lattice_0.20-41             splines_4.1.0              </span>
-<span class="co">#&gt; [71] Biostrings_2.59.2           hms_1.0.0                  </span>
-<span class="co">#&gt; [73] KEGGREST_1.31.1             locfit_1.5-9.4             </span>
-<span class="co">#&gt; [75] knitr_1.31                  pillar_1.5.1               </span>
-<span class="co">#&gt; [77] rjson_0.2.20                biomaRt_2.47.5             </span>
-<span class="co">#&gt; [79] XML_3.99-0.6                glue_1.4.2                 </span>
-<span class="co">#&gt; [81] ShortRead_1.49.2            evaluate_0.14              </span>
-<span class="co">#&gt; [83] latticeExtra_0.6-29         BiocManager_1.30.10        </span>
-<span class="co">#&gt; [85] png_0.1-7                   vctrs_0.3.6                </span>
-<span class="co">#&gt; [87] openssl_1.4.3               purrr_0.3.4                </span>
-<span class="co">#&gt; [89] assertthat_0.2.1            cachem_1.0.4               </span>
-<span class="co">#&gt; [91] xfun_0.22                   restfulr_0.0.13            </span>
-<span class="co">#&gt; [93] ragg_1.1.2                  tibble_3.1.0               </span>
-<span class="co">#&gt; [95] GenomicAlignments_1.27.2    memoise_2.0.0              </span>
-<span class="co">#&gt; [97] ellipsis_0.3.1</span></code></pre></div>
+<span class="co">#&gt; [69] lattice_0.20-44             splines_4.1.0              </span>
+<span class="co">#&gt; [71] Biostrings_2.61.0           hms_1.1.0                  </span>
+<span class="co">#&gt; [73] KEGGREST_1.33.0             locfit_1.5-9.4             </span>
+<span class="co">#&gt; [75] knitr_1.33                  pillar_1.6.1               </span>
+<span class="co">#&gt; [77] igraph_1.2.6                RUnit_0.4.32               </span>
+<span class="co">#&gt; [79] rjson_0.2.20                biomaRt_2.49.0             </span>
+<span class="co">#&gt; [81] XML_3.99-0.6                glue_1.4.2                 </span>
+<span class="co">#&gt; [83] ShortRead_1.51.0            evaluate_0.14              </span>
+<span class="co">#&gt; [85] latticeExtra_0.6-29         BiocManager_1.30.15        </span>
+<span class="co">#&gt; [87] png_0.1-7                   vctrs_0.3.8                </span>
+<span class="co">#&gt; [89] purrr_0.3.4                 assertthat_0.2.1           </span>
+<span class="co">#&gt; [91] cachem_1.0.5                xfun_0.23                  </span>
+<span class="co">#&gt; [93] restfulr_0.0.13             ragg_1.1.2                 </span>
+<span class="co">#&gt; [95] tibble_3.1.2                GenomicAlignments_1.29.0   </span>
+<span class="co">#&gt; [97] memoise_2.0.0               ellipsis_0.3.2</span></code></pre></div>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1 class="hasAnchor">
-<a href="#references" class="anchor"></a>References</h1>
+<a href="#references" class="anchor" aria-hidden="true"></a>References</h1>
 <div id="refs" class="references">
 <div id="ref-eisa">
 <p>Gaidatzis, D., L. Burger, M. Florescu, and M. B. Stadler. 2015. “Analysis of Intronic and Exonic Reads in Rna-Seq Data Characterizes Transcriptional and Post-Transcriptional Regulation.” <em>Nature Biotechnology</em> 33 (7): 722–29. <a href="https://doi.org/10.1038/nbt.3269" class="external-link">https://doi.org/10.1038/nbt.3269</a>.</p>
