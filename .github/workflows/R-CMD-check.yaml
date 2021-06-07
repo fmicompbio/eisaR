@@ -54,7 +54,7 @@ jobs:
         if: matrix.config.image == null
         run: |
           install.packages('BiocManager')
-          BiocManager::install(version = "${{ matrix.config.bioc }}", force = TRUE, ask = FALSE)
+          BiocManager::install(version = "${{ matrix.config.bioc }}", ask = FALSE)
         shell: Rscript {0}
 
       - name: Query dependencies
