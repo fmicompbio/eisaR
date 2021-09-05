@@ -17,6 +17,12 @@
 #' @param joinOverlappingIntrons Logical scalar indicating whether two introns 
 #'   that overlap (after adding the flanking sequences) should be joined into 
 #'   one feature.
+#' @param collapseIntronsByGene Logical scalar indicating whether to collapse 
+#'   overlapping intron ranges by gene after extraction.  
+#' @param keepIntronInFeature Logical scalar indicating whether introns 
+#'   (after adding the flank length) should be restricted to stay within the 
+#'   boundaries of the feature they were generated from. For backwards 
+#'   compatibility, the default is \code{FALSE}.
 #' @param verbose Logical scalar, whether to print out progress messages.
 #' 
 #' @author Charlotte Soneson
@@ -29,7 +35,7 @@
 #'   different feature types, as well as a list of all features for each type.
 #' 
 #' @importFrom GenomicRanges GRangesList reduce
-#' @importFrom BiocGenerics unlist relist setdiff
+#' @importFrom BiocGenerics unlist relist setdiff start end
 #' @importFrom S4Vectors mcols metadata
 #' 
 #' @examples
@@ -40,6 +46,7 @@
 #'     intronType = "separate",
 #'     flankLength = 5L,
 #'     joinOverlappingIntrons = FALSE,
+#'     collapseIntronsByGene = FALSE,
 #'     verbose = TRUE
 #'   )
 #'   
@@ -70,6 +77,8 @@ getFeatureRanges <- function(
     intronType = "separate", 
     flankLength = 90L, 
     joinOverlappingIntrons = FALSE, 
+    collapseIntronsByGene = FALSE, 
+    keepIntronInFeature = FALSE,
     verbose = TRUE) {
     
     ## --------------------------------------------------------------------- ##
@@ -103,6 +112,14 @@ getFeatureRanges <- function(
         if (!is.logical(joinOverlappingIntrons) || 
             length(joinOverlappingIntrons) != 1) {
             stop("'joinOverlappingIntrons' must be a logical scalar")
+        }
+        if (!is.logical(collapseIntronsByGene) ||
+            length(collapseIntronsByGene) != 1) {
+            stop("'collapseIntronsByGene' must be a logical scalar")
+        }
+        if (!is.logical(keepIntronInFeature) ||
+            length(keepIntronInFeature) != 1) {
+            stop("'keepIntronInFeature' must be a logical scalar")
         }
     }
     if (!is.logical(verbose) || length(verbose) != 1) {
@@ -218,20 +235,32 @@ getFeatureRanges <- function(
             grl <- GenomicRanges::reduce(grl)
         }
         
+        ## Get the full range of each feature - will be used to check
+        ## that the introns don't go outside after adding the flank
+        grlrange <- range(grl)
+        
         ## Get introns as the set difference between the range and the exons,
         ## for each transcript
         ## Here, the order of the introns doesn't really matter, since they
         ## will not be joined together into a transcript
-        grl <- BiocGenerics::setdiff(range(grl), grl)
+        grl <- BiocGenerics::setdiff(grlrange, grl)
         
         ## Remove empty entries
-        grl <- grl[vapply(grl, length, 0L) > 0]
+        keep <- vapply(grl, length, 0L) > 0
+        grl <- grl[keep]
+        grlrange <- grlrange[keep]
         
         ## Add flanking region
         grl <- grl + flankLength
         
-        ## Make sure that introns don't go to negative coordinates
-        # grl <- GenomicRanges::restrict(grl, start = 1L)
+        ## Make sure features (including flanks) are within the 
+        ## boundaries of the corresponding feature
+        if (keepIntronInFeature) {
+            grl <- GenomicRanges::restrict(
+                grl, 
+                start = BiocGenerics::start(unlist(grlrange)),
+                end = BiocGenerics::end(unlist(grlrange)))
+        }
         
         if (joinOverlappingIntrons) {
             ## If two (introns + flankLength) overlap, join them
@@ -246,6 +275,22 @@ getFeatureRanges <- function(
         } else {
             gr$gene_id <- gr$transcript_id
         }
+        
+        if (collapseIntronsByGene) {
+            ## Split introns by gene and join any overlapping introns
+            grl <- S4Vectors::split(gr, f = gr$gene_id)
+            grl <- GenomicRanges::reduce(grl)
+            
+            ## Unlist reduced introns
+            gr <- BiocGenerics::unlist(grl)
+            
+            gr$exon_rank <- 1L
+            
+            ## After collapsing, the names will be gene IDs
+            gr$transcript_id <- names(gr)
+            gr$gene_id <- gr$transcript_id
+        }
+        
         gr$type <- "exon"
         gr$transcript_id <- gsub(
             paste0(suffixes["intron"], "."), suffixes["intron"], 

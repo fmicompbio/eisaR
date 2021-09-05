@@ -10,6 +10,8 @@ getFeatureRanges(
   intronType = "separate",
   flankLength = 90L,
   joinOverlappingIntrons = FALSE,
+  collapseIntronsByGene = FALSE,
+  keepIntronInFeature = FALSE,
   verbose = TRUE
 )
 }
@@ -33,6 +35,14 @@ sequence added to each side of each extracted intron (only used if
 that overlap (after adding the flanking sequences) should be joined into
 one feature.}
 
+\item{collapseIntronsByGene}{Logical scalar indicating whether to collapse
+overlapping intron ranges by gene after extraction.}
+
+\item{keepIntronInFeature}{Logical scalar indicating whether introns
+(after adding the flank length) should be restricted to stay within the
+boundaries of the feature they were generated from. For backwards
+compatibility, the default is \code{FALSE}.}
+
 \item{verbose}{Logical scalar, whether to print out progress messages.}
 }
 \value{
@@ -53,6 +63,7 @@ spliced transcripts, unspliced transcripts and introns.
     intronType = "separate",
     flankLength = 5L,
     joinOverlappingIntrons = FALSE,
+    collapseIntronsByGene = FALSE,
     verbose = TRUE
   )
   

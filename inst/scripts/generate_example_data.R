@@ -14,7 +14,7 @@ t2g <- data.frame(
 
 ## Transcripts
 txome <- Biostrings::DNAStringSet(
-    c(`tx1.1` = paste0(substr(genome[["chr1"]], 61, 90),
+    c(`tx1.1` = paste0(substr(genome[["chr1"]], 116, 120),
                        substr(genome[["chr1"]], 141, 160)),
       `tx1.2` = paste0(substr(genome[["chr1"]], 61, 80),
                        substr(genome[["chr1"]], 101, 120),
@@ -38,10 +38,10 @@ txome <- Biostrings::DNAStringSet(
 gtf <- GenomicRanges::GRanges(
     seqnames = rep(c("chr1", "chr2"), c(18, 10)),
     ranges = IRanges::IRanges(
-        start = c(61, 141, 61, 101, 141, 61, 61, 61, 61, 61, 
+        start = c(116, 141, 61, 101, 141, 61, 116, 61, 61, 61, 
                   51, 11, 61, 36, 11, 11, 11, 11, 
                   61, 141, 61, 101, 141, 61, 61, 61, 61, 61),
-        end = c(90, 160, 80, 120, 160, 90, 160, 160, 90, 160, 
+        end = c(120, 160, 80, 120, 160, 90, 160, 160, 90, 160, 
                 70, 30, 80, 45, 20, 70, 80, 80, 
                 90, 160, 80, 120, 160, 90, 160, 160, 90, 160)
     ),

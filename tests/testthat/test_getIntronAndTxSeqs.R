@@ -47,6 +47,26 @@ test_that("reference extraction fails with the wrong inputs", {
                                 intronType = "separate", flankLength = 2L,
                                 joinOverlappingIntrons = c(TRUE, FALSE)), 
                regexp = "'joinOverlappingIntrons' must be a logical")
+  expect_error(getFeatureRanges(gtf = gtf, featureType = c("spliced", "intron"),
+                                intronType = "separate", flankLength = 2L,
+                                joinOverlappingIntrons = FALSE,
+                                collapseIntronsByGene = "TRUE"), 
+               regexp = "'collapseIntronsByGene' must be a logical")
+  expect_error(getFeatureRanges(gtf = gtf, featureType = c("spliced", "intron"),
+                                intronType = "separate", flankLength = 2L,
+                                joinOverlappingIntrons = FALSE,
+                                collapseIntronsByGene = c(TRUE, FALSE)), 
+               regexp = "'collapseIntronsByGene' must be a logical")
+  expect_error(getFeatureRanges(gtf = gtf, featureType = c("spliced", "intron"),
+                                intronType = "separate", flankLength = 2L,
+                                joinOverlappingIntrons = FALSE,
+                                keepIntronInFeature = "TRUE"), 
+               regexp = "'keepIntronInFeature' must be a logical")
+  expect_error(getFeatureRanges(gtf = gtf, featureType = c("spliced", "intron"),
+                                intronType = "separate", flankLength = 2L,
+                                joinOverlappingIntrons = FALSE,
+                                keepIntronInFeature = c(TRUE, FALSE)), 
+               regexp = "'keepIntronInFeature' must be a logical")
   
   ## If 'intron' is not in featureType, intron-related arguments are not checked
   expect_error(getFeatureRanges(gtf = gtf, featureType = "spliced", verbose = "TRUE",
@@ -75,6 +95,22 @@ test_that("reference extraction fails with the wrong inputs", {
                                 intronType = "separate", flankLength = 2L,
                                 joinOverlappingIntrons = c(TRUE, FALSE)), 
                regexp = "'verbose' must be a logical scalar")
+  expect_error(getFeatureRanges(gtf = gtf, featureType = "spliced", verbose = "TRUE",
+                                intronType = "separate", flankLength = 2L,
+                                collapseIntronsByGene = "TRUE"), 
+               regexp = "'verbose' must be a logical scalar")
+  expect_error(getFeatureRanges(gtf = gtf, featureType = "spliced", verbose = "TRUE",
+                                intronType = "separate", flankLength = 2L,
+                                collapseIntronsByGene = c(TRUE, FALSE)), 
+               regexp = "'verbose' must be a logical scalar")
+  expect_error(getFeatureRanges(gtf = gtf, featureType = "spliced", verbose = "TRUE",
+                                intronType = "separate", flankLength = 2L,
+                                keepIntronInFeature = "TRUE"), 
+               regexp = "'verbose' must be a logical scalar")
+  expect_error(getFeatureRanges(gtf = gtf, featureType = "spliced", verbose = "TRUE",
+                                intronType = "separate", flankLength = 2L,
+                                keepIntronInFeature = c(TRUE, FALSE)), 
+               regexp = "'verbose' must be a logical scalar")
   
   expect_error(getFeatureRanges(gtf = gtf, verbose = 1),
                regexp = "'verbose' must be a logical scalar")
@@ -93,6 +129,8 @@ test_that("feature range extraction works", {
                           intronType = "separate", 
                           flankLength = 3L, 
                           joinOverlappingIntrons = FALSE, 
+                          collapseIntronsByGene = FALSE, 
+                          keepIntronInFeature = FALSE,
                           verbose = FALSE)
   expect_length(frs, 25L)
   
@@ -135,7 +173,7 @@ test_that("feature range extraction works", {
   expect_equal(unique(frs$`tx3.3-U`$gene_id), "g3-U-U")
   
   ## Introns
-  expect_equal(ranges(frs$`tx1.1-I`), IRanges(start = 88, end = 143))
+  expect_equal(ranges(frs$`tx1.1-I`), IRanges(start = 118, end = 143))
   expect_equal(as.character(seqnames(frs$`tx1.1-I`)), "chr1")
   expect_equal(as.character(strand(frs$`tx1.1-I`)), "+")
   expect_equal(ranges(frs$`tx1.2-I`), IRanges(start = 78, end = 103))
@@ -182,6 +220,8 @@ test_that("feature range extraction works", {
                           intronType = "separate", 
                           flankLength = 9L, 
                           joinOverlappingIntrons = TRUE, 
+                          collapseIntronsByGene = FALSE, 
+                          keepIntronInFeature = FALSE,
                           verbose = FALSE)
   expect_length(frs, 24L)
   
@@ -206,7 +246,7 @@ test_that("feature range extraction works", {
   expect_equal(ranges(txfrsr), ranges(txgtflr))
   
   ## Introns
-  expect_equal(ranges(frs$`tx1.1-I`), IRanges(start = 82, end = 149))
+  expect_equal(ranges(frs$`tx1.1-I`), IRanges(start = 112, end = 149))
   expect_equal(as.character(seqnames(frs$`tx1.1-I`)), "chr1")
   expect_equal(as.character(strand(frs$`tx1.1-I`)), "+")
   expect_equal(ranges(frs$`tx1.2-I`), IRanges(start = 72, end = 109))
@@ -232,16 +272,256 @@ test_that("feature range extraction works", {
   expect_equal(as.character(strand(frs$`tx2.2-U-I`)), "-")
 
   ## ----------------------------------------------------------------------- ##
-  ## 'Separate' intron definition, flank length extends beyond chromosome end
+  ## Collapse introns by gene
   ## ----------------------------------------------------------------------- ##
-  # frs <- getFeatureRanges(gtf = gtf, 
-  #                         featureType = c("spliced", "unspliced", "intron"), 
-  #                         intronType = "separate", 
-  #                         flankLength = 30L, 
-  #                         joinOverlappingIntrons = TRUE, 
-  #                         verbose = FALSE)
-  # expect_length(frs, 22L)
-  # expect_equal(ranges(frs$`tx2.2-U-I`), IRanges(start = 1, end = 90))
+  frs <- getFeatureRanges(gtf = gtf, 
+                          featureType = c("spliced", "unspliced", "intron"), 
+                          intronType = "separate", 
+                          flankLength = 3L, 
+                          joinOverlappingIntrons = FALSE, 
+                          collapseIntronsByGene = TRUE, 
+                          keepIntronInFeature = FALSE,
+                          verbose = FALSE)
+  expect_length(frs, 20L)
+  
+  expect_equal(unique(unlist(frs)$type), "exon")
+  expect_equal(names(unlist(frs)), unlist(frs)$transcript_id)
+  
+  ## Spliced transcripts
+  spliced_ids <- metadata(frs)$corrtx$spliced
+  expect_equal(sort(spliced_ids), sort(tx2gene$V1))
+  txgtf <- subset(rtracklayer::import(gtf), type == "exon")
+  txgtfl <- as(split(txgtf, f = txgtf$transcript_id), "GRangesList")
+  txfrs <- frs[names(txgtfl)]
+  expect_named(txfrs, spliced_ids, ignore.order = TRUE)
+  expect_equal(ranges(txfrs), ranges(txgtfl))
+  
+  expect_equal(unique(frs$`tx1.1`$gene_id), "g1")
+  expect_equal(unique(frs$`tx1.2`$gene_id), "g1")
+  expect_equal(unique(frs$`tx1.3`$gene_id), "g1")
+  expect_equal(unique(frs$`tx2.1-I`$gene_id), "g2-I")
+  expect_equal(unique(frs$`tx2.2-U`$gene_id), "g2-I")
+  expect_equal(unique(frs$`tx3.1`$gene_id), "g3-U")
+  expect_equal(unique(frs$`tx3.2`$gene_id), "g3-U")
+  expect_equal(unique(frs$`tx3.3`$gene_id), "g3-U")
+  
+  ## Unspliced transcripts
+  unspliced_ids <- metadata(frs)$corrtx$unspliced
+  txgtflr <- range(txgtfl)
+  names(txgtflr) <- paste0(names(txgtflr), "-U")
+  txfrsr <- frs[names(txgtflr)]
+  expect_named(txfrsr, unspliced_ids, ignore.order = TRUE)
+  expect_equal(ranges(txfrsr), ranges(txgtflr))
+  
+  expect_equal(unique(frs$`tx1.1-U`$gene_id), "g1-U")
+  expect_equal(unique(frs$`tx1.2-U`$gene_id), "g1-U")
+  expect_equal(unique(frs$`tx1.3-U`$gene_id), "g1-U")
+  expect_equal(unique(frs$`tx2.1-I-U`$gene_id), "g2-I-U")
+  expect_equal(unique(frs$`tx2.2-U-U`$gene_id), "g2-I-U")
+  expect_equal(unique(frs$`tx3.1-U`$gene_id), "g3-U-U")
+  expect_equal(unique(frs$`tx3.2-U`$gene_id), "g3-U-U")
+  expect_equal(unique(frs$`tx3.3-U`$gene_id), "g3-U-U")
+  
+  ## Introns
+  expect_equal(ranges(frs$`g1-I`), IRanges(start = 78, end = 103))
+  expect_equal(as.character(seqnames(frs$`g1-I`)), "chr1")
+  expect_equal(as.character(strand(frs$`g1-I`)), "+")
+  expect_equal(ranges(frs$`g1-I1`), IRanges(start = 118, end = 143))
+  expect_equal(as.character(seqnames(frs$`g1-I1`)), "chr1")
+  expect_equal(as.character(strand(frs$`g1-I1`)), "+")
+  expect_equal(ranges(frs$`g3-U-I`), IRanges(start = 78, end = 143))
+  expect_equal(as.character(seqnames(frs$`g3-U-I`)), "chr2")
+  expect_equal(as.character(strand(frs$`g3-U-I`)), "+")
+  expect_equal(ranges(frs$`g2-I-I`), IRanges(start = 18, end = 63))
+  expect_equal(as.character(seqnames(frs$`g2-I-I`)), "chr1")
+  expect_equal(as.character(strand(frs$`g2-I-I`)), "-")
+
+  expect_equal(unique(frs$`g1-I`$gene_id), "g1-I")
+  expect_equal(unique(frs$`g1-I1`$gene_id), "g1-I")
+  expect_equal(unique(frs$`g2-I-I`$gene_id), "g2-I-I")
+  expect_equal(unique(frs$`g3-U-I`$gene_id), "g3-U-I")
+
+  ## ----------------------------------------------------------------------- ##
+  ## Introns extending outside of feature
+  ## ----------------------------------------------------------------------- ##
+  frs <- getFeatureRanges(gtf = gtf, 
+                          featureType = c("spliced", "unspliced", "intron"), 
+                          intronType = "separate", 
+                          flankLength = 9L, 
+                          joinOverlappingIntrons = FALSE, 
+                          collapseIntronsByGene = FALSE, 
+                          keepIntronInFeature = FALSE,
+                          verbose = FALSE)
+  expect_length(frs, 25L)
+  
+  expect_equal(unique(unlist(frs)$type), "exon")
+  expect_equal(names(unlist(frs)), unlist(frs)$transcript_id)
+  
+  ## Spliced transcripts
+  spliced_ids <- metadata(frs)$corrtx$spliced
+  expect_equal(sort(spliced_ids), sort(tx2gene$V1))
+  txgtf <- subset(rtracklayer::import(gtf), type == "exon")
+  txgtfl <- as(split(txgtf, f = txgtf$transcript_id), "GRangesList")
+  txfrs <- frs[names(txgtfl)]
+  expect_named(txfrs, spliced_ids, ignore.order = TRUE)
+  expect_equal(ranges(txfrs), ranges(txgtfl))
+  
+  expect_equal(unique(frs$`tx1.1`$gene_id), "g1")
+  expect_equal(unique(frs$`tx1.2`$gene_id), "g1")
+  expect_equal(unique(frs$`tx1.3`$gene_id), "g1")
+  expect_equal(unique(frs$`tx2.1-I`$gene_id), "g2-I")
+  expect_equal(unique(frs$`tx2.2-U`$gene_id), "g2-I")
+  expect_equal(unique(frs$`tx3.1`$gene_id), "g3-U")
+  expect_equal(unique(frs$`tx3.2`$gene_id), "g3-U")
+  expect_equal(unique(frs$`tx3.3`$gene_id), "g3-U")
+  
+  ## Unspliced transcripts
+  unspliced_ids <- metadata(frs)$corrtx$unspliced
+  txgtflr <- range(txgtfl)
+  names(txgtflr) <- paste0(names(txgtflr), "-U")
+  txfrsr <- frs[names(txgtflr)]
+  expect_named(txfrsr, unspliced_ids, ignore.order = TRUE)
+  expect_equal(ranges(txfrsr), ranges(txgtflr))
+  
+  expect_equal(unique(frs$`tx1.1-U`$gene_id), "g1-U")
+  expect_equal(unique(frs$`tx1.2-U`$gene_id), "g1-U")
+  expect_equal(unique(frs$`tx1.3-U`$gene_id), "g1-U")
+  expect_equal(unique(frs$`tx2.1-I-U`$gene_id), "g2-I-U")
+  expect_equal(unique(frs$`tx2.2-U-U`$gene_id), "g2-I-U")
+  expect_equal(unique(frs$`tx3.1-U`$gene_id), "g3-U-U")
+  expect_equal(unique(frs$`tx3.2-U`$gene_id), "g3-U-U")
+  expect_equal(unique(frs$`tx3.3-U`$gene_id), "g3-U-U")
+  
+  ## Introns
+  expect_equal(ranges(frs$`tx1.1-I`), IRanges(start = 112, end = 149))
+  expect_equal(as.character(seqnames(frs$`tx1.1-I`)), "chr1")
+  expect_equal(as.character(strand(frs$`tx1.1-I`)), "+")
+  expect_equal(ranges(frs$`tx1.2-I`), IRanges(start = 72, end = 109))
+  expect_equal(as.character(seqnames(frs$`tx1.2-I`)), "chr1")
+  expect_equal(as.character(strand(frs$`tx1.2-I`)), "+")
+  expect_equal(ranges(frs$`tx1.2-I1`), IRanges(start = 112, end = 149))
+  expect_equal(as.character(seqnames(frs$`tx1.2-I1`)), "chr1")
+  expect_equal(as.character(strand(frs$`tx1.2-I1`)), "+")
+  expect_equal(ranges(frs$`tx3.1-I`), IRanges(start = 82, end = 149))
+  expect_equal(as.character(seqnames(frs$`tx3.1-I`)), "chr2")
+  expect_equal(as.character(strand(frs$`tx3.1-I`)), "+")
+  expect_equal(ranges(frs$`tx3.2-I`), IRanges(start = 72, end = 109))
+  expect_equal(as.character(seqnames(frs$`tx3.2-I`)), "chr2")
+  expect_equal(as.character(strand(frs$`tx3.2-I`)), "+")
+  expect_equal(ranges(frs$`tx3.2-I1`), IRanges(start = 112, end = 149))
+  expect_equal(as.character(seqnames(frs$`tx3.2-I1`)), "chr2")
+  expect_equal(as.character(strand(frs$`tx3.2-I1`)), "+")
+  expect_equal(ranges(frs$`tx2.1-I-I`), IRanges(start = 22, end = 59))
+  expect_equal(as.character(seqnames(frs$`tx2.1-I-I`)), "chr1")
+  expect_equal(as.character(strand(frs$`tx2.1-I-I`)), "-")
+  expect_equal(ranges(frs$`tx2.2-U-I`), IRanges(start = 12, end = 44))
+  expect_equal(as.character(seqnames(frs$`tx2.2-U-I`)), "chr1")
+  expect_equal(as.character(strand(frs$`tx2.2-U-I`)), "-")
+  expect_equal(ranges(frs$`tx2.2-U-I1`), IRanges(start = 37, end = 69))
+  expect_equal(as.character(seqnames(frs$`tx2.2-U-I1`)), "chr1")
+  expect_equal(as.character(strand(frs$`tx2.2-U-I1`)), "-")
+  
+  expect_equal(unique(frs$`tx1.1-I`$gene_id), "g1-I")
+  expect_equal(unique(frs$`tx1.2-I`$gene_id), "g1-I")
+  expect_equal(unique(frs$`tx1.2-I1`$gene_id), "g1-I")
+  expect_equal(unique(frs$`tx2.1-I-I`$gene_id), "g2-I-I")
+  expect_equal(unique(frs$`tx2.2-U-I`$gene_id), "g2-I-I")
+  expect_equal(unique(frs$`tx2.2-U-I1`$gene_id), "g2-I-I")
+  expect_equal(unique(frs$`tx3.1-I`$gene_id), "g3-U-I")
+  expect_equal(unique(frs$`tx3.2-I`$gene_id), "g3-U-I")
+  expect_equal(unique(frs$`tx3.2-I1`$gene_id), "g3-U-I")
+  
+  
+  ## ----------------------------------------------------------------------- ##
+  ## Keep introns within feature
+  ## ----------------------------------------------------------------------- ##
+  frs <- getFeatureRanges(gtf = gtf, 
+                          featureType = c("spliced", "unspliced", "intron"), 
+                          intronType = "separate", 
+                          flankLength = 9L, 
+                          joinOverlappingIntrons = FALSE, 
+                          collapseIntronsByGene = FALSE, 
+                          keepIntronInFeature = TRUE,
+                          verbose = FALSE)
+  expect_length(frs, 25L)
+  
+  expect_equal(unique(unlist(frs)$type), "exon")
+  expect_equal(names(unlist(frs)), unlist(frs)$transcript_id)
+  
+  ## Spliced transcripts
+  spliced_ids <- metadata(frs)$corrtx$spliced
+  expect_equal(sort(spliced_ids), sort(tx2gene$V1))
+  txgtf <- subset(rtracklayer::import(gtf), type == "exon")
+  txgtfl <- as(split(txgtf, f = txgtf$transcript_id), "GRangesList")
+  txfrs <- frs[names(txgtfl)]
+  expect_named(txfrs, spliced_ids, ignore.order = TRUE)
+  expect_equal(ranges(txfrs), ranges(txgtfl))
+  
+  expect_equal(unique(frs$`tx1.1`$gene_id), "g1")
+  expect_equal(unique(frs$`tx1.2`$gene_id), "g1")
+  expect_equal(unique(frs$`tx1.3`$gene_id), "g1")
+  expect_equal(unique(frs$`tx2.1-I`$gene_id), "g2-I")
+  expect_equal(unique(frs$`tx2.2-U`$gene_id), "g2-I")
+  expect_equal(unique(frs$`tx3.1`$gene_id), "g3-U")
+  expect_equal(unique(frs$`tx3.2`$gene_id), "g3-U")
+  expect_equal(unique(frs$`tx3.3`$gene_id), "g3-U")
+  
+  ## Unspliced transcripts
+  unspliced_ids <- metadata(frs)$corrtx$unspliced
+  txgtflr <- range(txgtfl)
+  names(txgtflr) <- paste0(names(txgtflr), "-U")
+  txfrsr <- frs[names(txgtflr)]
+  expect_named(txfrsr, unspliced_ids, ignore.order = TRUE)
+  expect_equal(ranges(txfrsr), ranges(txgtflr))
+  
+  expect_equal(unique(frs$`tx1.1-U`$gene_id), "g1-U")
+  expect_equal(unique(frs$`tx1.2-U`$gene_id), "g1-U")
+  expect_equal(unique(frs$`tx1.3-U`$gene_id), "g1-U")
+  expect_equal(unique(frs$`tx2.1-I-U`$gene_id), "g2-I-U")
+  expect_equal(unique(frs$`tx2.2-U-U`$gene_id), "g2-I-U")
+  expect_equal(unique(frs$`tx3.1-U`$gene_id), "g3-U-U")
+  expect_equal(unique(frs$`tx3.2-U`$gene_id), "g3-U-U")
+  expect_equal(unique(frs$`tx3.3-U`$gene_id), "g3-U-U")
+  
+  ## Introns
+  expect_equal(ranges(frs$`tx1.1-I`), IRanges(start = 116, end = 149))
+  expect_equal(as.character(seqnames(frs$`tx1.1-I`)), "chr1")
+  expect_equal(as.character(strand(frs$`tx1.1-I`)), "+")
+  expect_equal(ranges(frs$`tx1.2-I`), IRanges(start = 72, end = 109))
+  expect_equal(as.character(seqnames(frs$`tx1.2-I`)), "chr1")
+  expect_equal(as.character(strand(frs$`tx1.2-I`)), "+")
+  expect_equal(ranges(frs$`tx1.2-I1`), IRanges(start = 112, end = 149))
+  expect_equal(as.character(seqnames(frs$`tx1.2-I1`)), "chr1")
+  expect_equal(as.character(strand(frs$`tx1.2-I1`)), "+")
+  expect_equal(ranges(frs$`tx3.1-I`), IRanges(start = 82, end = 149))
+  expect_equal(as.character(seqnames(frs$`tx3.1-I`)), "chr2")
+  expect_equal(as.character(strand(frs$`tx3.1-I`)), "+")
+  expect_equal(ranges(frs$`tx3.2-I`), IRanges(start = 72, end = 109))
+  expect_equal(as.character(seqnames(frs$`tx3.2-I`)), "chr2")
+  expect_equal(as.character(strand(frs$`tx3.2-I`)), "+")
+  expect_equal(ranges(frs$`tx3.2-I1`), IRanges(start = 112, end = 149))
+  expect_equal(as.character(seqnames(frs$`tx3.2-I1`)), "chr2")
+  expect_equal(as.character(strand(frs$`tx3.2-I1`)), "+")
+  expect_equal(ranges(frs$`tx2.1-I-I`), IRanges(start = 22, end = 59))
+  expect_equal(as.character(seqnames(frs$`tx2.1-I-I`)), "chr1")
+  expect_equal(as.character(strand(frs$`tx2.1-I-I`)), "-")
+  expect_equal(ranges(frs$`tx2.2-U-I`), IRanges(start = 12, end = 44))
+  expect_equal(as.character(seqnames(frs$`tx2.2-U-I`)), "chr1")
+  expect_equal(as.character(strand(frs$`tx2.2-U-I`)), "-")
+  expect_equal(ranges(frs$`tx2.2-U-I1`), IRanges(start = 37, end = 69))
+  expect_equal(as.character(seqnames(frs$`tx2.2-U-I1`)), "chr1")
+  expect_equal(as.character(strand(frs$`tx2.2-U-I1`)), "-")
+  
+  expect_equal(unique(frs$`tx1.1-I`$gene_id), "g1-I")
+  expect_equal(unique(frs$`tx1.2-I`$gene_id), "g1-I")
+  expect_equal(unique(frs$`tx1.2-I1`$gene_id), "g1-I")
+  expect_equal(unique(frs$`tx2.1-I-I`$gene_id), "g2-I-I")
+  expect_equal(unique(frs$`tx2.2-U-I`$gene_id), "g2-I-I")
+  expect_equal(unique(frs$`tx2.2-U-I1`$gene_id), "g2-I-I")
+  expect_equal(unique(frs$`tx3.1-I`$gene_id), "g3-U-I")
+  expect_equal(unique(frs$`tx3.2-I`$gene_id), "g3-U-I")
+  expect_equal(unique(frs$`tx3.2-I1`$gene_id), "g3-U-I")
+  
   
   ## ----------------------------------------------------------------------- ##
   ## 'Collapse' intron definition
@@ -251,6 +531,8 @@ test_that("feature range extraction works", {
                           intronType = "collapse", 
                           flankLength = 3L, 
                           joinOverlappingIntrons = FALSE, 
+                          collapseIntronsByGene = FALSE, 
+                          keepIntronInFeature = FALSE,
                           verbose = FALSE)
   expect_length(frs, 22L)
   
@@ -330,6 +612,8 @@ test_that("feature sequence extraction works", {
                           intronType = "separate", 
                           flankLength = 3L, 
                           joinOverlappingIntrons = FALSE, 
+                          collapseIntronsByGene = FALSE, 
+                          keepIntronInFeature = FALSE,
                           verbose = FALSE)
   expect_length(frs, 25L)
   expect_length(metadata(frs)$featurelist, 3L)
@@ -349,7 +633,7 @@ test_that("feature sequence extraction works", {
   
   ## Unspliced transcripts
   expect_equal(as.character(seqs[["tx1.1-U"]]), 
-               as.character(Biostrings::substr(genomeseq[["chr1"]], 61, 160)))
+               as.character(Biostrings::substr(genomeseq[["chr1"]], 116, 160)))
   expect_equal(as.character(seqs[["tx1.2-U"]]), 
                as.character(Biostrings::substr(genomeseq[["chr1"]], 61, 160)))
   expect_equal(as.character(seqs[["tx1.3-U"]]), 
@@ -367,7 +651,7 @@ test_that("feature sequence extraction works", {
   
   ## Introns
   expect_equal(as.character(seqs[["tx1.1-I"]]), 
-               as.character(Biostrings::substr(genomeseq[["chr1"]], 88, 143)))
+               as.character(Biostrings::substr(genomeseq[["chr1"]], 118, 143)))
   expect_equal(as.character(seqs[["tx1.2-I"]]), 
                as.character(Biostrings::substr(genomeseq[["chr1"]], 78, 103)))
   expect_equal(as.character(seqs[["tx1.2-I1"]]), 
@@ -393,6 +677,8 @@ test_that("feature sequence extraction works", {
                           intronType = "collapse", 
                           flankLength = 3L, 
                           joinOverlappingIntrons = FALSE, 
+                          collapseIntronsByGene = FALSE, 
+                          keepIntronInFeature = FALSE,
                           verbose = FALSE)
   expect_length(frs, 22L)
   expect_length(metadata(frs)$featurelist, 3L)
@@ -412,7 +698,7 @@ test_that("feature sequence extraction works", {
   
   ## Unspliced transcripts
   expect_equal(as.character(seqs[["tx1.1-U"]]), 
-               as.character(Biostrings::substr(genomeseq[["chr1"]], 61, 160)))
+               as.character(Biostrings::substr(genomeseq[["chr1"]], 116, 160)))
   expect_equal(as.character(seqs[["tx1.2-U"]]), 
                as.character(Biostrings::substr(genomeseq[["chr1"]], 61, 160)))
   expect_equal(as.character(seqs[["tx1.3-U"]]), 
@@ -449,6 +735,8 @@ test_that("gtf export works", {
                           intronType = "collapse", 
                           flankLength = 3L, 
                           joinOverlappingIntrons = FALSE, 
+                          collapseIntronsByGene = FALSE, 
+                          keepIntronInFeature = FALSE,
                           verbose = FALSE)
   f <- file.path(tempdir(), "exported_gtf.gtf")
   expect_error(exportToGtf("wrongtype", filepath = f), 
@@ -479,6 +767,8 @@ test_that("tx2gene generation works", {
                           intronType = "collapse", 
                           flankLength = 3L, 
                           joinOverlappingIntrons = FALSE, 
+                          collapseIntronsByGene = FALSE, 
+                          keepIntronInFeature = FALSE,
                           verbose = TRUE)
   getTx2Gene(frs, file.path(tempdir(), "tx2gene.tsv"))
   txg <- getTx2Gene(frs)
