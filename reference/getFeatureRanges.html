@@ -59,7 +59,6 @@ spliced transcripts, unspliced transcripts and introns." />
 
 
 
-
   
 
   
@@ -82,7 +81,7 @@ spliced transcripts, unspliced transcripts and introns." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">eisaR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.5.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.5.3</span>
       </span>
     </div>
 
@@ -116,7 +115,7 @@ spliced transcripts, unspliced transcripts and introns." />
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/fmicompbio/eisaR">
-    <span class="fas fa-github fa-lg"></span>
+    <span class="fa fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -149,6 +148,8 @@ spliced transcripts, unspliced transcripts and introns.</p>
   intronType <span class='op'>=</span> <span class='st'>"separate"</span>,
   flankLength <span class='op'>=</span> <span class='fl'>90L</span>,
   joinOverlappingIntrons <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  collapseIntronsByGene <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  keepIntronInFeature <span class='op'>=</span> <span class='cn'>FALSE</span>,
   verbose <span class='op'>=</span> <span class='cn'>TRUE</span>
 <span class='op'>)</span></code></pre></div>
 
@@ -185,6 +186,18 @@ that overlap (after adding the flanking sequences) should be joined into
 one feature.</p></td>
     </tr>
     <tr>
+      <th>collapseIntronsByGene</th>
+      <td><p>Logical scalar indicating whether to collapse
+overlapping intron ranges by gene after extraction.</p></td>
+    </tr>
+    <tr>
+      <th>keepIntronInFeature</th>
+      <td><p>Logical scalar indicating whether introns
+(after adding the flank length) should be restricted to stay within the
+boundaries of the feature they were generated from. For backwards
+compatibility, the default is <code>FALSE</code>.</p></td>
+    </tr>
+    <tr>
       <th>verbose</th>
       <td><p>Logical scalar, whether to print out progress messages.</p></td>
     </tr>
@@ -208,6 +221,7 @@ different feature types, as well as a list of all features for each type.</p>
 <span class='r-in'>    intronType <span class='op'>=</span> <span class='st'>"separate"</span>,</span>
 <span class='r-in'>    flankLength <span class='op'>=</span> <span class='fl'>5L</span>,</span>
 <span class='r-in'>    joinOverlappingIntrons <span class='op'>=</span> <span class='cn'>FALSE</span>,</span>
+<span class='r-in'>    collapseIntronsByGene <span class='op'>=</span> <span class='cn'>FALSE</span>,</span>
 <span class='r-in'>    verbose <span class='op'>=</span> <span class='cn'>TRUE</span></span>
 <span class='r-in'>  <span class='op'>)</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> Import genomic features from the file as a GRanges object ... </span>
@@ -234,19 +248,6 @@ different feature types, as well as a list of all features for each type.</p>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   -------</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   seqinfo: 2 sequences from an unspecified genome; no seqlengths</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> $tx1.1</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> GRanges object with 2 ranges and 5 metadata columns:</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>       seqnames    ranges strand |     exon_id exon_rank transcript_id</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt; &lt;integer&gt;   &lt;character&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   [1]     chr1     61-90      + |          E1         1         tx1.1</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   [2]     chr1   141-160      + |          E2         2         tx1.1</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>           gene_id        type</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>       &lt;character&gt; &lt;character&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   [1]          g1        exon</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   [2]          g1        exon</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   -------</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   seqinfo: 2 sequences from an unspecified genome; no seqlengths</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> $tx1.2</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> GRanges object with 3 ranges and 5 metadata columns:</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>       seqnames    ranges strand |     exon_id exon_rank transcript_id</span>
@@ -262,6 +263,19 @@ different feature types, as well as a list of all features for each type.</p>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   -------</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   seqinfo: 2 sequences from an unspecified genome; no seqlengths</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $tx1.1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> GRanges object with 2 ranges and 5 metadata columns:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       seqnames    ranges strand |     exon_id exon_rank transcript_id</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt; &lt;integer&gt;   &lt;character&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [1]     chr1   116-120      + |          E1         1         tx1.1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [2]     chr1   141-160      + |          E2         2         tx1.1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>           gene_id        type</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       &lt;character&gt; &lt;character&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [1]          g1        exon</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [2]          g1        exon</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   -------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   seqinfo: 2 sequences from an unspecified genome; no seqlengths</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> ...</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;14 more elements&gt;</span>
 <span class='r-in'>  </span>
@@ -269,8 +283,8 @@ different feature types, as well as a list of all features for each type.</p>
 <span class='r-in'>  <span class='fu'>S4Vectors</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/S4Vectors/man/Annotated-class.html'>metadata</a></span><span class='op'>(</span><span class='va'>grl</span><span class='op'>)</span><span class='op'>$</span><span class='va'>corrtx</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   spliced</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> 1   tx1.3</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 2   tx1.1</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 3   tx1.2</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 2   tx1.2</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 3   tx1.1</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> 4 tx2.1-I</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> 5 tx2.2-U</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> 6   tx3.3</span>
@@ -285,11 +299,11 @@ different feature types, as well as a list of all features for each type.</p>
 <span class='r-in'>  <span class='co'>## List of features of different types</span></span>
 <span class='r-in'>  <span class='fu'>S4Vectors</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/S4Vectors/man/Annotated-class.html'>metadata</a></span><span class='op'>(</span><span class='va'>grl</span><span class='op'>)</span><span class='op'>$</span><span class='va'>featurelist</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> $spliced</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "tx1.3"   "tx1.1"   "tx1.2"   "tx2.1-I" "tx2.2-U" "tx3.3"   "tx3.1"  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "tx1.3"   "tx1.2"   "tx1.1"   "tx2.1-I" "tx2.2-U" "tx3.3"   "tx3.1"  </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> [8] "tx3.2"  </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> $intron</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "tx1.1-I"    "tx1.2-I"    "tx1.2-I1"   "tx2.1-I-I"  "tx2.2-U-I" </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "tx1.2-I"    "tx1.2-I1"   "tx1.1-I"    "tx2.1-I-I"  "tx2.2-U-I" </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> [6] "tx2.2-U-I1" "tx3.1-I"    "tx3.2-I"    "tx3.2-I1"  </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
 <span class='r-in'>  </span>
@@ -304,32 +318,26 @@ different feature types, as well as a list of all features for each type.</p>
 <span class='r-in'>    <span class='va'>seqs</span></span>
 <span class='r-in'>  <span class='op'>}</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> Loading required package: BiocGenerics</span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> Loading required package: parallel</span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> Attaching package: ‘BiocGenerics’</span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> The following objects are masked from ‘package:parallel’:</span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span>     clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,</span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span>     clusterExport, clusterMap, parApply, parCapply, parLapply,</span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span>     parLapplyLB, parRapply, parSapply, parSapplyLB</span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> The following objects are masked from ‘package:stats’:</span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span>     IQR, mad, sd, var, xtabs</span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> The following objects are masked from ‘package:base’:</span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span>     anyDuplicated, append, as.data.frame, basename, cbind, colnames,</span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span>     dirname, do.call, duplicated, eval, evalq, Filter, Find, get, grep,</span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span>     grepl, intersect, is.unsorted, lapply, Map, mapply, match, mget,</span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span>     order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank,</span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span>     rbind, Reduce, rownames, sapply, setdiff, sort, table, tapply,</span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span>     union, unique, unsplit, which.max, which.min</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span>     Filter, Find, Map, Position, Reduce, anyDuplicated, append,</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span>     as.data.frame, basename, cbind, colnames, dirname, do.call,</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span>     duplicated, eval, evalq, get, grep, grepl, intersect, is.unsorted,</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span>     lapply, mapply, match, mget, order, paste, pmax, pmax.int, pmin,</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span>     pmin.int, rank, rbind, rownames, sapply, setdiff, sort, table,</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span>     tapply, union, unique, unsplit, which.max, which.min</span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> Loading required package: S4Vectors</span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> Loading required package: stats4</span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> Attaching package: ‘S4Vectors’</span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> The following objects are masked from ‘package:base’:</span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span>     expand.grid, I, unname</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span>     I, expand.grid, unname</span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> Loading required package: IRanges</span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> Loading required package: GenomeInfoDb</span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> Loading required package: GenomicRanges</span>
@@ -344,8 +352,8 @@ different feature types, as well as a list of all features for each type.</p>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> DNAStringSet object of length 17:</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>      width seq                                              names               </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>  [1]    30 <span style='color: #000000; background-color: #FFD7AF;'>T</span><span style='color: #000000; background-color: #AFFFFF;'>G</span><span style='color: #000000; background-color: #FFD7AF;'>TT</span><span style='color: #000000; background-color: #AFFFAF;'>C</span><span style='color: #000000; background-color: #FFAFAF;'>AA</span><span style='color: #000000; background-color: #AFFFFF;'>G</span><span style='color: #000000; background-color: #AFFFAF;'>C</span><span style='color: #000000; background-color: #AFFFFF;'>G</span><span style='color: #000000; background-color: #AFFFAF;'>CC</span><span style='color: #000000; background-color: #FFD7AF;'>T</span><span style='color: #000000; background-color: #FFAFAF;'>A</span><span style='color: #000000; background-color: #AFFFAF;'>C</span><span style='color: #000000; background-color: #AFFFFF;'>G</span><span style='color: #000000; background-color: #FFD7AF;'>T</span><span style='color: #000000; background-color: #AFFFFF;'>GGG</span><span style='color: #000000; background-color: #FFD7AF;'>TT</span><span style='color: #000000; background-color: #AFFFFF;'>GGG</span><span style='color: #000000; background-color: #AFFFAF;'>C</span><span style='color: #000000; background-color: #FFAFAF;'>AA</span><span style='color: #000000; background-color: #AFFFAF;'>CC</span>                   tx1.3</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  [2]    50 <span style='color: #000000; background-color: #FFD7AF;'>T</span><span style='color: #000000; background-color: #AFFFFF;'>G</span><span style='color: #000000; background-color: #FFD7AF;'>TT</span><span style='color: #000000; background-color: #AFFFAF;'>C</span><span style='color: #000000; background-color: #FFAFAF;'>AA</span><span style='color: #000000; background-color: #AFFFFF;'>G</span><span style='color: #000000; background-color: #AFFFAF;'>C</span><span style='color: #000000; background-color: #AFFFFF;'>G</span><span style='color: #000000; background-color: #AFFFAF;'>CC</span><span style='color: #000000; background-color: #FFD7AF;'>T</span><span style='color: #000000; background-color: #FFAFAF;'>A</span><span style='color: #000000; background-color: #AFFFAF;'>C</span><span style='color: #000000; background-color: #AFFFFF;'>G</span><span style='color: #000000; background-color: #FFD7AF;'>T</span><span style='color: #000000; background-color: #AFFFFF;'>GGG</span><span style='color: #000000; background-color: #FFD7AF;'>TT</span><span style='color: #000000; background-color: #AFFFFF;'>G</span>...<span style='color: #000000; background-color: #AFFFAF;'>CC</span><span style='color: #000000; background-color: #AFFFFF;'>G</span><span style='color: #000000; background-color: #FFAFAF;'>A</span><span style='color: #000000; background-color: #AFFFAF;'>CC</span><span style='color: #000000; background-color: #FFD7AF;'>T</span><span style='color: #000000; background-color: #FFAFAF;'>A</span><span style='color: #000000; background-color: #AFFFFF;'>G</span><span style='color: #000000; background-color: #FFAFAF;'>A</span><span style='color: #000000; background-color: #AFFFFF;'>GG</span><span style='color: #000000; background-color: #FFD7AF;'>T</span><span style='color: #000000; background-color: #FFAFAF;'>AA</span><span style='color: #000000; background-color: #FFD7AF;'>T</span><span style='color: #000000; background-color: #FFAFAF;'>AA</span><span style='color: #000000; background-color: #AFFFFF;'>GGG</span><span style='color: #000000; background-color: #FFD7AF;'>T</span> tx1.1</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  [3]    60 <span style='color: #000000; background-color: #FFD7AF;'>T</span><span style='color: #000000; background-color: #AFFFFF;'>G</span><span style='color: #000000; background-color: #FFD7AF;'>TT</span><span style='color: #000000; background-color: #AFFFAF;'>C</span><span style='color: #000000; background-color: #FFAFAF;'>AA</span><span style='color: #000000; background-color: #AFFFFF;'>G</span><span style='color: #000000; background-color: #AFFFAF;'>C</span><span style='color: #000000; background-color: #AFFFFF;'>G</span><span style='color: #000000; background-color: #AFFFAF;'>CC</span><span style='color: #000000; background-color: #FFD7AF;'>T</span><span style='color: #000000; background-color: #FFAFAF;'>A</span><span style='color: #000000; background-color: #AFFFAF;'>C</span><span style='color: #000000; background-color: #AFFFFF;'>G</span><span style='color: #000000; background-color: #FFD7AF;'>T</span><span style='color: #000000; background-color: #AFFFFF;'>GGGG</span><span style='color: #000000; background-color: #FFAFAF;'>A</span><span style='color: #000000; background-color: #AFFFFF;'>G</span>...<span style='color: #000000; background-color: #AFFFFF;'>G</span><span style='color: #000000; background-color: #FFD7AF;'>T</span><span style='color: #000000; background-color: #AFFFFF;'>G</span><span style='color: #000000; background-color: #FFAFAF;'>A</span><span style='color: #000000; background-color: #AFFFAF;'>CC</span><span style='color: #000000; background-color: #FFD7AF;'>T</span><span style='color: #000000; background-color: #FFAFAF;'>A</span><span style='color: #000000; background-color: #AFFFFF;'>G</span><span style='color: #000000; background-color: #FFAFAF;'>A</span><span style='color: #000000; background-color: #AFFFFF;'>GG</span><span style='color: #000000; background-color: #FFD7AF;'>T</span><span style='color: #000000; background-color: #FFAFAF;'>AA</span><span style='color: #000000; background-color: #FFD7AF;'>T</span><span style='color: #000000; background-color: #FFAFAF;'>AA</span><span style='color: #000000; background-color: #AFFFFF;'>GGG</span><span style='color: #000000; background-color: #FFD7AF;'>T</span> tx1.2</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [2]    60 <span style='color: #000000; background-color: #FFD7AF;'>T</span><span style='color: #000000; background-color: #AFFFFF;'>G</span><span style='color: #000000; background-color: #FFD7AF;'>TT</span><span style='color: #000000; background-color: #AFFFAF;'>C</span><span style='color: #000000; background-color: #FFAFAF;'>AA</span><span style='color: #000000; background-color: #AFFFFF;'>G</span><span style='color: #000000; background-color: #AFFFAF;'>C</span><span style='color: #000000; background-color: #AFFFFF;'>G</span><span style='color: #000000; background-color: #AFFFAF;'>CC</span><span style='color: #000000; background-color: #FFD7AF;'>T</span><span style='color: #000000; background-color: #FFAFAF;'>A</span><span style='color: #000000; background-color: #AFFFAF;'>C</span><span style='color: #000000; background-color: #AFFFFF;'>G</span><span style='color: #000000; background-color: #FFD7AF;'>T</span><span style='color: #000000; background-color: #AFFFFF;'>GGGG</span><span style='color: #000000; background-color: #FFAFAF;'>A</span><span style='color: #000000; background-color: #AFFFFF;'>G</span>...<span style='color: #000000; background-color: #AFFFFF;'>G</span><span style='color: #000000; background-color: #FFD7AF;'>T</span><span style='color: #000000; background-color: #AFFFFF;'>G</span><span style='color: #000000; background-color: #FFAFAF;'>A</span><span style='color: #000000; background-color: #AFFFAF;'>CC</span><span style='color: #000000; background-color: #FFD7AF;'>T</span><span style='color: #000000; background-color: #FFAFAF;'>A</span><span style='color: #000000; background-color: #AFFFFF;'>G</span><span style='color: #000000; background-color: #FFAFAF;'>A</span><span style='color: #000000; background-color: #AFFFFF;'>GG</span><span style='color: #000000; background-color: #FFD7AF;'>T</span><span style='color: #000000; background-color: #FFAFAF;'>AA</span><span style='color: #000000; background-color: #FFD7AF;'>T</span><span style='color: #000000; background-color: #FFAFAF;'>AA</span><span style='color: #000000; background-color: #AFFFFF;'>GGG</span><span style='color: #000000; background-color: #FFD7AF;'>T</span> tx1.2</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [3]    25 <span style='color: #000000; background-color: #FFD7AF;'>T</span><span style='color: #000000; background-color: #FFAFAF;'>A</span><span style='color: #000000; background-color: #AFFFFF;'>GG</span><span style='color: #000000; background-color: #FFD7AF;'>T</span><span style='color: #000000; background-color: #AFFFFF;'>G</span><span style='color: #000000; background-color: #FFAFAF;'>A</span><span style='color: #000000; background-color: #AFFFAF;'>CC</span><span style='color: #000000; background-color: #FFD7AF;'>T</span><span style='color: #000000; background-color: #FFAFAF;'>A</span><span style='color: #000000; background-color: #AFFFFF;'>G</span><span style='color: #000000; background-color: #FFAFAF;'>A</span><span style='color: #000000; background-color: #AFFFFF;'>GG</span><span style='color: #000000; background-color: #FFD7AF;'>T</span><span style='color: #000000; background-color: #FFAFAF;'>AA</span><span style='color: #000000; background-color: #FFD7AF;'>T</span><span style='color: #000000; background-color: #FFAFAF;'>AA</span><span style='color: #000000; background-color: #AFFFFF;'>GGG</span><span style='color: #000000; background-color: #FFD7AF;'>T</span>                        tx1.1</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>  [4]    40 <span style='color: #000000; background-color: #AFFFAF;'>C</span><span style='color: #000000; background-color: #AFFFFF;'>G</span><span style='color: #000000; background-color: #AFFFAF;'>C</span><span style='color: #000000; background-color: #FFD7AF;'>TT</span><span style='color: #000000; background-color: #AFFFFF;'>G</span><span style='color: #000000; background-color: #FFAFAF;'>AA</span><span style='color: #000000; background-color: #AFFFAF;'>C</span><span style='color: #000000; background-color: #FFAFAF;'>A</span><span style='color: #000000; background-color: #AFFFAF;'>C</span><span style='color: #000000; background-color: #AFFFFF;'>G</span><span style='color: #000000; background-color: #FFD7AF;'>T</span><span style='color: #000000; background-color: #FFAFAF;'>A</span><span style='color: #000000; background-color: #FFD7AF;'>T</span><span style='color: #000000; background-color: #FFAFAF;'>AA</span><span style='color: #000000; background-color: #FFD7AF;'>T</span><span style='color: #000000; background-color: #AFFFFF;'>G</span><span style='color: #000000; background-color: #AFFFAF;'>C</span><span style='color: #000000; background-color: #FFAFAF;'>A</span><span style='color: #000000; background-color: #AFFFFF;'>G</span><span style='color: #000000; background-color: #FFD7AF;'>T</span><span style='color: #000000; background-color: #AFFFAF;'>C</span><span style='color: #000000; background-color: #FFD7AF;'>T</span><span style='color: #000000; background-color: #AFFFAF;'>C</span><span style='color: #000000; background-color: #AFFFFF;'>G</span><span style='color: #000000; background-color: #FFD7AF;'>T</span><span style='color: #000000; background-color: #AFFFAF;'>C</span><span style='color: #000000; background-color: #FFAFAF;'>A</span><span style='color: #000000; background-color: #FFD7AF;'>T</span><span style='color: #000000; background-color: #AFFFAF;'>C</span><span style='color: #000000; background-color: #FFD7AF;'>T</span><span style='color: #000000; background-color: #AFFFAF;'>CCCCC</span><span style='color: #000000; background-color: #FFAFAF;'>A</span><span style='color: #000000; background-color: #AFFFFF;'>G</span>         tx2.1-I</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>  [5]    40 <span style='color: #000000; background-color: #AFFFAF;'>CCC</span><span style='color: #000000; background-color: #FFAFAF;'>A</span><span style='color: #000000; background-color: #AFFFAF;'>C</span><span style='color: #000000; background-color: #AFFFFF;'>G</span><span style='color: #000000; background-color: #FFD7AF;'>T</span><span style='color: #000000; background-color: #FFAFAF;'>A</span><span style='color: #000000; background-color: #AFFFFF;'>GG</span><span style='color: #000000; background-color: #AFFFAF;'>C</span><span style='color: #000000; background-color: #AFFFFF;'>G</span><span style='color: #000000; background-color: #AFFFAF;'>C</span><span style='color: #000000; background-color: #FFD7AF;'>TT</span><span style='color: #000000; background-color: #AFFFFF;'>G</span><span style='color: #000000; background-color: #FFAFAF;'>AA</span><span style='color: #000000; background-color: #AFFFAF;'>C</span><span style='color: #000000; background-color: #FFAFAF;'>A</span><span style='color: #000000; background-color: #AFFFFF;'>G</span><span style='color: #000000; background-color: #FFAFAF;'>A</span><span style='color: #000000; background-color: #AFFFAF;'>CC</span><span style='color: #000000; background-color: #FFAFAF;'>A</span><span style='color: #000000; background-color: #AFFFAF;'>C</span><span style='color: #000000; background-color: #AFFFFF;'>G</span><span style='color: #000000; background-color: #AFFFAF;'>C</span><span style='color: #000000; background-color: #AFFFFF;'>GG</span><span style='color: #000000; background-color: #FFD7AF;'>T</span><span style='color: #000000; background-color: #AFFFAF;'>C</span><span style='color: #000000; background-color: #FFD7AF;'>T</span><span style='color: #000000; background-color: #AFFFAF;'>CCCCC</span><span style='color: #000000; background-color: #FFAFAF;'>A</span><span style='color: #000000; background-color: #AFFFFF;'>G</span>         tx2.2-U</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>  ...   ... ...</span>
