@@ -1,3 +1,7 @@
+# eisaR 1.5.2
+
+* Add options to collapse introns by gene and restrict introns to feature ranges in getFeatureRanges.
+
 # eisaR 1.0
 
 * Initial version  
