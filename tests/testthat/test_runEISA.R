@@ -22,6 +22,7 @@ test_that("runEISA() runs", {
     res1 <- runEISA(cntEx, cntIn, cond, method = "Gaidatzis2015")
     res1se <- runEISA(cntEx = cntSE1, cntIn = NULL, cond, method = "Gaidatzis2015")
     res2 <- runEISA(cntEx, cntIn, cond, method = NULL, modelSamples = FALSE, sizeFactor = "individual")
+    res3 <- runEISA(cntEx, cntIn, cond, recalcLibSizeAfterFilt = TRUE, sizeFactor = "intron")
     expect_is(res0, "list")
     expect_is(res0se, "list")
     expect_equal(res0$contrasts, res0se$contrasts)
@@ -29,13 +30,15 @@ test_that("runEISA() runs", {
     expect_is(res1se, "list")
     expect_equal(res1, res1se)
     expect_is(res2, "list")
+    expect_is(res3, "list")
     expect_length(res1, 8L)
     expect_true(all(rownames(res1$DGEList) %in% rownames(cntEx)))
     ids <- intersect(rownames(res1$DGEList), rownames(res2$DGEList))
     expect_gt(cor(res1$contrasts[ids,"Dex"], res2$contrasts[ids,"Dex"]), 0.99)
     expect_gt(cor(res1$contrasts[ids,"Din"], res2$contrasts[ids,"Din"]), 0.99)
     expect_gt(cor(res1$contrasts[ids,"Dex.Din"], res2$contrasts[ids,"Dex.Din"]), 0.97)
-
+    expect_gt(cor(res2$contrasts[ids,"Dex"], res3$contrasts[ids,"Dex"]), 0.99)
+    
     # one replicate per condition
     expect_warning(res1 <- runEISA(cntEx[, c(1, 3)], cntIn[, c(1, 3)],
                                    cond[c(1, 3)], method = "Gaidatzis2015"))

@@ -118,6 +118,24 @@ test_that("reference extraction fails with the wrong inputs", {
                regexp = "'verbose' must be a logical scalar")
 })
 
+test_that("feature extraction fails if there are missing required packages", {
+  # ... set new lib paths
+  old <- .libPaths()
+  td <- tempfile(pattern = "Rlib")
+  dir.create(td)
+  .libPaths(c(td, old[length(old)]), include.site = FALSE)
+  unloadNamespace("ensembldb")
+  unloadNamespace("GenomicFeatures")
+  # ... test
+  expect_error(getFeatureRanges(gtf = gtf))
+  # ... clean up
+  unlink(td, recursive = TRUE, force = TRUE)
+  .libPaths(old)
+  loadNamespace("GenomicFeatures")
+  loadNamespace("ensembldb")
+  
+})
+
 test_that("feature range extraction works", {
   tx2gene <- read.delim(t2g, header = FALSE, as.is = TRUE)
 
@@ -738,12 +756,34 @@ test_that("gtf export works", {
                           collapseIntronsByGene = FALSE, 
                           keepIntronInFeature = FALSE,
                           verbose = FALSE)
+  # arguments
   f <- file.path(tempdir(), "exported_gtf.gtf")
   expect_error(exportToGtf("wrongtype", filepath = f), 
                regexp = "'grl' must be a GRangesList")
   exportToGtf(frs, filepath = f)
   rb <- rtracklayer::import(f)
+
+  # required installed packages
+  # ... set new lib paths
+  old <- .libPaths()
+  td <- tempfile(pattern = "Rlib")
+  dir.create(td)
+  .libPaths(c(td, old[length(old)]), include.site = FALSE)
+  unloadNamespace("ensembldb")
+  unloadNamespace("GenomicFeatures")
+  unloadNamespace("BSgenome")
+  unloadNamespace("rtracklayer")
+  # ... test
+  expect_error(exportToGtf(frs, tempfile()))
+  # ... clean up
+  unlink(td, recursive = TRUE, force = TRUE)
+  .libPaths(old)
+  loadNamespace("rtracklayer")
+  loadNamespace("GenomicFeatures")
+  loadNamespace("BSgenome")
+  loadNamespace("ensembldb")
   
+  # expected results  
   expect_length(rb, 17L + 6L + 8L + 6L + 3L + 3L)
   expect_equal(ranges(subset(rb, gene_id == "g1" & type == "gene")), 
                IRanges(start = 61, end = 160))
