@@ -1,6 +1,6 @@
 Package: eisaR
 Title: Exon-Intron Split Analysis (EISA) in R
-Version: 1.5.3
+Version: 1.5.4
 Authors@R: c(person("Michael", "Stadler", email = "michael.stadler@fmi.ch", role = c("aut", "cre")),
              person("Dimos", "Gaidatzis", email = "dimosthenis.gaidatzis@fmi.ch", role = "aut"),
              person("Lukas", "Burger", email = "lukas.burger@fmi.ch", role = "aut"),

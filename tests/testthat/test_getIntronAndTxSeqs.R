@@ -119,16 +119,20 @@ test_that("reference extraction fails with the wrong inputs", {
 })
 
 test_that("feature extraction fails if there are missing required packages", {
-  # ... set new lib paths
+  # these tests assume that all non-base packages are installed in
+  # .Library.site and will fail if this is not the case (e.g. on BioC builders)
+  skip_on_bioc()
+  
+  # set new lib paths
   old <- .libPaths()
   td <- tempfile(pattern = "Rlib")
   dir.create(td)
   .libPaths(c(td, old[length(old)]), include.site = FALSE)
   unloadNamespace("ensembldb")
   unloadNamespace("GenomicFeatures")
-  # ... test
+  # test
   expect_error(getFeatureRanges(gtf = gtf))
-  # ... clean up
+  # clean up
   unlink(td, recursive = TRUE, force = TRUE)
   .libPaths(old)
   loadNamespace("GenomicFeatures")
@@ -763,26 +767,6 @@ test_that("gtf export works", {
   exportToGtf(frs, filepath = f)
   rb <- rtracklayer::import(f)
 
-  # required installed packages
-  # ... set new lib paths
-  old <- .libPaths()
-  td <- tempfile(pattern = "Rlib")
-  dir.create(td)
-  .libPaths(c(td, old[length(old)]), include.site = FALSE)
-  unloadNamespace("ensembldb")
-  unloadNamespace("GenomicFeatures")
-  unloadNamespace("BSgenome")
-  unloadNamespace("rtracklayer")
-  # ... test
-  expect_error(exportToGtf(frs, tempfile()))
-  # ... clean up
-  unlink(td, recursive = TRUE, force = TRUE)
-  .libPaths(old)
-  loadNamespace("rtracklayer")
-  loadNamespace("GenomicFeatures")
-  loadNamespace("BSgenome")
-  loadNamespace("ensembldb")
-  
   # expected results  
   expect_length(rb, 17L + 6L + 8L + 6L + 3L + 3L)
   expect_equal(ranges(subset(rb, gene_id == "g1" & type == "gene")), 
@@ -799,6 +783,40 @@ test_that("gtf export works", {
   expect_equal(as.character(strand(subset(rb, transcript_id == "tx1.3" & type == "transcript"))), 
                "+")
   
+})
+
+test_that("gtf export fails if required packages are missing", {
+  # these tests assume that all non-base packages are installed in
+  # .Library.site and will fail if this is not the case (e.g. on BioC builders)
+  skip_on_bioc()
+  
+  frs <- getFeatureRanges(gtf = gtf, 
+                          featureType = c("spliced", "intron"), 
+                          intronType = "collapse", 
+                          flankLength = 3L, 
+                          joinOverlappingIntrons = FALSE, 
+                          collapseIntronsByGene = FALSE, 
+                          keepIntronInFeature = FALSE,
+                          verbose = FALSE)
+
+  # set new lib paths
+  old <- .libPaths()
+  td <- tempfile(pattern = "Rlib")
+  dir.create(td)
+  .libPaths(c(td, old[length(old)]), include.site = FALSE)
+  unloadNamespace("ensembldb")
+  unloadNamespace("GenomicFeatures")
+  unloadNamespace("BSgenome")
+  unloadNamespace("rtracklayer")
+  # test
+  expect_error(exportToGtf(frs, tempfile()))
+  # clean up
+  unlink(td, recursive = TRUE, force = TRUE)
+  .libPaths(old)
+  loadNamespace("rtracklayer")
+  loadNamespace("GenomicFeatures")
+  loadNamespace("BSgenome")
+  loadNamespace("ensembldb")
 })
 
 test_that("tx2gene generation works", {

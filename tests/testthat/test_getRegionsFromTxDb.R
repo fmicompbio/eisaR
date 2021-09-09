@@ -8,22 +8,6 @@ test_that("getRegionsFromTxDb() runs", {
     expect_error(getRegionsFromTxDb(txdb, exonExt = "a"))
     expect_error(getRegionsFromTxDb(txdb, strandedData = "a"))
     
-    # required installed packages
-    # ... set new lib paths
-    old <- .libPaths()
-    td <- tempfile(pattern = "Rlib")
-    dir.create(td)
-    .libPaths(c(td, old[length(old)]), include.site = FALSE)
-    unloadNamespace("ensembldb")
-    unloadNamespace("GenomicFeatures")
-    # ... test
-    expect_error(getRegionsFromTxDb(structure("dummy", class = "TxDb")))
-    # ... clean up
-    unlink(td, recursive = TRUE, force = TRUE)
-    .libPaths(old)
-    requireNamespace("GenomicFeatures")
-    requireNamespace("ensembldb")
-    
     # expected results
     expect_true(is.list(regL))
     expect_length(regL, 2L)
@@ -48,4 +32,25 @@ test_that("getRegionsFromTxDb() runs", {
     regL1 <- getRegionsFromTxDb(edb)
     regL2 <- getRegionsFromTxDb(txdb)
     expect_identical(regL1, regL2)
+})
+
+test_that("getRegionsFromTbx() fails when required packages are missing", {
+    # these tests assume that all non-base packages are installed in
+    # .Library.site and will fail if this is not the case (e.g. on BioC builders)
+    skip_on_bioc()
+    
+    # set new lib paths
+    old <- .libPaths()
+    td <- tempfile(pattern = "Rlib")
+    dir.create(td)
+    .libPaths(c(td, old[length(old)]), include.site = FALSE)
+    unloadNamespace("ensembldb")
+    unloadNamespace("GenomicFeatures")
+    # test
+    expect_error(getRegionsFromTxDb(structure("dummy", class = "TxDb")))
+    # clean up
+    unlink(td, recursive = TRUE, force = TRUE)
+    .libPaths(old)
+    requireNamespace("GenomicFeatures")
+    requireNamespace("ensembldb")
 })
