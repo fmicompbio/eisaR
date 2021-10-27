@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">eisaR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.5.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.0</span>
       </span>
     </div>
 
@@ -87,25 +87,25 @@
       <h1 data-toc-skip>Generating reference files for spliced and unspliced abundance estimation with alignment-free methods</h1>
                         <h4 data-toc-skip class="author">Charlotte Soneson</h4>
             
-            <h4 data-toc-skip class="date">2021-09-09</h4>
+            <h4 data-toc-skip class="date">2021-10-27</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/fmicompbio/eisaR/blob/master/vignettes/rna-velocity.Rmd" class="external-link"><code>vignettes/rna-velocity.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/fmicompbio/eisaR/blob/HEAD/vignettes/rna-velocity.Rmd" class="external-link"><code>vignettes/rna-velocity.Rmd</code></a></small>
       <div class="hidden name"><code>rna-velocity.Rmd</code></div>
 
     </div>
 
     
     
-<div id="introduction" class="section level1">
-<h1 class="hasAnchor">
-<a href="#introduction" class="anchor" aria-hidden="true"></a>Introduction</h1>
+<div class="section level1">
+<h1 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+</h1>
 <p>In this vignette, we show how to prepare reference files for estimating abundances of spliced and unspliced abundances with alignment-free methods (e.g., <a href="https://salmon.readthedocs.io/en/latest/salmon.html" class="external-link">Salmon</a>, <a href="https://salmon.readthedocs.io/en/latest/alevin.html" class="external-link">alevin</a> or <a href="https://pachterlab.github.io/kallisto/" class="external-link">kallisto</a>). Such abundances are used as input, e.g., for estimation of RNA velocity in single-cell data.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/fmicompbio/eisaR" class="external-link">eisaR</a></span><span class="op">)</span></code></pre></div>
 </div>
-<div id="generate-feature-ranges" class="section level1">
-<h1 class="hasAnchor">
-<a href="#generate-feature-ranges" class="anchor" aria-hidden="true"></a>Generate feature ranges</h1>
+<div class="section level1">
+<h1 id="generate-feature-ranges">Generate feature ranges<a class="anchor" aria-label="anchor" href="#generate-feature-ranges"></a>
+</h1>
 <p>The first step is to generate a <code>GRangesList</code> object containing the genomic ranges for the features of interest (spliced transcripts, and either unspliced transcripts or intron sequences). This is done using the <code><a href="../reference/getFeatureRanges.html">getFeatureRanges()</a></code> function, based on a reference GTF file. Here, we exemplify this with a small subset of a GTF file from <a href="https://www.gencodegenes.org/human/release_28.html" class="external-link">Gencode release 28</a>. We extract genomic ranges for spliced transcript and introns, where the latter are defined for each transcript separately (using the same terminology as in the <em><a href="https://bioconductor.org/packages/3.14/BUSpaRse" class="external-link">BUSpaRse</a></em> package). For each intron, a flanking sequence of 50 nt is added on each side to accommodate reads mapping across an exon/intron boundary.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">gtf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/gencode.v28.annotation.sub.gtf"</span>, 
@@ -206,9 +206,9 @@
 <span class="co">#&gt; 5 ENSG00000240361.2 ENSG00000240361.2-I</span>
 <span class="co">#&gt; 6 ENSG00000186092.6 ENSG00000186092.6-I</span></code></pre></div>
 </div>
-<div id="extract-feature-sequences" class="section level1">
-<h1 class="hasAnchor">
-<a href="#extract-feature-sequences" class="anchor" aria-hidden="true"></a>Extract feature sequences</h1>
+<div class="section level1">
+<h1 id="extract-feature-sequences">Extract feature sequences<a class="anchor" aria-label="anchor" href="#extract-feature-sequences"></a>
+</h1>
 <p>Once the genomic ranges of the features of interest are extracted, we can obtain the nucleotide sequences using the <code>extractTranscriptSeqs()</code> function from the <em><a href="https://bioconductor.org/packages/3.14/GenomicFeatures" class="external-link">GenomicFeatures</a></em> package. In addition to the ranges, this requires the genome sequence. This can be obtained, for example, from the corresponding BSgenome package, or from an external FASTA file.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="op">{</span>
@@ -222,22 +222,22 @@
 <span class="va">seqs</span>
 <span class="co">#&gt; DNAStringSet object of length 895:</span>
 <span class="co">#&gt;        width seq                                  names               </span>
-<span class="co">#&gt;   [1]   1657 GTTAACTTGCCGTCAGC...ACACTGTTGGTTTCTG ENST00000456328.2</span>
-<span class="co">#&gt;   [2]    632 GTGTCTGACTTCCAGCA...ACAGGGGAATCCCGAA ENST00000450305.2</span>
-<span class="co">#&gt;   [3]    712 GTGCACACGGCTCCCAT...TGAGGGATAAATGTAT ENST00000473358.1</span>
-<span class="co">#&gt;   [4]    535 TCATCAGTCCAAAGTCC...GTATGATTTTAAAGTC ENST00000469289.1</span>
-<span class="co">#&gt;   [5]    138 GGATGCCCAGCTAGTTT...AGAATTAAGCATTTTA ENST00000607096.1</span>
+<span class="co">#&gt;   [1]   1657 <span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">TT</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">TT</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span>...<span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">TT</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFD7AF;">TTT</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span> ENST00000456328.2</span>
+<span class="co">#&gt;   [2]    632 <span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">TT</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span>...<span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">GGGG</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">CCC</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">AA</span> ENST00000450305.2</span>
+<span class="co">#&gt;   [3]    712 <span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">CCC</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">T</span>...<span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">GGG</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #FFAFAF;">AAA</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">T</span> ENST00000473358.1</span>
+<span class="co">#&gt;   [4]    535 <span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #FFAFAF;">AAA</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">CC</span>...<span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">TTTT</span><span style="color: #000000; background-color: #FFAFAF;">AAA</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">C</span> ENST00000469289.1</span>
+<span class="co">#&gt;   [5]    138 <span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">CCC</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">TTT</span>...<span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #FFD7AF;">TT</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">TTTT</span><span style="color: #000000; background-color: #FFAFAF;">A</span> ENST00000607096.1</span>
 <span class="co">#&gt;   ...    ... ...</span>
-<span class="co">#&gt; [891]    178 GCGCCAGCCGGACCCCA...CGCGTATTAACGAGAG ENST00000304952.1...</span>
-<span class="co">#&gt; [892]    193 GGAGATGACCGTGAGAC...GTACCGCGCCGGCTTC ENST00000481869.1-I</span>
-<span class="co">#&gt; [893]    193 GGAGATGACCGTGAGAC...GTACCGCGCCGGCTTC ENST00000484667.2-I</span>
-<span class="co">#&gt; [894]    352 GCGCCAGCCGGACCCCA...TCCTGGAGATGACCGT ENST00000484667.2-I1</span>
-<span class="co">#&gt; [895]    826 ACCTCCGCCTGCCAGGC...AGAGATTGTGGTGAGC ENST00000458555.1-I</span></code></pre></div>
+<span class="co">#&gt; [891]    178 <span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">CCCC</span><span style="color: #000000; background-color: #FFAFAF;">A</span>...<span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">TT</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span> ENST00000304952.1...</span>
+<span class="co">#&gt; [892]    193 <span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">C</span>...<span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">TT</span><span style="color: #000000; background-color: #AFFFAF;">C</span> ENST00000481869.1-I</span>
+<span class="co">#&gt; [893]    193 <span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">C</span>...<span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">TT</span><span style="color: #000000; background-color: #AFFFAF;">C</span> ENST00000484667.2-I</span>
+<span class="co">#&gt; [894]    352 <span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">CCCC</span><span style="color: #000000; background-color: #FFAFAF;">A</span>...<span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span> ENST00000484667.2-I1</span>
+<span class="co">#&gt; [895]    826 <span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #AFFFAF;">C</span>...<span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">TT</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span> ENST00000458555.1-I</span></code></pre></div>
 <p>The resulting <code>DNAStringSet</code> can be written to a FASTA file and used to generate an index for alignment-free methods such as <em>Salmon</em> and <em>kallisto</em>.</p>
 </div>
-<div id="generate-an-expanded-gtf-file" class="section level1">
-<h1 class="hasAnchor">
-<a href="#generate-an-expanded-gtf-file" class="anchor" aria-hidden="true"></a>Generate an expanded GTF file</h1>
+<div class="section level1">
+<h1 id="generate-an-expanded-gtf-file">Generate an expanded GTF file<a class="anchor" aria-label="anchor" href="#generate-an-expanded-gtf-file"></a>
+</h1>
 <p>In addition to extracting feature sequences, we can also export a GTF file with the full set of features. This is useful, for example, in order to generate a linked transcriptome for later import of estimated abundances with <em><a href="https://bioconductor.org/packages/3.14/tximeta" class="external-link">tximeta</a></em>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/exportToGtf.html">exportToGtf</a></span><span class="op">(</span>
@@ -246,9 +246,9 @@
 <span class="op">)</span></code></pre></div>
 <p>In the exported GTF file, each entry of <code>grl</code> will correspond to a “transcript” feature, and each individual range corresponds to an “exon” feature. In addition, each gene is represented as a “gene” feature.</p>
 </div>
-<div id="generate-a-transcript-to-gene-mapping" class="section level1">
-<h1 class="hasAnchor">
-<a href="#generate-a-transcript-to-gene-mapping" class="anchor" aria-hidden="true"></a>Generate a transcript-to-gene mapping</h1>
+<div class="section level1">
+<h1 id="generate-a-transcript-to-gene-mapping">Generate a transcript-to-gene mapping<a class="anchor" aria-label="anchor" href="#generate-a-transcript-to-gene-mapping"></a>
+</h1>
 <p>Finally, we can export a <code>data.frame</code> (or a tab-separated test file) providing a conversion table between “transcript” and “gene” identifiers. This is needed to aggregate the transcript-level abundance estimates from alignment-free methods such as <em>Salmon</em> and <em>kallisto</em> to the gene level.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getTx2Gene.html">getTx2Gene</a></span><span class="op">(</span><span class="va">grl</span><span class="op">)</span>
@@ -269,9 +269,9 @@
 <span class="co">#&gt; ENST00000484667.2-I1   ENST00000484667.2-I1 ENSG00000188290.10-I</span>
 <span class="co">#&gt; ENST00000458555.1-I     ENST00000458555.1-I  ENSG00000224969.1-I</span></code></pre></div>
 </div>
-<div id="session-info" class="section level1">
-<h1 class="hasAnchor">
-<a href="#session-info" class="anchor" aria-hidden="true"></a>Session info</h1>
+<div class="section level1">
+<h1 id="session-info">Session info<a class="anchor" aria-label="anchor" href="#session-info"></a>
+</h1>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; R version 4.1.1 (2021-08-10)</span>
@@ -290,65 +290,65 @@
 <span class="co">#&gt; [7] methods   base     </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; other attached packages:</span>
-<span class="co">#&gt;  [1] BSgenome.Hsapiens.UCSC.hg38_1.4.3</span>
+<span class="co">#&gt;  [1] BSgenome.Hsapiens.UCSC.hg38_1.4.4</span>
 <span class="co">#&gt;  [2] BSgenome_1.61.0                  </span>
 <span class="co">#&gt;  [3] rtracklayer_1.53.1               </span>
 <span class="co">#&gt;  [4] Biostrings_2.61.2                </span>
 <span class="co">#&gt;  [5] XVector_0.33.0                   </span>
 <span class="co">#&gt;  [6] GenomicRanges_1.45.0             </span>
-<span class="co">#&gt;  [7] GenomeInfoDb_1.29.8              </span>
+<span class="co">#&gt;  [7] GenomeInfoDb_1.29.10             </span>
 <span class="co">#&gt;  [8] IRanges_2.27.2                   </span>
-<span class="co">#&gt;  [9] S4Vectors_0.31.3                 </span>
+<span class="co">#&gt;  [9] S4Vectors_0.31.5                 </span>
 <span class="co">#&gt; [10] BiocGenerics_0.39.2              </span>
-<span class="co">#&gt; [11] eisaR_1.5.4                      </span>
-<span class="co">#&gt; [12] BiocStyle_2.21.3                 </span>
+<span class="co">#&gt; [11] eisaR_1.7.0                      </span>
+<span class="co">#&gt; [12] BiocStyle_2.21.4                 </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; loaded via a namespace (and not attached):</span>
-<span class="co">#&gt;  [1] bitops_1.0-7                matrixStats_0.60.1         </span>
+<span class="co">#&gt;  [1] bitops_1.0-7                matrixStats_0.61.0         </span>
 <span class="co">#&gt;  [3] fs_1.5.0                    bit64_4.0.5                </span>
 <span class="co">#&gt;  [5] filelock_1.0.2              progress_1.2.2             </span>
 <span class="co">#&gt;  [7] httr_1.4.2                  rprojroot_2.0.2            </span>
-<span class="co">#&gt;  [9] tools_4.1.1                 bslib_0.3.0                </span>
+<span class="co">#&gt;  [9] tools_4.1.1                 bslib_0.3.1                </span>
 <span class="co">#&gt; [11] utf8_1.2.2                  R6_2.5.1                   </span>
 <span class="co">#&gt; [13] DBI_1.1.1                   tidyselect_1.1.1           </span>
 <span class="co">#&gt; [15] prettyunits_1.1.1           bit_4.0.4                  </span>
 <span class="co">#&gt; [17] curl_4.3.2                  compiler_4.1.1             </span>
-<span class="co">#&gt; [19] textshaping_0.3.5           Biobase_2.53.0             </span>
-<span class="co">#&gt; [21] xml2_1.3.2                  desc_1.3.0                 </span>
-<span class="co">#&gt; [23] DelayedArray_0.19.2         bookdown_0.24              </span>
-<span class="co">#&gt; [25] sass_0.4.0                  rappdirs_0.3.3             </span>
-<span class="co">#&gt; [27] pkgdown_1.6.1.9001          systemfonts_1.0.2          </span>
-<span class="co">#&gt; [29] stringr_1.4.0               digest_0.6.27              </span>
-<span class="co">#&gt; [31] Rsamtools_2.9.1             rmarkdown_2.10             </span>
-<span class="co">#&gt; [33] pkgconfig_2.0.3             htmltools_0.5.2            </span>
-<span class="co">#&gt; [35] MatrixGenerics_1.5.4        dbplyr_2.1.1               </span>
-<span class="co">#&gt; [37] fastmap_1.1.0               limma_3.49.4               </span>
-<span class="co">#&gt; [39] rlang_0.4.11                RSQLite_2.2.8              </span>
-<span class="co">#&gt; [41] jquerylib_0.1.4             BiocIO_1.3.0               </span>
-<span class="co">#&gt; [43] generics_0.1.0              jsonlite_1.7.2             </span>
-<span class="co">#&gt; [45] BiocParallel_1.27.4         dplyr_1.0.7                </span>
-<span class="co">#&gt; [47] RCurl_1.98-1.4              magrittr_2.0.1             </span>
-<span class="co">#&gt; [49] GenomeInfoDbData_1.2.6      Matrix_1.3-4               </span>
-<span class="co">#&gt; [51] Rcpp_1.0.7                  fansi_0.5.0                </span>
-<span class="co">#&gt; [53] lifecycle_1.0.0             stringi_1.7.4              </span>
-<span class="co">#&gt; [55] yaml_2.2.1                  edgeR_3.35.1               </span>
-<span class="co">#&gt; [57] SummarizedExperiment_1.23.4 zlibbioc_1.39.0            </span>
-<span class="co">#&gt; [59] BiocFileCache_2.1.1         grid_4.1.1                 </span>
-<span class="co">#&gt; [61] blob_1.2.2                  parallel_4.1.1             </span>
-<span class="co">#&gt; [63] crayon_1.4.1                lattice_0.20-44            </span>
-<span class="co">#&gt; [65] GenomicFeatures_1.45.2      hms_1.1.0                  </span>
-<span class="co">#&gt; [67] KEGGREST_1.33.0             locfit_1.5-9.4             </span>
-<span class="co">#&gt; [69] knitr_1.33                  pillar_1.6.2               </span>
-<span class="co">#&gt; [71] rjson_0.2.20                biomaRt_2.49.4             </span>
-<span class="co">#&gt; [73] XML_3.99-0.7                glue_1.4.2                 </span>
-<span class="co">#&gt; [75] evaluate_0.14               BiocManager_1.30.16        </span>
-<span class="co">#&gt; [77] png_0.1-7                   vctrs_0.3.8                </span>
-<span class="co">#&gt; [79] purrr_0.3.4                 assertthat_0.2.1           </span>
-<span class="co">#&gt; [81] cachem_1.0.6                xfun_0.25                  </span>
-<span class="co">#&gt; [83] restfulr_0.0.13             ragg_1.1.3                 </span>
-<span class="co">#&gt; [85] tibble_3.1.4                GenomicAlignments_1.29.0   </span>
-<span class="co">#&gt; [87] AnnotationDbi_1.55.1        memoise_2.0.0              </span>
-<span class="co">#&gt; [89] ellipsis_0.3.2</span></code></pre></div>
+<span class="co">#&gt; [19] textshaping_0.3.6           cli_3.0.1                  </span>
+<span class="co">#&gt; [21] Biobase_2.53.0              xml2_1.3.2                 </span>
+<span class="co">#&gt; [23] desc_1.4.0                  DelayedArray_0.19.4        </span>
+<span class="co">#&gt; [25] bookdown_0.24               sass_0.4.0                 </span>
+<span class="co">#&gt; [27] rappdirs_0.3.3              pkgdown_1.9000.9000.9000   </span>
+<span class="co">#&gt; [29] Rsamtools_2.9.1             systemfonts_1.0.3          </span>
+<span class="co">#&gt; [31] stringr_1.4.0               digest_0.6.28              </span>
+<span class="co">#&gt; [33] rmarkdown_2.11              pkgconfig_2.0.3            </span>
+<span class="co">#&gt; [35] htmltools_0.5.2             MatrixGenerics_1.5.4       </span>
+<span class="co">#&gt; [37] dbplyr_2.1.1                fastmap_1.1.0              </span>
+<span class="co">#&gt; [39] limma_3.49.5                rlang_0.99.0.9000          </span>
+<span class="co">#&gt; [41] RSQLite_2.2.8               jquerylib_0.1.4            </span>
+<span class="co">#&gt; [43] BiocIO_1.3.0                generics_0.1.0             </span>
+<span class="co">#&gt; [45] jsonlite_1.7.2              BiocParallel_1.27.17       </span>
+<span class="co">#&gt; [47] dplyr_1.0.7                 RCurl_1.98-1.5             </span>
+<span class="co">#&gt; [49] magrittr_2.0.1              GenomeInfoDbData_1.2.7     </span>
+<span class="co">#&gt; [51] Matrix_1.3-4                Rcpp_1.0.7                 </span>
+<span class="co">#&gt; [53] fansi_0.5.0                 lifecycle_1.0.1            </span>
+<span class="co">#&gt; [55] stringi_1.7.5               yaml_2.2.1                 </span>
+<span class="co">#&gt; [57] edgeR_3.35.3                SummarizedExperiment_1.23.5</span>
+<span class="co">#&gt; [59] zlibbioc_1.39.0             BiocFileCache_2.1.1        </span>
+<span class="co">#&gt; [61] grid_4.1.1                  blob_1.2.2                 </span>
+<span class="co">#&gt; [63] parallel_4.1.1              crayon_1.4.1               </span>
+<span class="co">#&gt; [65] lattice_0.20-45             GenomicFeatures_1.45.2     </span>
+<span class="co">#&gt; [67] hms_1.1.1                   KEGGREST_1.33.0            </span>
+<span class="co">#&gt; [69] locfit_1.5-9.4              knitr_1.36                 </span>
+<span class="co">#&gt; [71] pillar_1.6.4                rjson_0.2.20               </span>
+<span class="co">#&gt; [73] biomaRt_2.49.7              XML_3.99-0.8               </span>
+<span class="co">#&gt; [75] glue_1.4.2                  evaluate_0.14              </span>
+<span class="co">#&gt; [77] BiocManager_1.30.16         png_0.1-7                  </span>
+<span class="co">#&gt; [79] vctrs_0.3.8                 purrr_0.3.4                </span>
+<span class="co">#&gt; [81] assertthat_0.2.1            cachem_1.0.6               </span>
+<span class="co">#&gt; [83] xfun_0.27                   restfulr_0.0.13            </span>
+<span class="co">#&gt; [85] ragg_1.1.3                  tibble_3.1.5               </span>
+<span class="co">#&gt; [87] GenomicAlignments_1.29.0    AnnotationDbi_1.55.2       </span>
+<span class="co">#&gt; [89] memoise_2.0.0               ellipsis_0.3.2</span></code></pre></div>
 </div>
   </div>
 
@@ -364,12 +364,12 @@
 
       <footer><div class="copyright">
   <p></p>
-<p>Developed by <a href="https://github.com/mbstadler" class="external-link external-link">Michael Stadler</a>, Dimos Gaidatzis, <a href="https://github.com/LukasBurger" class="external-link external-link">Lukas Burger</a>, <a href="https://csoneson.github.io" class="external-link external-link">Charlotte Soneson</a>.</p>
+<p>Developed by <a href="https://github.com/mbstadler" class="external-link">Michael Stadler</a>, Dimos Gaidatzis, <a href="https://github.com/LukasBurger" class="external-link">Lukas Burger</a>, <a href="https://csoneson.github.io" class="external-link">Charlotte Soneson</a>.</p>
 </div>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link external-link">pkgdown</a> 1.6.1.9001.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.9000.9000.9000.</p>
 </div>
 
       </footer>
