@@ -87,7 +87,7 @@
       <h1 data-toc-skip>Using eisaR for Exon-Intron Split Analysis (EISA)</h1>
                         <h4 data-toc-skip class="author">Michael Stadler</h4>
             
-            <h4 data-toc-skip class="date">2021-10-27</h4>
+            <h4 data-toc-skip class="date">2021-11-01</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/fmicompbio/eisaR/blob/HEAD/vignettes/eisaR.Rmd" class="external-link"><code>vignettes/eisaR.Rmd</code></a></small>
       <div class="hidden name"><code>eisaR.Rmd</code></div>
@@ -105,7 +105,7 @@
 2. quantifying RNA-seq alignments in exons and introns (sections @ref(align) and @ref(count))<br>
 3. calculating and comparing exonic and intronic changes across conditions (section @ref(convenient))<br>
 4. visualizing the results (section @ref(plot))</p>
-<p>For the steps 1. and 2. above, this vignette makes use of Bioconductor annotation and the <em><a href="https://bioconductor.org/packages/3.14/QuasR" class="external-link">QuasR</a></em> package. It is also possible to obtain count tables for exons and introns using some other pipeline or approach, and directly start with step 3.</p>
+<p>For the steps 1. and 2. above, this vignette makes use of Bioconductor annotation and the <em><a href="https://bioconductor.org/packages/3.15/QuasR" class="external-link">QuasR</a></em> package. It is also possible to obtain count tables for exons and introns using some other pipeline or approach, and directly start with step 3.</p>
 </div>
 <div class="section level1">
 <h1 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -122,10 +122,10 @@
 <div class="section level1">
 <h1 id="annotation">Preparing the annotation<a class="anchor" aria-label="anchor" href="#annotation"></a>
 </h1>
-<p>As mentioned, <code>eisaR</code> uses gene annotations from Bioconductor. They are provided in the form of <code>TxDb</code> or <code>EnsDb</code> objects, e.g. via packages such as <em><a href="https://bioconductor.org/packages/3.14/TxDb.Mmusculus.UCSC.mm10.knownGene" class="external-link">TxDb.Mmusculus.UCSC.mm10.knownGene</a></em> or <em><a href="https://bioconductor.org/packages/3.14/EnsDb.Hsapiens.v86" class="external-link">EnsDb.Hsapiens.v86</a></em>. You can see available annotations using the following code:</p>
+<p>As mentioned, <code>eisaR</code> uses gene annotations from Bioconductor. They are provided in the form of <code>TxDb</code> or <code>EnsDb</code> objects, e.g. via packages such as <em><a href="https://bioconductor.org/packages/3.15/TxDb.Mmusculus.UCSC.mm10.knownGene" class="external-link">TxDb.Mmusculus.UCSC.mm10.knownGene</a></em> or <em><a href="https://bioconductor.org/packages/3.15/EnsDb.Hsapiens.v86" class="external-link">EnsDb.Hsapiens.v86</a></em>. You can see available annotations using the following code:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>pkgs &lt;-<span class="st"> </span><span class="kw">c</span>(BiocManager<span class="op">::</span><span class="kw">available</span>(<span class="st">"TxDb"</span>)</span>
 <span id="cb2-2"><a href="#cb2-2"></a>          BiocManager<span class="op">::</span><span class="kw">available</span>(<span class="st">"EnsDb"</span>))</span></code></pre></div>
-<p>If you would like to use an alternative source of gene annotations, you might still be able to use <code>eisaR</code> by first converting your annotations into a <code>TxDb</code> or an <code>EnsDb</code> (for creating a <code>TxDb</code> see <code>makeTxDb</code> in the <em><a href="https://bioconductor.org/packages/3.14/GenomicFeatures" class="external-link">GenomicFeatures</a></em> package, for creating an <code>EnsDb</code> see <code>makeEnsembldbPackage</code> in the <em><a href="https://bioconductor.org/packages/3.14/ensembldb" class="external-link">ensembldb</a></em> package).</p>
+<p>If you would like to use an alternative source of gene annotations, you might still be able to use <code>eisaR</code> by first converting your annotations into a <code>TxDb</code> or an <code>EnsDb</code> (for creating a <code>TxDb</code> see <code>makeTxDb</code> in the <em><a href="https://bioconductor.org/packages/3.15/GenomicFeatures" class="external-link">GenomicFeatures</a></em> package, for creating an <code>EnsDb</code> see <code>makeEnsembldbPackage</code> in the <em><a href="https://bioconductor.org/packages/3.15/ensembldb" class="external-link">ensembldb</a></em> package).</p>
 <p>For this example, <code>eisaR</code> contains a small <code>TxDb</code> to illustrate how regions are extracted. We will load it from a file. Alternatively, the object would be loaded using <code><a href="https://rdrr.io/r/base/library.html" class="external-link">library(...)</a></code>, for example using <code><a href="https://rdrr.io/r/base/library.html" class="external-link">library(TxDb.Mmusculus.UCSC.mm10.knownGene)</a></code>.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># load package</span>
@@ -173,7 +173,7 @@
 <span class="co">#&gt;   -------</span>
 <span class="co">#&gt;   seqinfo: 3 sequences from an unspecified genome</span></code></pre></div>
 <p>As you can see, the filtering procedure removes slightly more genes for unstranded data (<code>strandedData = FALSE</code>), as overlapping genes cannot be discriminated even if they reside on opposite strands.</p>
-<p>You can also export the obtained regions into files. This may be useful if you plan to align and/or quantify reads outside of R. For example, you can use <em><a href="https://bioconductor.org/packages/3.14/rtracklayer" class="external-link">rtracklayer</a></em> to export the regions in <code>regS</code> into <code>.gtf</code> files:</p>
+<p>You can also export the obtained regions into files. This may be useful if you plan to align and/or quantify reads outside of R. For example, you can use <em><a href="https://bioconductor.org/packages/3.15/rtracklayer" class="external-link">rtracklayer</a></em> to export the regions in <code>regS</code> into <code>.gtf</code> files:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">rtracklayer</span><span class="op">)</span>
 <span class="fu">export</span><span class="op">(</span><span class="va">regS</span><span class="op">$</span><span class="va">exons</span>, <span class="st">"hg19sub_exons_stranded.gtf"</span><span class="op">)</span>
@@ -182,11 +182,11 @@
 <div class="section level1">
 <h1 id="quantify-rna-seq-alignments-in-exons-and-introns">Quantify RNA-seq alignments in exons and introns<a class="anchor" aria-label="anchor" href="#quantify-rna-seq-alignments-in-exons-and-introns"></a>
 </h1>
-<p>For this example we will use the <em><a href="https://bioconductor.org/packages/3.14/QuasR" class="external-link">QuasR</a></em> package for indexing and alignment of short reads, and a small RNA-seq dataset that is contained in that package. As mentioned, it is also possible to align or also quantify your reads using an alternative aligner/counter, and skip over these steps. For more details about the syntax, we refer to the documentation and vignette of the <em><a href="https://bioconductor.org/packages/3.14/QuasR" class="external-link">QuasR</a></em> package.</p>
+<p>For this example we will use the <em><a href="https://bioconductor.org/packages/3.15/QuasR" class="external-link">QuasR</a></em> package for indexing and alignment of short reads, and a small RNA-seq dataset that is contained in that package. As mentioned, it is also possible to align or also quantify your reads using an alternative aligner/counter, and skip over these steps. For more details about the syntax, we refer to the documentation and vignette of the <em><a href="https://bioconductor.org/packages/3.15/QuasR" class="external-link">QuasR</a></em> package.</p>
 <div class="section level2">
 <h2 id="align">Align reads<a class="anchor" aria-label="anchor" href="#align"></a>
 </h2>
-<p>Let’s first copy the sample data from the <em><a href="https://bioconductor.org/packages/3.14/QuasR" class="external-link">QuasR</a></em> package to the current working directory, all contained in a folder named <code>extdata</code>:</p>
+<p>Let’s first copy the sample data from the <em><a href="https://bioconductor.org/packages/3.15/QuasR" class="external-link">QuasR</a></em> package to the current working directory, all contained in a folder named <code>extdata</code>:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">QuasR</span><span class="op">)</span>
 <span class="co">#&gt; Loading required package: parallel</span>
@@ -217,9 +217,9 @@
 <span class="co">#&gt; Testing the compute nodes...OK</span>
 <span class="co">#&gt; Loading QuasR on the compute nodes...preparing to run on 1 nodes...done</span>
 <span class="co">#&gt; Available cores:</span>
-<span class="co">#&gt; Mac-1635347393357.local: 1</span>
+<span class="co">#&gt; Mac-1635750215940.local: 1</span>
 <span class="co">#&gt; Performing genomic alignments for 4 samples. See progress in the log file:</span>
-<span class="co">#&gt; /Users/runner/work/eisaR/eisaR/vignettes/QuasR_log_93bf2d3b27c6.txt</span>
+<span class="co">#&gt; /Users/runner/work/eisaR/eisaR/vignettes/QuasR_log_bfb66995bc2.txt</span>
 <span class="co">#&gt; Genomic alignments have been created successfully</span>
 <span class="fu"><a href="https://rdrr.io/pkg/QuasR/man/alignmentStats.html" class="external-link">alignmentStats</a></span><span class="op">(</span><span class="va">proj</span><span class="op">)</span>
 <span class="co">#&gt;                seqlength mapped unmapped</span>
@@ -294,7 +294,7 @@
 <code>FALSE</code> (<code>method="Gaidatzis2015"</code>): use a model of the form <code>~ condition * region</code><br>
 </li>
 <li>
-<code>TRUE</code> (default): use a model adjusting for the baseline differences among samples, and with condition-specific region effects (similar to the model described in section 3.5 of the <em><a href="https://bioconductor.org/packages/3.14/edgeR" class="external-link">edgeR</a></em> user guide)</li>
+<code>TRUE</code> (default): use a model adjusting for the baseline differences among samples, and with condition-specific region effects (similar to the model described in section 3.5 of the <em><a href="https://bioconductor.org/packages/3.15/edgeR" class="external-link">edgeR</a></em> user guide)</li>
 </ul>
 </li>
 <li>
@@ -389,7 +389,7 @@
 <h2 id="on-the-estimation-of-interactions-in-a-split-plot-design-experiment">On the estimation of interactions in a split-plot design experiment<a class="anchor" aria-label="anchor" href="#on-the-estimation-of-interactions-in-a-split-plot-design-experiment"></a>
 </h2>
 <p>The calculation of the significance of interactions (here whether the fold-changes differ between exonic or intronic data) is well defined for experimental designs where all samples are independent from one another. Within EISA, this is not the case (each sample yields two data points, one for exons and one for introns). That results in a dependency between data points: If a sample is affected by a problem in the experiment, it might at the same time give rise to outlier values in both exonic and intronic counts.</p>
-<p>In statistics, such an experimental design is often referred to as a split-plot design, and a recommended way to analyze interactions in such experiments would be to use a mixed effect model with the plot (in our case, the sample) as a random effect. The disadvantage here however would be that available packages for mixed effect models are not designed for count data, and we therefore use an alternative approach to explicitly model the sample dependency, by introducing sample-specific columns into the design matrix (for <code>modelSamples=TRUE</code>). That sample factor is nested in the condition factor (no sample can belong to more than one condition). Thus, we are in the situation described in section 3.5 (‘Comparisons both between and within subjects’) of the <em><a href="https://bioconductor.org/packages/3.14/edgeR" class="external-link">edgeR</a></em> user guide, and we use the approach described there to define a design matrix with sample-specific baseline effects as well as condition-specific region effects.</p>
+<p>In statistics, such an experimental design is often referred to as a split-plot design, and a recommended way to analyze interactions in such experiments would be to use a mixed effect model with the plot (in our case, the sample) as a random effect. The disadvantage here however would be that available packages for mixed effect models are not designed for count data, and we therefore use an alternative approach to explicitly model the sample dependency, by introducing sample-specific columns into the design matrix (for <code>modelSamples=TRUE</code>). That sample factor is nested in the condition factor (no sample can belong to more than one condition). Thus, we are in the situation described in section 3.5 (‘Comparisons both between and within subjects’) of the <em><a href="https://bioconductor.org/packages/3.15/edgeR" class="external-link">edgeR</a></em> user guide, and we use the approach described there to define a design matrix with sample-specific baseline effects as well as condition-specific region effects.</p>
 <p>This has no impact on the effects (the log2 fold-changes of <code>modelSamples=TRUE</code> and <code>modelSamples=FALSE</code> are nearly identical). However, in the presence of sample effects, <code>modelSamples=TRUE</code> increases the sensitivity of detecting genes with significant interactions. Here is a comparison of the EISA results with and without accounting for the sample in the model:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">res3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/runEISA.html">runEISA</a></span><span class="op">(</span><span class="va">Rex</span>, <span class="va">Rin</span>, <span class="va">cond</span>, modelSamples <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
@@ -501,7 +501,7 @@
 <div class="section level2">
 <h2 id="statistical-analysis">Statistical analysis<a class="anchor" aria-label="anchor" href="#statistical-analysis"></a>
 </h2>
-<p>Finally, we use the replicate measurement in the <em><a href="https://bioconductor.org/packages/3.14/edgeR" class="external-link">edgeR</a></em> framework to calculate the significance of the changes:</p>
+<p>Finally, we use the replicate measurement in the <em><a href="https://bioconductor.org/packages/3.15/edgeR" class="external-link">edgeR</a></em> framework to calculate the significance of the changes:</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># create DGEList object with exonic and intronic counts</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://bioinf.wehi.edu.au/edgeR" class="external-link">edgeR</a></span><span class="op">)</span>
@@ -599,13 +599,13 @@
 <p>The output in this vignette was produced under:</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; R version 4.1.1 (2021-08-10)</span>
+<span class="co">#&gt; R Under development (unstable) (2021-10-31 r81114)</span>
 <span class="co">#&gt; Platform: x86_64-apple-darwin17.0 (64-bit)</span>
 <span class="co">#&gt; Running under: macOS Catalina 10.15.7</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Matrix products: default</span>
-<span class="co">#&gt; BLAS:   /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRblas.0.dylib</span>
-<span class="co">#&gt; LAPACK: /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRlapack.dylib</span>
+<span class="co">#&gt; BLAS:   /Library/Frameworks/R.framework/Versions/4.2/Resources/lib/libRblas.0.dylib</span>
+<span class="co">#&gt; LAPACK: /Library/Frameworks/R.framework/Versions/4.2/Resources/lib/libRlapack.dylib</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; locale:</span>
 <span class="co">#&gt; [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8</span>
@@ -615,63 +615,63 @@
 <span class="co">#&gt; [8] methods   base     </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; other attached packages:</span>
-<span class="co">#&gt;  [1] edgeR_3.35.3           limma_3.49.5           QuasR_1.33.5          </span>
-<span class="co">#&gt;  [4] Rbowtie_1.33.0         rtracklayer_1.53.1     GenomicFeatures_1.45.2</span>
-<span class="co">#&gt;  [7] AnnotationDbi_1.55.2   Biobase_2.53.0         GenomicRanges_1.45.0  </span>
-<span class="co">#&gt; [10] GenomeInfoDb_1.29.10   IRanges_2.27.2         S4Vectors_0.31.5      </span>
-<span class="co">#&gt; [13] BiocGenerics_0.39.2    eisaR_1.7.0            BiocStyle_2.21.4      </span>
+<span class="co">#&gt;  [1] edgeR_3.37.0           limma_3.51.0           QuasR_1.35.0          </span>
+<span class="co">#&gt;  [4] Rbowtie_1.35.0         rtracklayer_1.55.0     GenomicFeatures_1.47.1</span>
+<span class="co">#&gt;  [7] AnnotationDbi_1.57.1   Biobase_2.55.0         GenomicRanges_1.47.2  </span>
+<span class="co">#&gt; [10] GenomeInfoDb_1.31.1    IRanges_2.29.0         S4Vectors_0.33.0      </span>
+<span class="co">#&gt; [13] BiocGenerics_0.41.1    eisaR_1.7.0            BiocStyle_2.23.0      </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; loaded via a namespace (and not attached):</span>
-<span class="co">#&gt;   [1] bitops_1.0-7                matrixStats_0.61.0         </span>
-<span class="co">#&gt;   [3] fs_1.5.0                    bit64_4.0.5                </span>
-<span class="co">#&gt;   [5] RColorBrewer_1.1-2          filelock_1.0.2             </span>
-<span class="co">#&gt;   [7] progress_1.2.2              httr_1.4.2                 </span>
-<span class="co">#&gt;   [9] rprojroot_2.0.2             GenomicFiles_1.29.0        </span>
-<span class="co">#&gt;  [11] tools_4.1.1                 bslib_0.3.1                </span>
-<span class="co">#&gt;  [13] utf8_1.2.2                  R6_2.5.1                   </span>
-<span class="co">#&gt;  [15] DBI_1.1.1                   tidyselect_1.1.1           </span>
-<span class="co">#&gt;  [17] prettyunits_1.1.1           bit_4.0.4                  </span>
-<span class="co">#&gt;  [19] curl_4.3.2                  compiler_4.1.1             </span>
-<span class="co">#&gt;  [21] SGSeq_1.27.0                textshaping_0.3.6          </span>
-<span class="co">#&gt;  [23] cli_3.0.1                   xml2_1.3.2                 </span>
-<span class="co">#&gt;  [25] desc_1.4.0                  DelayedArray_0.19.4        </span>
-<span class="co">#&gt;  [27] bookdown_0.24               sass_0.4.0                 </span>
-<span class="co">#&gt;  [29] rappdirs_0.3.3              pkgdown_1.9000.9000.9000   </span>
-<span class="co">#&gt;  [31] Rsamtools_2.9.1             systemfonts_1.0.3          </span>
-<span class="co">#&gt;  [33] stringr_1.4.0               digest_0.6.28              </span>
-<span class="co">#&gt;  [35] rmarkdown_2.11              XVector_0.33.0             </span>
-<span class="co">#&gt;  [37] Rhisat2_1.9.0               jpeg_0.1-9                 </span>
-<span class="co">#&gt;  [39] pkgconfig_2.0.3             htmltools_0.5.2            </span>
-<span class="co">#&gt;  [41] MatrixGenerics_1.5.4        highr_0.9                  </span>
-<span class="co">#&gt;  [43] BSgenome_1.61.0             dbplyr_2.1.1               </span>
-<span class="co">#&gt;  [45] fastmap_1.1.0               rlang_0.99.0.9000          </span>
-<span class="co">#&gt;  [47] RSQLite_2.2.8               jquerylib_0.1.4            </span>
-<span class="co">#&gt;  [49] BiocIO_1.3.0                generics_0.1.0             </span>
-<span class="co">#&gt;  [51] hwriter_1.3.2               jsonlite_1.7.2             </span>
-<span class="co">#&gt;  [53] BiocParallel_1.27.17        dplyr_1.0.7                </span>
-<span class="co">#&gt;  [55] VariantAnnotation_1.39.0    RCurl_1.98-1.5             </span>
-<span class="co">#&gt;  [57] magrittr_2.0.1              GenomeInfoDbData_1.2.7     </span>
-<span class="co">#&gt;  [59] Matrix_1.3-4                Rcpp_1.0.7                 </span>
-<span class="co">#&gt;  [61] fansi_0.5.0                 lifecycle_1.0.1            </span>
-<span class="co">#&gt;  [63] stringi_1.7.5               yaml_2.2.1                 </span>
-<span class="co">#&gt;  [65] SummarizedExperiment_1.23.5 zlibbioc_1.39.0            </span>
-<span class="co">#&gt;  [67] BiocFileCache_2.1.1         grid_4.1.1                 </span>
-<span class="co">#&gt;  [69] blob_1.2.2                  crayon_1.4.1               </span>
-<span class="co">#&gt;  [71] lattice_0.20-45             splines_4.1.1              </span>
-<span class="co">#&gt;  [73] Biostrings_2.61.2           hms_1.1.1                  </span>
-<span class="co">#&gt;  [75] KEGGREST_1.33.0             locfit_1.5-9.4             </span>
-<span class="co">#&gt;  [77] knitr_1.36                  pillar_1.6.4               </span>
-<span class="co">#&gt;  [79] igraph_1.2.7                RUnit_0.4.32               </span>
-<span class="co">#&gt;  [81] rjson_0.2.20                biomaRt_2.49.7             </span>
-<span class="co">#&gt;  [83] XML_3.99-0.8                glue_1.4.2                 </span>
-<span class="co">#&gt;  [85] ShortRead_1.51.0            evaluate_0.14              </span>
-<span class="co">#&gt;  [87] latticeExtra_0.6-29         BiocManager_1.30.16        </span>
-<span class="co">#&gt;  [89] png_0.1-7                   vctrs_0.3.8                </span>
-<span class="co">#&gt;  [91] purrr_0.3.4                 assertthat_0.2.1           </span>
-<span class="co">#&gt;  [93] cachem_1.0.6                xfun_0.27                  </span>
-<span class="co">#&gt;  [95] restfulr_0.0.13             ragg_1.1.3                 </span>
-<span class="co">#&gt;  [97] tibble_3.1.5                GenomicAlignments_1.29.0   </span>
-<span class="co">#&gt;  [99] memoise_2.0.0               ellipsis_0.3.2</span></code></pre></div>
+<span class="co">#&gt;  [1] bitops_1.0-7                matrixStats_0.61.0         </span>
+<span class="co">#&gt;  [3] fs_1.5.0                    bit64_4.0.5                </span>
+<span class="co">#&gt;  [5] RColorBrewer_1.1-2          filelock_1.0.2             </span>
+<span class="co">#&gt;  [7] progress_1.2.2              httr_1.4.2                 </span>
+<span class="co">#&gt;  [9] rprojroot_2.0.2             GenomicFiles_1.31.0        </span>
+<span class="co">#&gt; [11] tools_4.2.0                 bslib_0.3.1                </span>
+<span class="co">#&gt; [13] utf8_1.2.2                  R6_2.5.1                   </span>
+<span class="co">#&gt; [15] DBI_1.1.1                   tidyselect_1.1.1           </span>
+<span class="co">#&gt; [17] prettyunits_1.1.1           bit_4.0.4                  </span>
+<span class="co">#&gt; [19] curl_4.3.2                  compiler_4.2.0             </span>
+<span class="co">#&gt; [21] SGSeq_1.29.0                textshaping_0.3.6          </span>
+<span class="co">#&gt; [23] xml2_1.3.2                  desc_1.4.0                 </span>
+<span class="co">#&gt; [25] DelayedArray_0.21.0         bookdown_0.24              </span>
+<span class="co">#&gt; [27] sass_0.4.0                  rappdirs_0.3.3             </span>
+<span class="co">#&gt; [29] pkgdown_1.9000.9000.9000    systemfonts_1.0.3          </span>
+<span class="co">#&gt; [31] stringr_1.4.0               digest_0.6.28              </span>
+<span class="co">#&gt; [33] Rsamtools_2.11.0            rmarkdown_2.11             </span>
+<span class="co">#&gt; [35] XVector_0.35.0              Rhisat2_1.11.0             </span>
+<span class="co">#&gt; [37] jpeg_0.1-9                  pkgconfig_2.0.3            </span>
+<span class="co">#&gt; [39] htmltools_0.5.2             MatrixGenerics_1.7.0       </span>
+<span class="co">#&gt; [41] highr_0.9                   BSgenome_1.63.1            </span>
+<span class="co">#&gt; [43] dbplyr_2.1.1                fastmap_1.1.0              </span>
+<span class="co">#&gt; [45] rlang_0.4.12                RSQLite_2.2.8              </span>
+<span class="co">#&gt; [47] jquerylib_0.1.4             BiocIO_1.5.0               </span>
+<span class="co">#&gt; [49] generics_0.1.1              hwriter_1.3.2              </span>
+<span class="co">#&gt; [51] jsonlite_1.7.2              BiocParallel_1.29.0        </span>
+<span class="co">#&gt; [53] dplyr_1.0.7                 VariantAnnotation_1.41.0   </span>
+<span class="co">#&gt; [55] RCurl_1.98-1.5              magrittr_2.0.1             </span>
+<span class="co">#&gt; [57] GenomeInfoDbData_1.2.7      Matrix_1.3-4               </span>
+<span class="co">#&gt; [59] Rcpp_1.0.7                  fansi_0.5.0                </span>
+<span class="co">#&gt; [61] lifecycle_1.0.1             stringi_1.7.5              </span>
+<span class="co">#&gt; [63] yaml_2.2.1                  SummarizedExperiment_1.25.0</span>
+<span class="co">#&gt; [65] zlibbioc_1.41.0             BiocFileCache_2.3.0        </span>
+<span class="co">#&gt; [67] grid_4.2.0                  blob_1.2.2                 </span>
+<span class="co">#&gt; [69] crayon_1.4.2                lattice_0.20-45            </span>
+<span class="co">#&gt; [71] splines_4.2.0               Biostrings_2.63.0          </span>
+<span class="co">#&gt; [73] hms_1.1.1                   KEGGREST_1.35.0            </span>
+<span class="co">#&gt; [75] locfit_1.5-9.4              knitr_1.36                 </span>
+<span class="co">#&gt; [77] pillar_1.6.4                igraph_1.2.7               </span>
+<span class="co">#&gt; [79] RUnit_0.4.32                rjson_0.2.20               </span>
+<span class="co">#&gt; [81] biomaRt_2.51.0              XML_3.99-0.8               </span>
+<span class="co">#&gt; [83] glue_1.4.2                  ShortRead_1.53.0           </span>
+<span class="co">#&gt; [85] evaluate_0.14               latticeExtra_0.6-29        </span>
+<span class="co">#&gt; [87] BiocManager_1.30.16         png_0.1-7                  </span>
+<span class="co">#&gt; [89] vctrs_0.3.8                 purrr_0.3.4                </span>
+<span class="co">#&gt; [91] assertthat_0.2.1            cachem_1.0.6               </span>
+<span class="co">#&gt; [93] xfun_0.27                   restfulr_0.0.13            </span>
+<span class="co">#&gt; [95] ragg_1.2.0                  tibble_3.1.5               </span>
+<span class="co">#&gt; [97] GenomicAlignments_1.31.0    memoise_2.0.0              </span>
+<span class="co">#&gt; [99] ellipsis_0.3.2</span></code></pre></div>
 </div>
 <div class="section level1 unnumbered">
 <h1 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
