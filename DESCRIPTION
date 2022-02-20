@@ -9,7 +9,7 @@ Description: Exon-intron split analysis (EISA) uses ordinary RNA-seq data to mea
     changes in mature RNA and pre-mRNA reads across different experimental conditions
     to quantify transcriptional and post-transcriptional regulation of gene expression.
     For details see Gaidatzis et al., Nat Biotechnol 2015. doi: 10.1038/nbt.3269.
-    eisaR implements the major steps of EISA in R.
+    eisaR implements the major steps of EISA in R. 
 Depends: R (>= 4.1)
 License: GPL-3
 biocViews: 
