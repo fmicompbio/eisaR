@@ -45,9 +45,9 @@ jobs:
         uses: r-lib/actions/setup-pandoc@master
         if: matrix.config.image == null
 
-      - name: Install remotes
+      - name: Install remotes and RCurl
         run: |
-          install.packages('remotes')
+          install.packages(c('remotes', 'RCurl'))
         shell: Rscript {0}
 
       - name: Set BiocManager version
