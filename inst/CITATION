@@ -39,7 +39,7 @@ citEntry(entry="article",
 	 year=2021,
 	 note="PMID:33428615",
      doi="10.1371/journal.pcbi.1008585",
-	 textVersion="Soneson C, Srivastava A, Patro R and Stadler MB. 2021. Preprocessing choices affect RNA velocity results for droplet scRNA-seq data. PLoS Computational Biology 17(1):e1008585 (2021)."
+	 textVersion="Soneson C, Srivastava A, Patro R and Stadler MB. Preprocessing choices affect RNA velocity results for droplet scRNA-seq data. PLoS Computational Biology 17(1):e1008585 (2021)."
 )
 
 citFooter("This free open-source software implements academic
