@@ -73,8 +73,8 @@ as well as intron sequences, for use in RNA velocity analysis, has been describe
 
 "Preprocessing choices affect RNA velocity results for droplet scRNA-seq data."
 Soneson C., Srivastava A., Patro R. and Stadler, M.B.
-*bioRxiv* **2020**.
-[bioRxiv](https://www.biorxiv.org/content/10.1101/2020.03.13.990069v1), [doi: 10.1101/2020.03.13.990069](https://doi.org/10.1101/2020.03.13.990069)
+*PLoS Comput Biol* **2021**; 17(1):e1008585.
+[PubMed: 33428615](https://pubmed.ncbi.nlm.nih.gov/33428615/), [doi: 10.1371/journal.pcbi.1008585](https://doi.org/10.1371/journal.pcbi.1008585)
 
 
 ## Software status
