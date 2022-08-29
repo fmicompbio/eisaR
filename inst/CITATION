@@ -32,10 +32,14 @@ citEntry(entry="article",
 			   as.person("Avi Srivastava"),
 			   as.person("Rob Patro"),
 			   as.person("Michael B Stadler")),
-	 journal="bioRxiv",
-	 year=2020,
-     doi="10.1101/2020.03.13.990069",
-	 textVersion="Soneson C, Srivastava A, Patro R and Stadler MB. 2020. Preprocessing choices affect RNA velocity results for droplet scRNA-seq data. bioRxiv doi: 10.1101/2020.03.13.990069"
+	 journal="PLoS Computational Biology",
+	 volume="17",
+	 number="1",
+	 pages="e1008585",
+	 year=2021,
+	 note="PMID:33428615",
+     doi="10.1371/journal.pcbi.1008585",
+	 textVersion="Soneson C, Srivastava A, Patro R and Stadler MB. Preprocessing choices affect RNA velocity results for droplet scRNA-seq data. PLoS Computational Biology 17(1):e1008585 (2021)."
 )
 
 citFooter("This free open-source software implements academic
