@@ -96,6 +96,55 @@ jobs:
           sessioninfo::session_info(pkgs, include_base = TRUE)
         shell: Rscript {0}
 
+      - name: Build Rhisat2 index (1)
+        run: |
+            library(QuasR)
+            library(Rhisat2)
+            file.copy(system.file(package = "QuasR", "extdata"), ".", recursive = TRUE)
+            Rhisat2::hisat2_build("extdata/hg19sub.fa", outdir = tempfile("index1_"))
+        shell: Rscript {0}
+
+      - name: Build Rhisat2 index (2)
+        run: |
+            ret <- system2(file.path(system.file(package = "Rhisat2"), "hisat2-build"),
+                   c(shQuote("extdata/hg19sub.fa"), 
+                   shQuote(tempfile("index2_"))), 
+                   stdout = TRUE, stderr = TRUE)
+            ret
+            grepl("^Total time for call to driver", ret[length(ret)])
+
+      - name: Build Rhisat2 index (3)
+        run: |
+            buildIndex_Rhisat2_mod <- function(seqFile,indexPath) {
+                indexFullPath <- file.path(indexPath, "hisat2Index")
+                ret <- system2(file.path(system.file(package = "Rhisat2"), "hisat2-build"),
+                   c(shQuote(seqFile), shQuote(indexFullPath)), 
+                   stdout = TRUE, stderr = TRUE)
+                if (!(grepl("^Total time for call to driver", ret[length(ret)]))) {
+                    print(ret)
+                    ret <- 1
+                } else {
+                    ret <- 0
+                }
+                return(ret)
+            }
+            buildIndex_Rhisat2_mod("extdata/hg19sub.fa", tempfile("index3_"))
+
+      - name: Build Rhisat2 index (4)
+        run: |
+            library(QuasR)
+            QuasR:::buildIndex_Rhisat2("extdata/hg19sub.fa", tempfile("index4_"))
+        shell: Rscript {0}
+
+      - name: Align to Rhisat2 index
+        run: |
+            library(QuasR)
+            sampleFile <- "extdata/samples_rna_single.txt"
+            proj <- qAlign(sampleFile = sampleFile, 
+                           genome = "extdata/hg19sub.fa",
+                           aligner = "Rhisat2", splicedAlignment = TRUE)
+        shell: Rscript {0}
+
       - name: Build, Install, Check
         uses: grimbough/bioc-actions/build-install-check@v1
 
