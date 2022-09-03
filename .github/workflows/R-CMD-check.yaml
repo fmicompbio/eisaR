@@ -106,12 +106,13 @@ jobs:
 
       - name: Build Rhisat2 index (2)
         run: |
-            ret <- system2(file.path(system.file(package = "Rhisat2"), "hisat2-build"),
-                   c(shQuote("extdata/hg19sub.fa"), 
-                   shQuote(tempfile("index2_"))), 
-                   stdout = TRUE, stderr = TRUE)
+            ret = system2(file.path(system.file(package = "Rhisat2"), "hisat2-build"),
+                          c(shQuote("extdata/hg19sub.fa"), 
+                            shQuote(tempfile("index2_"))), 
+                          stdout = TRUE, stderr = TRUE)
             ret
             grepl("^Total time for call to driver", ret[length(ret)])
+        shell: Rscript {0}
 
       - name: Build Rhisat2 index (3)
         run: |
@@ -129,6 +130,7 @@ jobs:
                 return(ret)
             }
             buildIndex_Rhisat2_mod("extdata/hg19sub.fa", tempfile("index3_"))
+        shell: Rscript {0}
 
       - name: Build Rhisat2 index (4)
         run: |
