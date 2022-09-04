@@ -99,12 +99,6 @@ jobs:
       - name: Build, Install, Check
         uses: grimbough/bioc-actions/build-install-check@v1
 
-      - name: BiocCheck
-        run: |
-          BiocManager::install("BiocCheck")
-          BiocCheck::BiocCheck(".")
-        shell: Rscript {0}
-        
       - name: Run BiocCheck
         uses: grimbough/bioc-actions/run-BiocCheck@v1
         with:
