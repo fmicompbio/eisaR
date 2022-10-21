@@ -21,7 +21,7 @@ and exonic region counts."><!-- mathjax --><script src="https://cdnjs.cloudflare
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">eisaR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.1</span>
       </span>
     </div>
 
@@ -77,26 +77,33 @@ and exonic region counts.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">getRegionsFromTxDb</span><span class="op">(</span><span class="va">txdb</span>, exonExt <span class="op">=</span> <span class="fl">10L</span>, strandedData <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">getRegionsFromTxDb</span><span class="op">(</span><span class="va">txdb</span>, exonExt <span class="op">=</span> <span class="fl">10L</span>, strandedData <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>txdb</dt>
 <dd><p>a <code>TxDb</code> or an <code>EnsDb</code> object with the transcript annotations.</p></dd>
+
+
 <dt>exonExt</dt>
 <dd><p><code>numeric</code> (default = 10L). Exonic ranges will be extended
 on either side by this many nucleotides, in order to avoid "bleed-over" of
 exonic alignments into adjacent intronic regions.</p></dd>
+
+
 <dt>strandedData</dt>
 <dd><p><code>logical(1)</code>. If <code>TRUE</code>, the RNA-seq data is
 assumed to be strand-specific, and therefore only overlapping genes that
 are on the same strand will be filtered out. If <code>FALSE</code>, also genes
 overlapping on opposite strands will be filtered out.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>a <code>list</code> with elements "exons" and "genebodies", containing
+    
+
+<p>a <code>list</code> with elements "exons" and "genebodies", containing
 named <code>GenomicRanges</code> objects with ranges for exons and gene bodies,
 respectively.</p>
     </div>
@@ -122,11 +129,11 @@ and how to create them, e.g. from <code>.gtf</code> files.</p></div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"AnnotationDbi"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in">    <span class="va">txdb</span> <span class="op">&lt;-</span> <span class="fu">AnnotationDbi</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/AnnotationDbi/man/AnnotationDb-class.html" class="external-link">loadDb</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"hg19sub.sqlite"</span>, package <span class="op">=</span> <span class="st">"eisaR"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in">    <span class="va">regL</span> <span class="op">&lt;-</span> <span class="fu">getRegionsFromTxDb</span><span class="op">(</span><span class="va">txdb</span><span class="op">)</span></span>
-<span class="r-in">    <span class="fu"><a href="https://rdrr.io/r/base/lengths.html" class="external-link">lengths</a></span><span class="op">(</span><span class="va">regL</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"AnnotationDbi"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="va">txdb</span> <span class="op">&lt;-</span> <span class="fu">AnnotationDbi</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/AnnotationDbi/man/AnnotationDb-class.html" class="external-link">loadDb</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"hg19sub.sqlite"</span>, package <span class="op">=</span> <span class="st">"eisaR"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="va">regL</span> <span class="op">&lt;-</span> <span class="fu">getRegionsFromTxDb</span><span class="op">(</span><span class="va">txdb</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/lengths.html" class="external-link">lengths</a></span><span class="op">(</span><span class="va">regL</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: GenomicFeatures</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: AnnotationDbi</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: Biobase</span>
@@ -141,7 +148,7 @@ and how to create them, e.g. from <code>.gtf</code> files.</p></div>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> creating filtered regions for 4 genes (33.3%) with 20 exons (62.5%)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      exons genebodies </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         20          4 </span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -156,7 +163,7 @@ and how to create them, e.g. from <code>.gtf</code> files.</p></div>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.9000.</p>
 </div>
 
       </footer></div>
