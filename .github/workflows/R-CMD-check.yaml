@@ -44,6 +44,13 @@ jobs:
         uses: r-lib/actions/setup-pandoc@v2
         if: matrix.config.image == null
 
+      - name: Check and set Xcode CLTools version
+        if: runner.os == 'macOS'
+        run: |
+          pkgutil --pkg-info=com.apple.pkg.CLTools_Executables
+          ## See https://github.com/orgs/Homebrew/discussions/3659
+          sudo xcode-select --switch /Library/Developer/CommandLineTools
+
       - name: Install remotes and RCurl
         run: |
           install.packages(c('remotes', 'RCurl'))
