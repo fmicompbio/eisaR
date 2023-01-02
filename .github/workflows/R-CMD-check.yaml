@@ -53,7 +53,7 @@ jobs:
 
       - name: Install remotes and RCurl
         run: |
-          install.packages(c('remotes', 'RCurl'))
+          BiocManager::install(c('remotes', 'RCurl', 'XML', 'httr'))
         shell: Rscript {0}
 
       - name: Query dependencies
