@@ -32,7 +32,7 @@ jobs:
 
     steps:
       - name: checkout branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up R and install BiocManager
         uses: grimbough/bioc-actions/setup-bioc@v1
@@ -56,7 +56,7 @@ jobs:
 
       - name: Cache R packages
         if: runner.os != 'Windows' && matrix.config.image == null
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: ${{ env.R_LIBS_USER }}
           key: ${{ runner.os }}-bioc-${{ matrix.config.bioc }}-${{ hashFiles('depends.Rds') }}
@@ -97,6 +97,7 @@ jobs:
         shell: Rscript {0}
 
       - name: Build, Install, Check
+        id: build-install-check
         uses: grimbough/bioc-actions/build-install-check@v1
 
       - name: Run BiocCheck
@@ -110,12 +111,13 @@ jobs:
         run: find check -name 'testthat.Rout*' -exec cat '{}' \; || true
         shell: bash
 
-      - name: Upload check results
-        if: failure()
-        uses: actions/upload-artifact@master
+      - name: Upload install log if the build/install/check step fails
+        if: always() && (steps.build-install-check.outcome == 'failure')
+        uses: actions/upload-artifact@v3
         with:
-          name: ${{ runner.os }}-results
-          path: check
+          name: install-log
+          path: |
+            ${{ steps.build-install-check.outputs.install-log }}
 
       - name: Test coverage
         if: matrix.config.os == 'macOS-12' && matrix.config.bioc == 'devel'
