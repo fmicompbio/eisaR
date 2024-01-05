@@ -1,6 +1,6 @@
 Package: eisaR
 Title: Exon-Intron Split Analysis (EISA) in R
-Version: 1.15.0
+Version: 1.15.1
 Authors@R: c(person("Michael", "Stadler", email = "michael.stadler@fmi.ch", role = c("aut", "cre")),
              person("Dimos", "Gaidatzis", email = "dimosthenis.gaidatzis@fmi.ch", role = "aut"),
              person("Lukas", "Burger", email = "lukas.burger@fmi.ch", role = "aut"),
@@ -22,7 +22,7 @@ biocViews:
     RNASeq
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 Suggests: 
     knitr,
     rmarkdown,
@@ -46,7 +46,7 @@ Imports:
     S4Vectors,
     IRanges,
     limma,
-    edgeR,
+    edgeR (>= 4.0),
     methods,
     SummarizedExperiment,
     BiocGenerics,
