@@ -79,7 +79,7 @@ jobs:
           brew install harfbuzz
           brew install fribidi
           Rscript -e 'BiocManager::install(c("GenomeInfoDbData"), type = "source")'
-          Rscript -e 'BiocManager::install(c("GenomicFeatures"), type = "binary")'
+          Rscript -e 'BiocManager::install(c("GenomicFeatures"), type = "source")'
 
 
       - name: Install R package dependencies
