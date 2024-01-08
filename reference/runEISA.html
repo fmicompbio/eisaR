@@ -19,7 +19,7 @@ quantifyable genes, calculate contrasts and their significance)."><!-- mathjax -
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">eisaR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.15.1</span>
       </span>
     </div>
 
@@ -81,6 +81,7 @@ quantifyable genes, calculate contrasts and their significance).</p>
 <span>  modelSamples <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  geneSelection <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"filterByExpr"</span>, <span class="st">"none"</span>, <span class="st">"Gaidatzis2015"</span><span class="op">)</span>,</span>
 <span>  statFramework <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"QLF"</span>, <span class="st">"LRT"</span><span class="op">)</span>,</span>
+<span>  legacyQLF <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  effects <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"predFC"</span>, <span class="st">"Gaidatzis2015"</span><span class="op">)</span>,</span>
 <span>  pscnt <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  sizeFactor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"exon"</span>, <span class="st">"intron"</span>, <span class="st">"individual"</span><span class="op">)</span>,</span>
@@ -172,6 +173,13 @@ and <code><a href="https://rdrr.io/pkg/edgeR/man/glmfit.html" class="external-li
 .
 
 </dl></dd>
+
+
+<dt>legacyQLF</dt>
+<dd><p>Whether to use the 'legacy' version of
+<code><a href="https://rdrr.io/pkg/edgeR/man/glmQLFTest.html" class="external-link">glmQLFit</a></code>. See <code><a href="https://rdrr.io/pkg/edgeR/man/glmQLFTest.html" class="external-link">glmQLFit</a></code>
+for more details. If <code>FALSE</code>, the new method introduced in
+<code>edgeR</code> 4.0.0 is used.</p></dd>
 
 
 <dt>effects</dt>
@@ -306,7 +314,7 @@ analysis.</p></div>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> calculating log-fold changes...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> done</span>
 <span class="r-in"><span><span class="fu"><a href="plotEISA.html">plotEISA</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> identified 114 genes to highlight</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> identified 143 genes to highlight</span>
 <span class="r-plt img"><img src="runEISA-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
@@ -323,7 +331,7 @@ analysis.</p></div>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
 </div>
 
       </footer></div>
