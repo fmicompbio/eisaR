@@ -29,7 +29,7 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       CURL_CONFIG: ${{ matrix.config.curlConfigPath }}curl-config
-      cache-version: v1
+      cache-version: v2
 
     steps:
       - name: checkout branch
@@ -79,13 +79,14 @@ jobs:
           brew install harfbuzz
           brew install fribidi
           Rscript -e 'BiocManager::install(c("GenomeInfoDbData"), type = "source")'
-          Rscript -e 'BiocManager::install(c("GenomicFeatures"), type = "binary")'
+          Rscript -e 'BiocManager::install(c("GenomicFeatures"), type = "source")'
 
 
       - name: Install R package dependencies
         run: |
           local_deps <- remotes::local_package_deps(dependencies = TRUE)
           deps <- remotes::dev_package_deps(dependencies = TRUE, repos = BiocManager::repositories())
+          print(deps)
           BiocManager::install(local_deps[local_deps %in% deps$package[deps$diff != 0]], Ncpu = 2L)
           remotes::install_cran('rcmdcheck', Ncpu = 2L)
         shell: Rscript {0}

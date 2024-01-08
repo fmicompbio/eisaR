@@ -12,6 +12,7 @@ runEISA(
   modelSamples = TRUE,
   geneSelection = c("filterByExpr", "none", "Gaidatzis2015"),
   statFramework = c("QLF", "LRT"),
+  legacyQLF = FALSE,
   effects = c("predFC", "Gaidatzis2015"),
   pscnt = 2,
   sizeFactor = c("exon", "intron", "individual"),
@@ -78,6 +79,11 @@ by accounting for the uncertainty in dispersion estimation.}
 \item{\code{"LRT"}: }{Likelihood ratio test using \code{\link[edgeR]{glmFit}}
 and \code{\link[edgeR:glmFit]{glmLRT}}}.
 }}
+
+\item{legacyQLF}{Whether to use the 'legacy' version of
+\code{\link[edgeR:glmQLFTest]{glmQLFit}}. See \code{\link[edgeR:glmQLFTest]{glmQLFit}}
+for more details. If \code{FALSE}, the new method introduced in
+\code{edgeR} 4.0.0 is used.}
 
 \item{effects}{How the effects (contrasts or log2 fold-changes) are calculated.
 One of:\describe{

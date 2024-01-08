@@ -57,6 +57,10 @@
 #'       \item{\code{"LRT"}: }{Likelihood ratio test using \code{\link[edgeR]{glmFit}}
 #'       and \code{\link[edgeR:glmFit]{glmLRT}}}.
 #'   }
+#' @param legacyQLF Whether to use the 'legacy' version of 
+#'   \code{\link[edgeR:glmQLFTest]{glmQLFit}}. See \code{\link[edgeR:glmQLFTest]{glmQLFit}}
+#'   for more details. If \code{FALSE}, the new method introduced in 
+#'   \code{edgeR} 4.0.0 is used.
 #' @param effects How the effects (contrasts or log2 fold-changes) are calculated.
 #'   One of:\describe{
 #'       \item{\code{"predFC"}: }{(default) Fold-changes are calculated using
@@ -143,6 +147,7 @@ runEISA <- function(cntEx, cntIn, cond, method = NULL,
                     modelSamples = TRUE,
                     geneSelection = c("filterByExpr", "none", "Gaidatzis2015"),
                     statFramework = c("QLF", "LRT"),
+                    legacyQLF = FALSE,
                     effects = c("predFC", "Gaidatzis2015"),
                     pscnt = 2, 
                     sizeFactor = c("exon", "intron", "individual"), 
@@ -346,7 +351,7 @@ runEISA <- function(cntEx, cntIn, cond, method = NULL,
             contr <- as.numeric(colnames(dsgn) == colnames(dsgn)[ncol(dsgn)])
         }
         if (statFramework == "QLF") {
-            fit <- edgeR::glmQLFit(y, dsgn)
+            fit <- edgeR::glmQLFit(y, dsgn, legacy = legacyQLF)
             tst.ExIn <- edgeR::glmQLFTest(fit, contrast = contr)
         } else if (statFramework == "LRT") {
             fit <- edgeR::glmFit(y, dsgn)
@@ -373,7 +378,7 @@ runEISA <- function(cntEx, cntIn, cond, method = NULL,
             # dsgn2 <- model.matrix(~ region * cond2)
             # y2 <- edgeR::estimateDisp(y, dsgn2)
             # if (statFramework == "QLF") {
-            #     fit2 <- edgeR::glmQLFit(y2, dsgn2)
+            #     fit2 <- edgeR::glmQLFit(y2, dsgn2, legacy = legacyQLF)
             # } else if (statFramework == "LRT") {
             #     fit2 <- edgeR::glmFit(y2, dsgn2)
             # }
