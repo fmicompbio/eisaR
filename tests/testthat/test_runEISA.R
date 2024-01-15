@@ -18,11 +18,13 @@ test_that("runEISA() runs", {
     res0 <- runEISA(cntEx[1:1000,], cntIn[1:1000,], cond,
                     modelSamples = TRUE, geneSelection = "none", statFramework = "LRT")
     res0se <- runEISA(cntEx = cntSE2[1:1000,], cntIn = NULL, cond,
-                      modelSamples = TRUE, geneSelection = "none")
+                      modelSamples = TRUE, geneSelection = "none", legacyQLF = TRUE)
     res1 <- runEISA(cntEx, cntIn, cond, method = "Gaidatzis2015")
     res1se <- runEISA(cntEx = cntSE1, cntIn = NULL, cond, method = "Gaidatzis2015")
-    res2 <- runEISA(cntEx, cntIn, cond, method = NULL, modelSamples = FALSE, sizeFactor = "individual")
-    res3 <- runEISA(cntEx, cntIn, cond, recalcLibSizeAfterFilt = TRUE, sizeFactor = "intron")
+    res2 <- runEISA(cntEx, cntIn, cond, method = NULL, modelSamples = FALSE,
+                    sizeFactor = "individual", legacyQLF = TRUE)
+    res3 <- runEISA(cntEx, cntIn, cond, recalcLibSizeAfterFilt = TRUE,
+                    sizeFactor = "intron", legacyQLF = TRUE)
     expect_is(res0, "list")
     expect_is(res0se, "list")
     expect_equal(res0$contrasts, res0se$contrasts)
@@ -50,7 +52,8 @@ test_that("runEISA() runs", {
     expect_equal(nrow(res1$tab.ExIn), 0)
     expect_error(plotEISA(res1))
     expect_error(suppressWarnings(runEISA(cntEx[, c(1, 3)], cntIn[, c(1, 3)],
-                                          cond[c(1, 3)], method = NULL)))
+                                          cond[c(1, 3)], method = NULL,
+                                          legacyQLF = TRUE)))
 })
 
 context("runEISA gives expected results")
@@ -102,9 +105,11 @@ test_that("runEISA() gives expected results", {
 
     # run EISA (use gene filtering that is independent of model)
     res1 <- runEISA(cntEx, cntIn, cond, geneSelection = "Gaidatzis2015",
-                    pscnt = 8, sizeFactor = "individual", modelSamples = FALSE)
+                    pscnt = 8, sizeFactor = "individual", modelSamples = FALSE,
+                    legacyQLF = TRUE)
     res2 <- runEISA(cntEx, cntIn, cond, geneSelection = "Gaidatzis2015",
-                    pscnt = 8, sizeFactor = "individual", modelSamples = TRUE)
+                    pscnt = 8, sizeFactor = "individual", modelSamples = TRUE,
+                    legacyQLF = TRUE)
 
     # account for filtered genes
     ngenes <- nrow(res1$tab.ExIn)

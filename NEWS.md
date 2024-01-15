@@ -1,3 +1,7 @@
+# eisaR 1.14.1
+
+* Add legacyQLF argument to runEISA (will be passed to edgeR::glmQLFit)
+
 # eisaR 1.5.2
 
 * Add options to collapse introns by gene and restrict introns to feature ranges in getFeatureRanges.
