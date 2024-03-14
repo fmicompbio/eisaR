@@ -37,6 +37,7 @@ Suggests:
     ensembldb,
     AnnotationDbi,
     GenomicFeatures,
+    txdbmaker,
     rtracklayer
 VignetteBuilder: knitr
 Imports: 
