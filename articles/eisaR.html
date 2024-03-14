@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Using eisaR for Exon-Intron Split Analysis (EISA) • eisaR</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">eisaR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.15.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.15.2</span>
       </span>
     </div>
 
@@ -89,7 +89,7 @@
                         <h4 data-toc-skip class="author">Michael
 Stadler</h4>
             
-            <h4 data-toc-skip class="date">2024-01-08</h4>
+            <h4 data-toc-skip class="date">2024-03-14</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/fmicompbio/eisaR/blob/HEAD/vignettes/eisaR.Rmd" class="external-link"><code>vignettes/eisaR.Rmd</code></a></small>
       <div class="hidden name"><code>eisaR.Rmd</code></div>
@@ -143,12 +143,12 @@ Bioconductor. They are provided in the form of <code>TxDb</code> or
 <code>EnsDb</code> objects, e.g. via packages such as <em><a href="https://bioconductor.org/packages/3.19/TxDb.Mmusculus.UCSC.mm10.knownGene" class="external-link">TxDb.Mmusculus.UCSC.mm10.knownGene</a></em>
 or <em><a href="https://bioconductor.org/packages/3.19/EnsDb.Hsapiens.v86" class="external-link">EnsDb.Hsapiens.v86</a></em>.
 You can see available annotations using the following code:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>pkgs <span class="ot">&lt;-</span> <span class="fu">c</span>(BiocManager<span class="sc">::</span><span class="fu">available</span>(<span class="st">"TxDb"</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>          BiocManager<span class="sc">::</span><span class="fu">available</span>(<span class="st">"EnsDb"</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>pkgs <span class="ot">&lt;-</span> <span class="fu">c</span>(BiocManager<span class="sc">::</span><span class="fu">available</span>(<span class="st">"TxDb"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>          BiocManager<span class="sc">::</span><span class="fu">available</span>(<span class="st">"EnsDb"</span>))</span></code></pre></div>
 <p>If you would like to use an alternative source of gene annotations,
 you might still be able to use <code>eisaR</code> by first converting
 your annotations into a <code>TxDb</code> or an <code>EnsDb</code> (for
-creating a <code>TxDb</code> see <code>makeTxDb</code> in the <em><a href="https://bioconductor.org/packages/3.19/GenomicFeatures" class="external-link">GenomicFeatures</a></em>
+creating a <code>TxDb</code> see <code>makeTxDb</code> in the <em><a href="https://bioconductor.org/packages/3.19/txdbmaker" class="external-link">txdbmaker</a></em>
 package, for creating an <code>EnsDb</code> see
 <code>makeEnsembldbPackage</code> in the <em><a href="https://bioconductor.org/packages/3.19/ensembldb" class="external-link">ensembldb</a></em>
 package).</p>
@@ -215,7 +215,21 @@ files:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">rtracklayer</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/BiocIO/man/IO.html" class="external-link">export</a></span><span class="op">(</span><span class="va">regS</span><span class="op">$</span><span class="va">exons</span>, <span class="st">"hg19sub_exons_stranded.gtf"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/BiocIO/man/IO.html" class="external-link">export</a></span><span class="op">(</span><span class="va">regS</span><span class="op">$</span><span class="va">genebodies</span>, <span class="st">"hg19sub_genebodies_stranded.gtf"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co">#&gt; Warning in as.data.frame.factor(value, row.names = row.names, optional =</span></span>
+<span><span class="co">#&gt; optional, : Direct call of 'as.data.frame.factor()' is deprecated.  Use</span></span>
+<span><span class="co">#&gt; 'as.data.frame.vector()' or 'as.data.frame()' instead</span></span>
+<span></span>
+<span><span class="co">#&gt; Warning in as.data.frame.factor(value, row.names = row.names, optional =</span></span>
+<span><span class="co">#&gt; optional, : Direct call of 'as.data.frame.factor()' is deprecated.  Use</span></span>
+<span><span class="co">#&gt; 'as.data.frame.vector()' or 'as.data.frame()' instead</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/BiocIO/man/IO.html" class="external-link">export</a></span><span class="op">(</span><span class="va">regS</span><span class="op">$</span><span class="va">genebodies</span>, <span class="st">"hg19sub_genebodies_stranded.gtf"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in as.data.frame.factor(value, row.names = row.names, optional =</span></span>
+<span><span class="co">#&gt; optional, : Direct call of 'as.data.frame.factor()' is deprecated.  Use</span></span>
+<span><span class="co">#&gt; 'as.data.frame.vector()' or 'as.data.frame()' instead</span></span>
+<span></span>
+<span><span class="co">#&gt; Warning in as.data.frame.factor(value, row.names = row.names, optional =</span></span>
+<span><span class="co">#&gt; optional, : Direct call of 'as.data.frame.factor()' is deprecated.  Use</span></span>
+<span><span class="co">#&gt; 'as.data.frame.vector()' or 'as.data.frame()' instead</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="quantify-rna-seq-alignments-in-exons-and-introns">Quantify RNA-seq alignments in exons and introns<a class="anchor" aria-label="anchor" href="#quantify-rna-seq-alignments-in-exons-and-introns"></a>
@@ -237,6 +251,7 @@ named <code>extdata</code>:</p>
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/QuasR" class="external-link">QuasR</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; Loading required package: parallel</span></span>
 <span><span class="co">#&gt; Loading required package: Rbowtie</span></span>
+<span><span class="co">#&gt; Loading required package: dbplyr</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.copy</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span>package <span class="op">=</span> <span class="st">"QuasR"</span>, <span class="st">"extdata"</span><span class="op">)</span>, <span class="st">"."</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
 <p>We next align the reads to a mini-genome (fasta file
@@ -266,9 +281,9 @@ paths to the respective fastq files.</p>
 <span><span class="co">#&gt; Testing the compute nodes...OK</span></span>
 <span><span class="co">#&gt; Loading QuasR on the compute nodes...preparing to run on 1 nodes...done</span></span>
 <span><span class="co">#&gt; Available cores:</span></span>
-<span><span class="co">#&gt; Mac-1704709230511.local: 1</span></span>
+<span><span class="co">#&gt; Mac-1710420875374.local: 1</span></span>
 <span><span class="co">#&gt; Performing genomic alignments for 4 samples. See progress in the log file:</span></span>
-<span><span class="co">#&gt; /Users/runner/work/eisaR/eisaR/vignettes/QuasR_log_dd474383f60d.txt</span></span>
+<span><span class="co">#&gt; /Users/runner/work/eisaR/eisaR/vignettes/QuasR_log_9e9e7802ca56.txt</span></span>
 <span><span class="co">#&gt; Genomic alignments have been created successfully</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/QuasR/man/alignmentStats.html" class="external-link">alignmentStats</a></span><span class="op">(</span><span class="va">proj</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                seqlength mapped unmapped</span></span>
@@ -406,14 +421,14 @@ values are:</p>
 <ul>
 <li>
 <code>"QLF"</code> (default): quasi-likelihood F-test using
-<code><a href="https://rdrr.io/pkg/edgeR/man/glmQLFTest.html" class="external-link">edgeR::glmQLFit</a></code> and <code><a href="https://rdrr.io/pkg/edgeR/man/glmQLFTest.html" class="external-link">edgeR::glmQLFTest</a></code>. This
+<code><a href="https://rdrr.io/pkg/edgeR/man/glmQLFit.html" class="external-link">edgeR::glmQLFit</a></code> and <code><a href="https://rdrr.io/pkg/edgeR/man/glmQLFTest.html" class="external-link">edgeR::glmQLFTest</a></code>. This
 framework is highly recommended as it gives stricter error rate control
 by accounting for the uncertainty in dispersion estimation.<br>
 </li>
 <li>
 <code>"LRT"</code> (<code>method="Gaidatzis2015"</code>): likelihood
 ratio test using <code><a href="https://rdrr.io/pkg/edgeR/man/glmfit.html" class="external-link">edgeR::glmFit</a></code> and
-<code><a href="https://rdrr.io/pkg/edgeR/man/glmfit.html" class="external-link">edgeR::glmLRT</a></code>.</li>
+<code><a href="https://rdrr.io/pkg/edgeR/man/glmLRT.html" class="external-link">edgeR::glmLRT</a></code>.</li>
 </ul>
 </li>
 <li>
@@ -488,13 +503,13 @@ numbers of replicates).</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">res1</span><span class="op">$</span><span class="va">tab.ExIn</span><span class="op">$</span><span class="va">FDR</span> <span class="op">&lt;</span> <span class="fl">0.05</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 458</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">res2</span><span class="op">$</span><span class="va">tab.ExIn</span><span class="op">$</span><span class="va">FDR</span> <span class="op">&lt;</span> <span class="fl">0.05</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 143</span></span>
+<span><span class="co">#&gt; [1] 111</span></span>
 <span></span>
 <span><span class="co"># method="Gaidatzis2015" results contain most of default results</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">res2</span><span class="op">$</span><span class="va">contrasts</span><span class="op">)</span><span class="op">[</span><span class="va">res2</span><span class="op">$</span><span class="va">tab.ExIn</span><span class="op">$</span><span class="va">FDR</span> <span class="op">&lt;</span> <span class="fl">0.05</span><span class="op">]</span> <span class="op"><a href="https://rdrr.io/pkg/BiocGenerics/man/match.html" class="external-link">%in%</a></span></span>
 <span>        <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">res1</span><span class="op">$</span><span class="va">contrasts</span><span class="op">)</span><span class="op">[</span><span class="va">res1</span><span class="op">$</span><span class="va">tab.ExIn</span><span class="op">$</span><span class="va">FDR</span> <span class="op">&lt;</span> <span class="fl">0.05</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    Mode   FALSE    TRUE </span></span>
-<span><span class="co">#&gt; logical      52      91</span></span>
+<span><span class="co">#&gt; logical      37      74</span></span>
 <span></span>
 <span><span class="co"># comparison of deltas</span></span>
 <span><span class="va">ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/sets.html" class="external-link">intersect</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">res1</span><span class="op">$</span><span class="va">DGEList</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">res2</span><span class="op">$</span><span class="va">DGEList</span><span class="op">)</span><span class="op">)</span></span>
@@ -555,16 +570,16 @@ results with and without accounting for the sample in the model:</p>
 <span></span>
 <span><span class="co"># number of genes with significant post-transcriptional regulation</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">res3</span><span class="op">$</span><span class="va">tab.ExIn</span><span class="op">$</span><span class="va">FDR</span> <span class="op">&lt;</span> <span class="fl">0.05</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 6</span></span>
+<span><span class="co">#&gt; [1] 5</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">res4</span><span class="op">$</span><span class="va">tab.ExIn</span><span class="op">$</span><span class="va">FDR</span> <span class="op">&lt;</span> <span class="fl">0.05</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 143</span></span>
+<span><span class="co">#&gt; [1] 111</span></span>
 <span></span>
 <span><span class="co"># modelSamples=TRUE results are a super-set of</span></span>
 <span><span class="co"># modelSamples=FALSE results</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">res3</span><span class="op">$</span><span class="va">contrasts</span><span class="op">)</span><span class="op">[</span><span class="va">res3</span><span class="op">$</span><span class="va">tab.ExIn</span><span class="op">$</span><span class="va">FDR</span> <span class="op">&lt;</span> <span class="fl">0.05</span><span class="op">]</span> <span class="op"><a href="https://rdrr.io/pkg/BiocGenerics/man/match.html" class="external-link">%in%</a></span></span>
 <span>        <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">res4</span><span class="op">$</span><span class="va">contrasts</span><span class="op">)</span><span class="op">[</span><span class="va">res4</span><span class="op">$</span><span class="va">tab.ExIn</span><span class="op">$</span><span class="va">FDR</span> <span class="op">&lt;</span> <span class="fl">0.05</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    Mode    TRUE </span></span>
-<span><span class="co">#&gt; logical       6</span></span>
+<span><span class="co">#&gt; logical       5</span></span>
 <span></span>
 <span><span class="co"># comparison of contrasts</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">res3</span><span class="op">$</span><span class="va">contrasts</span><span class="op">[</span><span class="va">ids</span>, <span class="op">]</span>, <span class="va">res4</span><span class="op">$</span><span class="va">contrasts</span><span class="op">[</span><span class="va">ids</span>, <span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
@@ -593,7 +608,7 @@ exonic changes (genes with significant interactions, which are likely to
 be post-transcriptionally regulated, are color coded):</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotEISA.html">plotEISA</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
-<span><span class="co">#&gt; identified 143 genes to highlight</span></span></code></pre></div>
+<span><span class="co">#&gt; identified 111 genes to highlight</span></span></code></pre></div>
 <p><img src="eisaR_files/figure-html/plotEISA-1.png" width="700"></p>
 </div>
 <div class="section level2">
@@ -718,7 +733,7 @@ framework to calculate the significance of the changes:</p>
 <span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/edgeR/man/glmfit.html" class="external-link">glmFit</a></span><span class="op">(</span><span class="va">y</span>, <span class="va">design</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># calculate likelihood-ratio between full and reduced models</span></span>
-<span><span class="va">lrt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/edgeR/man/glmfit.html" class="external-link">glmLRT</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
+<span><span class="va">lrt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/edgeR/man/glmLRT.html" class="external-link">glmLRT</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># create results table</span></span>
 <span><span class="va">tt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/edgeR/man/topTags.html" class="external-link">topTags</a></span><span class="op">(</span><span class="va">lrt</span>, n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span>, sort.by <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span>
@@ -772,13 +787,13 @@ be post-transcriptionally regulated, are color coded):</p>
 <p>The output in this vignette was produced under:</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; R Under development (unstable) (2024-01-04 r85771)</span></span>
+<span><span class="co">#&gt; R Under development (unstable) (2024-03-12 r86109)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-apple-darwin20</span></span>
-<span><span class="co">#&gt; Running under: macOS Monterey 12.7.2</span></span>
+<span><span class="co">#&gt; Running under: macOS Monterey 12.7.3</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Matrix products: default</span></span>
 <span><span class="co">#&gt; BLAS:   /Library/Frameworks/R.framework/Versions/4.4-x86_64/Resources/lib/libRblas.0.dylib </span></span>
-<span><span class="co">#&gt; LAPACK: /Library/Frameworks/R.framework/Versions/4.4-x86_64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0</span></span>
+<span><span class="co">#&gt; LAPACK: /Library/Frameworks/R.framework/Versions/4.4-x86_64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; locale:</span></span>
 <span><span class="co">#&gt; [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8</span></span>
@@ -791,61 +806,62 @@ be post-transcriptionally regulated, are color coded):</p>
 <span><span class="co">#&gt; [8] methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt;  [1] edgeR_4.1.6            limma_3.59.1           QuasR_1.43.2          </span></span>
-<span><span class="co">#&gt;  [4] Rbowtie_1.43.0         rtracklayer_1.63.0     GenomicFeatures_1.55.1</span></span>
-<span><span class="co">#&gt;  [7] AnnotationDbi_1.65.2   Biobase_2.63.0         GenomicRanges_1.55.1  </span></span>
-<span><span class="co">#&gt; [10] GenomeInfoDb_1.39.5    IRanges_2.37.0         S4Vectors_0.41.3      </span></span>
-<span><span class="co">#&gt; [13] BiocGenerics_0.49.1    eisaR_1.15.1           BiocStyle_2.31.0      </span></span>
+<span><span class="co">#&gt;  [1] edgeR_4.1.18           limma_3.59.5           QuasR_1.43.3          </span></span>
+<span><span class="co">#&gt;  [4] dbplyr_2.4.0           Rbowtie_1.43.0         rtracklayer_1.63.0    </span></span>
+<span><span class="co">#&gt;  [7] GenomicFeatures_1.55.4 AnnotationDbi_1.65.2   Biobase_2.63.0        </span></span>
+<span><span class="co">#&gt; [10] GenomicRanges_1.55.3   GenomeInfoDb_1.39.8    IRanges_2.37.1        </span></span>
+<span><span class="co">#&gt; [13] S4Vectors_0.41.4       BiocGenerics_0.49.1    eisaR_1.15.2          </span></span>
+<span><span class="co">#&gt; [16] BiocStyle_2.31.0      </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;   [1] DBI_1.2.0                   bitops_1.0-7               </span></span>
-<span><span class="co">#&gt;   [3] deldir_2.0-2                biomaRt_2.59.0             </span></span>
-<span><span class="co">#&gt;   [5] rlang_1.1.2                 magrittr_2.0.3             </span></span>
-<span><span class="co">#&gt;   [7] Rhisat2_1.19.1              matrixStats_1.2.0          </span></span>
-<span><span class="co">#&gt;   [9] compiler_4.4.0              RSQLite_2.3.4              </span></span>
-<span><span class="co">#&gt;  [11] png_0.1-8                   systemfonts_1.0.5          </span></span>
-<span><span class="co">#&gt;  [13] vctrs_0.6.5                 stringr_1.5.1              </span></span>
-<span><span class="co">#&gt;  [15] pkgconfig_2.0.3             crayon_1.5.2               </span></span>
-<span><span class="co">#&gt;  [17] fastmap_1.1.1               dbplyr_2.4.0               </span></span>
-<span><span class="co">#&gt;  [19] XVector_0.43.0              utf8_1.2.4                 </span></span>
-<span><span class="co">#&gt;  [21] Rsamtools_2.19.2            rmarkdown_2.25             </span></span>
-<span><span class="co">#&gt;  [23] ragg_1.2.7                  purrr_1.0.2                </span></span>
-<span><span class="co">#&gt;  [25] bit_4.0.5                   xfun_0.41                  </span></span>
+<span><span class="co">#&gt;   [1] DBI_1.2.2                   bitops_1.0-7               </span></span>
+<span><span class="co">#&gt;   [3] deldir_2.0-4                httr2_1.0.0                </span></span>
+<span><span class="co">#&gt;   [5] biomaRt_2.59.1              rlang_1.1.3                </span></span>
+<span><span class="co">#&gt;   [7] magrittr_2.0.3              Rhisat2_1.19.1             </span></span>
+<span><span class="co">#&gt;   [9] matrixStats_1.2.0           compiler_4.4.0             </span></span>
+<span><span class="co">#&gt;  [11] RSQLite_2.3.5               png_0.1-8                  </span></span>
+<span><span class="co">#&gt;  [13] systemfonts_1.0.6           vctrs_0.6.5                </span></span>
+<span><span class="co">#&gt;  [15] stringr_1.5.1               pkgconfig_2.0.3            </span></span>
+<span><span class="co">#&gt;  [17] crayon_1.5.2                fastmap_1.1.1              </span></span>
+<span><span class="co">#&gt;  [19] XVector_0.43.1              utf8_1.2.4                 </span></span>
+<span><span class="co">#&gt;  [21] Rsamtools_2.19.3            rmarkdown_2.26             </span></span>
+<span><span class="co">#&gt;  [23] ragg_1.3.0                  purrr_1.0.2                </span></span>
+<span><span class="co">#&gt;  [25] bit_4.0.5                   xfun_0.42                  </span></span>
 <span><span class="co">#&gt;  [27] zlibbioc_1.49.0             cachem_1.0.8               </span></span>
 <span><span class="co">#&gt;  [29] jsonlite_1.8.8              progress_1.2.3             </span></span>
 <span><span class="co">#&gt;  [31] blob_1.2.4                  highr_0.10                 </span></span>
-<span><span class="co">#&gt;  [33] DelayedArray_0.29.0         BiocParallel_1.37.0        </span></span>
+<span><span class="co">#&gt;  [33] DelayedArray_0.29.9         BiocParallel_1.37.1        </span></span>
 <span><span class="co">#&gt;  [35] jpeg_0.1-10                 prettyunits_1.2.0          </span></span>
-<span><span class="co">#&gt;  [37] VariantAnnotation_1.49.2    R6_2.5.1                   </span></span>
+<span><span class="co">#&gt;  [37] R6_2.5.1                    VariantAnnotation_1.49.6   </span></span>
 <span><span class="co">#&gt;  [39] RColorBrewer_1.1-3          bslib_0.6.1                </span></span>
 <span><span class="co">#&gt;  [41] stringi_1.8.3               jquerylib_0.1.4            </span></span>
-<span><span class="co">#&gt;  [43] Rcpp_1.0.11                 bookdown_0.37              </span></span>
-<span><span class="co">#&gt;  [45] SummarizedExperiment_1.33.1 knitr_1.45                 </span></span>
+<span><span class="co">#&gt;  [43] Rcpp_1.0.12                 bookdown_0.38              </span></span>
+<span><span class="co">#&gt;  [45] SummarizedExperiment_1.33.3 knitr_1.45                 </span></span>
 <span><span class="co">#&gt;  [47] SGSeq_1.37.0                splines_4.4.0              </span></span>
-<span><span class="co">#&gt;  [49] igraph_1.6.0                Matrix_1.6-4               </span></span>
-<span><span class="co">#&gt;  [51] tidyselect_1.2.0            abind_1.4-5                </span></span>
+<span><span class="co">#&gt;  [49] igraph_2.0.3                Matrix_1.6-5               </span></span>
+<span><span class="co">#&gt;  [51] tidyselect_1.2.1            abind_1.4-5                </span></span>
 <span><span class="co">#&gt;  [53] yaml_2.3.8                  codetools_0.2-19           </span></span>
-<span><span class="co">#&gt;  [55] RUnit_0.4.32                hwriter_1.3.2.1            </span></span>
-<span><span class="co">#&gt;  [57] curl_5.2.0                  lattice_0.22-5             </span></span>
-<span><span class="co">#&gt;  [59] tibble_3.2.1                ShortRead_1.61.1           </span></span>
+<span><span class="co">#&gt;  [55] RUnit_0.4.33                hwriter_1.3.2.1            </span></span>
+<span><span class="co">#&gt;  [57] curl_5.2.1                  lattice_0.22-5             </span></span>
+<span><span class="co">#&gt;  [59] tibble_3.2.1                ShortRead_1.61.2           </span></span>
 <span><span class="co">#&gt;  [61] KEGGREST_1.43.0             evaluate_0.23              </span></span>
 <span><span class="co">#&gt;  [63] desc_1.4.3                  BiocFileCache_2.11.1       </span></span>
-<span><span class="co">#&gt;  [65] xml2_1.3.6                  Biostrings_2.71.1          </span></span>
+<span><span class="co">#&gt;  [65] xml2_1.3.6                  Biostrings_2.71.4          </span></span>
 <span><span class="co">#&gt;  [67] pillar_1.9.0                BiocManager_1.30.22        </span></span>
 <span><span class="co">#&gt;  [69] filelock_1.0.3              MatrixGenerics_1.15.0      </span></span>
-<span><span class="co">#&gt;  [71] generics_0.1.3              RCurl_1.98-1.13            </span></span>
+<span><span class="co">#&gt;  [71] generics_0.1.3              RCurl_1.98-1.14            </span></span>
 <span><span class="co">#&gt;  [73] hms_1.1.3                   GenomicFiles_1.39.0        </span></span>
-<span><span class="co">#&gt;  [75] glue_1.6.2                  tools_4.4.0                </span></span>
-<span><span class="co">#&gt;  [77] interp_1.1-5                BiocIO_1.13.0              </span></span>
-<span><span class="co">#&gt;  [79] BSgenome_1.71.1             locfit_1.5-9.8             </span></span>
-<span><span class="co">#&gt;  [81] GenomicAlignments_1.39.0    fs_1.6.3                   </span></span>
-<span><span class="co">#&gt;  [83] XML_3.99-0.16               grid_4.4.0                 </span></span>
+<span><span class="co">#&gt;  [75] glue_1.7.0                  tools_4.4.0                </span></span>
+<span><span class="co">#&gt;  [77] interp_1.1-6                BiocIO_1.13.0              </span></span>
+<span><span class="co">#&gt;  [79] BSgenome_1.71.2             locfit_1.5-9.9             </span></span>
+<span><span class="co">#&gt;  [81] GenomicAlignments_1.39.4    fs_1.6.3                   </span></span>
+<span><span class="co">#&gt;  [83] XML_3.99-0.16.1             grid_4.4.0                 </span></span>
 <span><span class="co">#&gt;  [85] latticeExtra_0.6-30         GenomeInfoDbData_1.2.11    </span></span>
 <span><span class="co">#&gt;  [87] restfulr_0.0.15             cli_3.6.2                  </span></span>
 <span><span class="co">#&gt;  [89] rappdirs_0.3.3              textshaping_0.3.7          </span></span>
-<span><span class="co">#&gt;  [91] fansi_1.0.6                 S4Arrays_1.3.1             </span></span>
+<span><span class="co">#&gt;  [91] fansi_1.0.6                 S4Arrays_1.3.6             </span></span>
 <span><span class="co">#&gt;  [93] dplyr_1.1.4                 sass_0.4.8                 </span></span>
-<span><span class="co">#&gt;  [95] digest_0.6.33               SparseArray_1.3.2          </span></span>
+<span><span class="co">#&gt;  [95] digest_0.6.35               SparseArray_1.3.4          </span></span>
 <span><span class="co">#&gt;  [97] rjson_0.2.21                memoise_2.0.1              </span></span>
 <span><span class="co">#&gt;  [99] htmltools_0.5.7             pkgdown_2.0.7.9000         </span></span>
 <span><span class="co">#&gt; [101] lifecycle_1.0.4             httr_1.4.7                 </span></span>
@@ -854,7 +870,7 @@ be post-transcriptionally regulated, are color coded):</p>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
 <div id="ref-eisa" class="csl-entry">
 Gaidatzis, D., L. Burger, M. Florescu, and M. B. Stadler. 2015.
 <span>“Analysis of Intronic and Exonic Reads in RNA-Seq Data
