@@ -1,6 +1,6 @@
 test_that("getRegionsFromTxDb() runs", {
-    requireNamespace("GenomicFeatures")
     requireNamespace("txdbmaker")
+    requireNamespace("GenomicFeatures")
     txdb <- AnnotationDbi::loadDb(system.file("extdata", "hg19sub.sqlite", package = "eisaR"))
     regL <- getRegionsFromTxDb(txdb)
 
@@ -46,6 +46,7 @@ test_that("getRegionsFromTbx() fails when required packages are missing", {
     dir.create(td)
     .libPaths(c(td, old[length(old)]), include.site = FALSE)
     unloadNamespace("ensembldb")
+    unloadNamespace("txdbmaker")
     unloadNamespace("GenomicFeatures")
     # test
     expect_error(getRegionsFromTxDb(structure("dummy", class = "TxDb")))
@@ -53,5 +54,6 @@ test_that("getRegionsFromTbx() fails when required packages are missing", {
     unlink(td, recursive = TRUE, force = TRUE)
     .libPaths(old)
     requireNamespace("GenomicFeatures")
+    requireNamespace("txdbmaker")
     requireNamespace("ensembldb")
 })

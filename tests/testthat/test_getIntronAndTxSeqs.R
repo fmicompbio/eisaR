@@ -129,6 +129,7 @@ test_that("feature extraction fails if there are missing required packages", {
   dir.create(td)
   .libPaths(c(td, old[length(old)]), include.site = FALSE)
   unloadNamespace("ensembldb")
+  unloadNamespace("txdbmaker")
   unloadNamespace("GenomicFeatures")
   # test
   expect_error(getFeatureRanges(gtf = gtf))
@@ -136,6 +137,7 @@ test_that("feature extraction fails if there are missing required packages", {
   unlink(td, recursive = TRUE, force = TRUE)
   .libPaths(old)
   loadNamespace("GenomicFeatures")
+  loadNamespace("txdbmaker")
   loadNamespace("ensembldb")
   
 })
@@ -805,6 +807,7 @@ test_that("gtf export fails if required packages are missing", {
   dir.create(td)
   .libPaths(c(td, old[length(old)]), include.site = FALSE)
   unloadNamespace("ensembldb")
+  unloadNamespace("txdbmaker")
   unloadNamespace("GenomicFeatures")
   unloadNamespace("BSgenome")
   unloadNamespace("rtracklayer")
@@ -816,6 +819,7 @@ test_that("gtf export fails if required packages are missing", {
   loadNamespace("rtracklayer")
   loadNamespace("GenomicFeatures")
   loadNamespace("BSgenome")
+  loadNamespace("txdbmaker")
   loadNamespace("ensembldb")
 })
 
