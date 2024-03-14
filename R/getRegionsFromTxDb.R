@@ -31,8 +31,9 @@
 #'   named \code{GenomicRanges} objects with ranges for exons and gene bodies,
 #'   respectively.
 #'
-#' @seealso \code{\link[GenomicFeatures:TxDb-class]{TxDb}} for details on \code{TxDb} objects
-#'   and how to create them, e.g. from \code{.gtf} files.
+#' @seealso \code{\link[GenomicFeatures:TxDb-class]{TxDb}} for details on
+#'   \code{TxDb} objects and the \code{txdbmaker} package for how to create them,
+#'   e.g. from \code{.gtf} files.
 #'
 #' @examples
 #' if (requireNamespace("AnnotationDbi", quietly = TRUE)) {

@@ -1,5 +1,6 @@
 test_that("getRegionsFromTxDb() runs", {
     requireNamespace("GenomicFeatures")
+    requireNamespace("txdbmaker")
     txdb <- AnnotationDbi::loadDb(system.file("extdata", "hg19sub.sqlite", package = "eisaR"))
     regL <- getRegionsFromTxDb(txdb)
 
@@ -22,7 +23,7 @@ test_that("getRegionsFromTxDb() runs", {
                                                        organism = "Homo_sapiens"))
     edb <- ensembldb::EnsDb(DB)
     # ... create corresponding TxDb
-    suppressWarnings(txdb <- GenomicFeatures::makeTxDbFromGRanges(Y))
+    suppressWarnings(txdb <- txdbmaker::makeTxDbFromGRanges(Y))
     # ... compare annotation
     expect_identical(length(GenomicFeatures::genes(edb)),
                      length(GenomicFeatures::genes(txdb)))

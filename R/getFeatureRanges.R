@@ -84,7 +84,7 @@ getFeatureRanges <- function(
     ## --------------------------------------------------------------------- ##
     ## Pre-flight checks
     ## --------------------------------------------------------------------- ##
-    for (pkg in c("GenomicFeatures", "AnnotationDbi")) {
+    for (pkg in c("GenomicFeatures", "AnnotationDbi", "txdbmaker")) {
         if (!requireNamespace(pkg, quietly = TRUE)) {
             stop("getFeatureRanges() requires installing the Bioconductor package '",
                  pkg, "' using BiocManager::install(\"", pkg, "\")")
@@ -134,7 +134,7 @@ getFeatureRanges <- function(
     ## --------------------------------------------------------------------- ##
     ## Construct TxDb from gtf file
     ## --------------------------------------------------------------------- ##
-    txdb <- GenomicFeatures::makeTxDbFromGFF(gtf, format = "gtf")
+    txdb <- txdbmaker::makeTxDbFromGFF(gtf, format = "gtf")
     
     ## Initialize GRangesList
     grlfull <- GenomicRanges::GRangesList()

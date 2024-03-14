@@ -51,8 +51,9 @@ if (requireNamespace("AnnotationDbi", quietly = TRUE)) {
 
 }
 \seealso{
-\code{\link[GenomicFeatures:TxDb-class]{TxDb}} for details on \code{TxDb} objects
-and how to create them, e.g. from \code{.gtf} files.
+\code{\link[GenomicFeatures:TxDb-class]{TxDb}} for details on
+\code{TxDb} objects and the \code{txdbmaker} package for how to create them,
+e.g. from \code{.gtf} files.
 }
 \author{
 Michael Stadler

@@ -64,7 +64,7 @@ pkgs <- c(BiocManager::available("TxDb")
 
 If you would like to use an alternative source of gene annotations, you might
 still be able to use `eisaR` by first converting your annotations into a `TxDb`
-or an `EnsDb` (for creating a `TxDb` see `makeTxDb` in the `r Biocpkg("GenomicFeatures")`
+or an `EnsDb` (for creating a `TxDb` see `makeTxDb` in the `r Biocpkg("txdbmaker")`
 package, for creating an `EnsDb` see `makeEnsembldbPackage` in the `r Biocpkg("ensembldb")`
 package).
 
