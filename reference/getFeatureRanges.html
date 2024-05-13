@@ -18,7 +18,7 @@ spliced transcripts, unspliced transcripts and introns."><!-- mathjax --><script
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">eisaR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.15.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.17.0</span>
       </span>
     </div>
 
@@ -36,10 +36,7 @@ spliced transcripts, unspliced transcripts and introns."><!-- mathjax --><script
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/eisaR.html">eisaR</a>
-    </li>
-    <li>
-      <a href="../articles/rna-velocity.html">Feature extraction for RNA velocity</a>
+      <a href="../articles/rna-velocity.html">Generating reference files for spliced and unspliced abundance estimation with alignment-free methods</a>
     </li>
   </ul></li>
 <li>
@@ -85,16 +82,16 @@ spliced transcripts, unspliced transcripts and introns.</p>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>gtf</dt>
+    <dl><dt id="arg-gtf">gtf<a class="anchor" aria-label="anchor" href="#arg-gtf"></a></dt>
 <dd><p>Path to gtf file.</p></dd>
 
 
-<dt>featureType</dt>
+<dt id="arg-featuretype">featureType<a class="anchor" aria-label="anchor" href="#arg-featuretype"></a></dt>
 <dd><p>Character vector indicating the type(s) of features to
 extract, any subset of <code>c("spliced", "intron", "unspliced")</code>.</p></dd>
 
 
-<dt>intronType</dt>
+<dt id="arg-introntype">intronType<a class="anchor" aria-label="anchor" href="#arg-introntype"></a></dt>
 <dd><p>Character vector indicating how to define the introns
 (only used if "intron" is part of <code>featureType</code>). Has to be either
 "separate" (introns are defined for each transcript separately) or
@@ -102,31 +99,31 @@ extract, any subset of <code>c("spliced", "intron", "unspliced")</code>.</p></dd
 introns are defined as any non-exonic part of the gene locus).</p></dd>
 
 
-<dt>flankLength</dt>
+<dt id="arg-flanklength">flankLength<a class="anchor" aria-label="anchor" href="#arg-flanklength"></a></dt>
 <dd><p>Integer scalar indicating the length of the flanking
 sequence added to each side of each extracted intron (only used if
 "intron" is included in <code>featureType</code>).</p></dd>
 
 
-<dt>joinOverlappingIntrons</dt>
+<dt id="arg-joinoverlappingintrons">joinOverlappingIntrons<a class="anchor" aria-label="anchor" href="#arg-joinoverlappingintrons"></a></dt>
 <dd><p>Logical scalar indicating whether two introns
 that overlap (after adding the flanking sequences) should be joined into
 one feature.</p></dd>
 
 
-<dt>collapseIntronsByGene</dt>
+<dt id="arg-collapseintronsbygene">collapseIntronsByGene<a class="anchor" aria-label="anchor" href="#arg-collapseintronsbygene"></a></dt>
 <dd><p>Logical scalar indicating whether to collapse
 overlapping intron ranges by gene after extraction.</p></dd>
 
 
-<dt>keepIntronInFeature</dt>
+<dt id="arg-keepintroninfeature">keepIntronInFeature<a class="anchor" aria-label="anchor" href="#arg-keepintroninfeature"></a></dt>
 <dd><p>Logical scalar indicating whether introns
 (after adding the flank length) should be restricted to stay within the
 boundaries of the feature they were generated from. For backwards
 compatibility, the default is <code>FALSE</code>.</p></dd>
 
 
-<dt>verbose</dt>
+<dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
 <dd><p>Logical scalar, whether to print out progress messages.</p></dd>
 
 </dl></div>
@@ -161,14 +158,6 @@ different feature types, as well as a list of all features for each type.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Prepare the 'metadata' data frame ... </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> OK</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Make the TxDb object ... </span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Direct call of 'as.data.frame.factor()' is deprecated.  Use 'as.data.frame.vector()' or 'as.data.frame()' instead</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Direct call of 'as.data.frame.factor()' is deprecated.  Use 'as.data.frame.vector()' or 'as.data.frame()' instead</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Direct call of 'as.data.frame.factor()' is deprecated.  Use 'as.data.frame.vector()' or 'as.data.frame()' instead</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Direct call of 'as.data.frame.factor()' is deprecated.  Use 'as.data.frame.vector()' or 'as.data.frame()' instead</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Direct call of 'as.data.frame.factor()' is deprecated.  Use 'as.data.frame.vector()' or 'as.data.frame()' instead</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Direct call of 'as.data.frame.factor()' is deprecated.  Use 'as.data.frame.vector()' or 'as.data.frame()' instead</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Direct call of 'as.data.frame.factor()' is deprecated.  Use 'as.data.frame.vector()' or 'as.data.frame()' instead</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Direct call of 'as.data.frame.factor()' is deprecated.  Use 'as.data.frame.vector()' or 'as.data.frame()' instead</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> OK</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 'select()' returned 1:1 mapping between keys and columns</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Extracting spliced transcript features</span>
@@ -326,7 +315,7 @@ different feature types, as well as a list of all features for each type.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
 </div>
 
       </footer></div>

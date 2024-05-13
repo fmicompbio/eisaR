@@ -19,7 +19,7 @@ quantifyable genes, calculate contrasts and their significance)."><!-- mathjax -
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">eisaR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.15.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.17.0</span>
       </span>
     </div>
 
@@ -37,10 +37,7 @@ quantifyable genes, calculate contrasts and their significance)."><!-- mathjax -
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/eisaR.html">eisaR</a>
-    </li>
-    <li>
-      <a href="../articles/rna-velocity.html">Feature extraction for RNA velocity</a>
+      <a href="../articles/rna-velocity.html">Generating reference files for spliced and unspliced abundance estimation with alignment-free methods</a>
     </li>
   </ul></li>
 <li>
@@ -93,7 +90,7 @@ quantifyable genes, calculate contrasts and their significance).</p>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>cntEx</dt>
+    <dl><dt id="arg-cntex">cntEx<a class="anchor" aria-label="anchor" href="#arg-cntex"></a></dt>
 <dd><p>Gene by sample <code>matrix</code> with exonic counts, OR a
 <code>SummarizedExperiment</code> with two assays named <code>exon</code> and
 <code>intron</code>, containing exonic and intronic counts, respectively. If
@@ -101,20 +98,20 @@ quantifyable genes, calculate contrasts and their significance).</p>
 disregarded.</p></dd>
 
 
-<dt>cntIn</dt>
+<dt id="arg-cntin">cntIn<a class="anchor" aria-label="anchor" href="#arg-cntin"></a></dt>
 <dd><p>Gene by sample <code>matrix</code> with intronic counts. Must have the
 same structure as <code>cntEx</code> (same number and order of rows and columns)
 if <code>cntEx</code> is a matrix. Will be disregarded if <code>cntEx</code> is a
 <code>SummarizedExperiment</code>.</p></dd>
 
 
-<dt>cond</dt>
+<dt id="arg-cond">cond<a class="anchor" aria-label="anchor" href="#arg-cond"></a></dt>
 <dd><p><code>numeric</code>, <code>character</code> or <code>factor</code> with two levels
 that groups the samples (columns of <code>cntEx</code> and <code>cntIn</code>) into two
 conditions. The contrast will be defined as secondLevel - firstLevel.</p></dd>
 
 
-<dt>method</dt>
+<dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
 <dd><p>One of <code>NULL</code> (the default) or <code>"Gaidatzis2015"</code>. If
 <code>"Gaidatzis2015"</code>, gene filtering, statistical analysis and
 calculation of contrasts is performed as described in Gaidatzis et al.
@@ -128,14 +125,14 @@ passed to these arguments. If <code>NULL</code>, the default values of the argum
 will be used instead (recommended).</p></dd>
 
 
-<dt>modelSamples</dt>
+<dt id="arg-modelsamples">modelSamples<a class="anchor" aria-label="anchor" href="#arg-modelsamples"></a></dt>
 <dd><p>Whether to include a sample identifier in the design matrix
 of the statistical model. If <code>TRUE</code>, potential sample effects
 that affect both exonic and intronic counts of that sample will be taken
 into account, which could result in higher sensitivity (default: <code>TRUE</code>).</p></dd>
 
 
-<dt>geneSelection</dt>
+<dt id="arg-geneselection">geneSelection<a class="anchor" aria-label="anchor" href="#arg-geneselection"></a></dt>
 <dd><p>Controls how to select quantifyable genes. One of the
 following:</p><dl><dt><code>"filterByExpr"</code>: </dt>
 <dd><p>(default) First, counts are normalized using
@@ -159,7 +156,7 @@ selected as the genes with counts <code>x</code> that fulfill
 </dl></dd>
 
 
-<dt>statFramework</dt>
+<dt id="arg-statframework">statFramework<a class="anchor" aria-label="anchor" href="#arg-statframework"></a></dt>
 <dd><p>Selects the framework within <code>edgeR</code> that is used
 for the statistical analysis. One of:</p><dl><dt><code>"QLF"</code>: </dt>
 <dd><p>(default) Quasi-likelihood F-test using
@@ -175,14 +172,14 @@ and <code><a href="https://rdrr.io/pkg/edgeR/man/glmfit.html" class="external-li
 </dl></dd>
 
 
-<dt>legacyQLF</dt>
+<dt id="arg-legacyqlf">legacyQLF<a class="anchor" aria-label="anchor" href="#arg-legacyqlf"></a></dt>
 <dd><p>Whether to use the 'legacy' version of
 <code><a href="https://rdrr.io/pkg/edgeR/man/glmQLFTest.html" class="external-link">glmQLFit</a></code>. See <code><a href="https://rdrr.io/pkg/edgeR/man/glmQLFTest.html" class="external-link">glmQLFit</a></code>
 for more details. If <code>FALSE</code>, the new method introduced in
 <code>edgeR</code> 4.0.0 is used.</p></dd>
 
 
-<dt>effects</dt>
+<dt id="arg-effects">effects<a class="anchor" aria-label="anchor" href="#arg-effects"></a></dt>
 <dd><p>How the effects (contrasts or log2 fold-changes) are calculated.
 One of:</p><dl><dt><code>"predFC"</code>: </dt>
 <dd><p>(default) Fold-changes are calculated using
@@ -202,7 +199,7 @@ used in Gaidatzis et al., 2015.</p></dd>
 </dl></dd>
 
 
-<dt>pscnt</dt>
+<dt id="arg-pscnt">pscnt<a class="anchor" aria-label="anchor" href="#arg-pscnt"></a></dt>
 <dd><p><code>numeric(1)</code> with pseudocount to add to read counts
 (default: 2). For <code>method = "Gaidatzis2015"</code>, it is set to 8.
 It is added to scaled read counts used in <code>geneSelection = "Gaidatzis2015"</code>
@@ -210,7 +207,7 @@ and <code>effects = "Gaidatzis2015"</code>, or else used in <code>cpm(..., prior
 and <code>predFC(..., prior.count = pscnt)</code>.</p></dd>
 
 
-<dt>sizeFactor</dt>
+<dt id="arg-sizefactor">sizeFactor<a class="anchor" aria-label="anchor" href="#arg-sizefactor"></a></dt>
 <dd><p>How the size factors are calculated in the analysis.
 If 'exon' (default), the exon-derived size factors are used also for the
 columns corresponding to intronic counts. If 'intron', the intron-derived
@@ -218,19 +215,19 @@ size factors are used also for the columns corresponding to exonic
 counts. If 'individual', column-wise size factors are calculated.</p></dd>
 
 
-<dt>recalcNormFactAfterFilt</dt>
+<dt id="arg-recalcnormfactafterfilt">recalcNormFactAfterFilt<a class="anchor" aria-label="anchor" href="#arg-recalcnormfactafterfilt"></a></dt>
 <dd><p>Logical, indicating whether normalization
 factors should be recalculated after filtering out lowly
 expressed genes.</p></dd>
 
 
-<dt>recalcLibSizeAfterFilt</dt>
+<dt id="arg-recalclibsizeafterfilt">recalcLibSizeAfterFilt<a class="anchor" aria-label="anchor" href="#arg-recalclibsizeafterfilt"></a></dt>
 <dd><p>Logical, indicating whether library
 sizes should be recalculated after filtering out lowly
 expressed genes.</p></dd>
 
 
-<dt>...</dt>
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>additional arguments passed to the <code><a href="https://rdrr.io/pkg/edgeR/man/DGEList.html" class="external-link">DGEList</a></code>
 constructor, such as <code>lib.size</code> or <code>genes</code>.</p></dd>
 
@@ -314,7 +311,7 @@ analysis.</p></div>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> calculating log-fold changes...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> done</span>
 <span class="r-in"><span><span class="fu"><a href="plotEISA.html">plotEISA</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> identified 111 genes to highlight</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> identified 106 genes to highlight</span>
 <span class="r-plt img"><img src="runEISA-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
@@ -331,7 +328,7 @@ analysis.</p></div>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
 </div>
 
       </footer></div>
