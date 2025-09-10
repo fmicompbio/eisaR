@@ -58,7 +58,7 @@ They are provided in the form of `TxDb` or `EnsDb` objects, e.g. via packages su
 You can see available annotations using the following code:  
 
 ```{r availableOnline, eval=FALSE}
-pkgs <- c(BiocManager::available("TxDb")
+pkgs <- c(BiocManager::available("TxDb"),
           BiocManager::available("EnsDb"))
 ```
 
