@@ -134,7 +134,11 @@ getFeatureRanges <- function(
     ## --------------------------------------------------------------------- ##
     ## Construct TxDb from gtf file
     ## --------------------------------------------------------------------- ##
-    txdb <- txdbmaker::makeTxDbFromGFF(gtf, format = "gtf")
+    # suppress the warning:
+    #    "genome version information is not available for this TxDb object"
+    suppressWarnings(
+        txdb <- txdbmaker::makeTxDbFromGFF(gtf, format = "gtf", chrominfo = NULL)
+    )
     
     ## Initialize GRangesList
     grlfull <- GenomicRanges::GRangesList()
