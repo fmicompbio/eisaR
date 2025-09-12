@@ -124,21 +124,18 @@ test_that("feature extraction fails if there are missing required packages", {
   skip_on_bioc()
   
   # set new lib paths
-  old <- .libPaths()
-  td <- tempfile(pattern = "Rlib")
-  dir.create(td)
-  .libPaths(c(td, old[length(old)]), include.site = FALSE)
+    withr::with_temp_libpaths({
+        # unload ns
   unloadNamespace("ensembldb")
   unloadNamespace("txdbmaker")
   unloadNamespace("GenomicFeatures")
   # test
   expect_error(getFeatureRanges(gtf = gtf))
-  # clean up
-  unlink(td, recursive = TRUE, force = TRUE)
-  .libPaths(old)
+        # reload ns
   loadNamespace("GenomicFeatures")
   loadNamespace("txdbmaker")
   loadNamespace("ensembldb")
+    }, action = "prefix")
   
 })
 

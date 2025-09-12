@@ -38,7 +38,8 @@ Suggests:
     AnnotationDbi,
     GenomicFeatures,
     txdbmaker,
-    rtracklayer
+    rtracklayer,
+    withr
 VignetteBuilder: knitr
 Imports: 
     graphics,
