@@ -37,21 +37,22 @@ plotEISA <- function(x, contrast = c("ExIn", "none"),
                      genecolors = c("#E41A1C", "#497AB3", "#222222"), ...) {
     # check arguments
     contrast <- match.arg(contrast)
-    contrastName <- ifelse("contrastName" %in% names(x), paste0(" (",x$contrastName, ")"), "")
+    contrastName <- ifelse("contrastName" %in% names(x),
+                           paste0(" (", x$contrastName, ")"), "")
     sigtab <- switch(contrast, ExIn = x$tab.ExIn, none = data.frame())
-    if (nrow(sigtab) == 0 && contrast != "none")
+    if (nrow(sigtab) == 0L && contrast != "none")
         stop("'x' does not contain the requested statistics and can only ",
              "be plotted using contrast = 'none'. Note that at least two ",
              "replicates per condition are required to run the statistical ",
              "testing.")
     if (is.null(minLfc))
-        minLfc <- 0
+        minLfc <- 0.0
     stopifnot(exprs = {
         is.numeric(minLfc)
         length(minLfc) == 1L
         is.numeric(maxFDR)
         length(maxFDR) == 1L
-        maxFDR >= 0
+        maxFDR >= 0.0
         maxFDR <= 1.0
         is.character(genecolors)
         length(genecolors) == 3L
@@ -60,10 +61,10 @@ plotEISA <- function(x, contrast = c("ExIn", "none"),
     # identify gene to highlight
     if (contrast == "none") {
         sig <- rep(FALSE, nrow(x$contrasts))
-        sig.dir <- numeric(0)
+        sigDir <- 0.0
     } else {
         sig <- abs(sigtab$logFC) >= minLfc & sigtab$FDR <= maxFDR
-        sig.dir <- sign(sigtab$logFC[sig])
+        sigDir <- sign(sigtab$logFC[sig])
         message("identified ", sum(sig), " genes to highlight")
     }
 
@@ -74,22 +75,29 @@ plotEISA <- function(x, contrast = c("ExIn", "none"),
     if (!"pch" %in% names(dotsL))
         dotsL$pch <- "."
     if (!"cex" %in% names(dotsL))
-        dotsL$cex <- 2
+        dotsL$cex <- 2L
     if (!"col" %in% names(dotsL))
-        dotsL$col <- ifelse(sig, ifelse(sigtab$logFC > 0, genecolors[1], genecolors[2]), genecolors[3])
+        dotsL$col <- ifelse(sig,
+                            ifelse(sigtab$logFC > 0.0,
+                                   genecolors[1L], genecolors[2L]),
+                            genecolors[3L])
     if (!"xlab" %in% names(dotsL))
-        dotsL$xlab <- substitute(expression(paste(Delta, "intron", cn)), list(cn = contrastName))
+        dotsL$xlab <- substitute(expression(paste(Delta, "intron", cn)),
+                                 list(cn = contrastName))
     if (!"ylab" %in% names(dotsL))
-        dotsL$ylab <- substitute(expression(paste(Delta, "exon", cn)), list(cn = contrastName))
+        dotsL$ylab <- substitute(expression(paste(Delta, "exon", cn)),
+                                 list(cn = contrastName))
 
     # Delta I vs. Delta E
     do.call(plot, dotsL)
     if (contrast != "none") {
         if (length(dotsL$col) == 1L)
             dotsL$col <- rep(dotsL$col, length(dotsL$x))
-        points(dotsL$x[sig], dotsL$y[sig], pch = 20, col = dotsL$col[sig])
-        legend(x = "bottomright", bty = "n", pch = 20, col = genecolors[c(1,2)],
-               legend = sprintf("%s (%d)", c("Up","Down"), c(sum(sig.dir == 1), sum(sig.dir == -1))))
+        points(dotsL$x[sig], dotsL$y[sig], pch = 20L, col = dotsL$col[sig])
+        legend(x = "bottomright", bty = "n", pch = 20L, col = genecolors[c(1L, 2L)],
+               legend = sprintf("%s (%d)",
+                                c("Up", "Down"),
+                                c(sum(sigDir == 1.0), sum(sigDir == -1.0))))
     }
 
     return(invisible(NULL))

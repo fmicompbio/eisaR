@@ -1,58 +1,63 @@
 context("runEISA runs")
 test_that("runEISA() runs", {
-    cntEx <- readRDS(system.file("extdata", "Fig3abc_GSE33252_rawcounts_exonic.rds", package = "eisaR"))[,-1]
-    cntIn <- readRDS(system.file("extdata", "Fig3abc_GSE33252_rawcounts_intronic.rds", package = "eisaR"))[,-1]
-    cond <- factor(c("ES","ES","TN","TN"))
-    cntSE1 <- SummarizedExperiment::SummarizedExperiment(assays = list(exon = cntEx, intron = cntIn))
-    cntSE2 <- SummarizedExperiment::SummarizedExperiment(assays = list(spliced = cntEx, unspliced = cntIn))
+    cntEx <- readRDS(system.file("extdata", "Fig3abc_GSE33252_rawcounts_exonic.rds",
+                                 package = "eisaR"))[, -1L]
+    cntIn <- readRDS(system.file("extdata", "Fig3abc_GSE33252_rawcounts_intronic.rds",
+                                 package = "eisaR"))[, -1L]
+    cond <- factor(c("ES", "ES", "TN", "TN"))
+    cntSE1 <- SummarizedExperiment::SummarizedExperiment(
+        assays = list(exon = cntEx, intron = cntIn))
+    cntSE2 <- SummarizedExperiment::SummarizedExperiment(
+        assays = list(spliced = cntEx, unspliced = cntIn))
 
     # arguments
     expect_error(runEISA(data.frame("a")))
-    expect_error(runEISA(rbind(1:2, 3:4), "b"))
-    expect_error(runEISA(rbind(1:2, 3:4), rbind(1:2, 3:4), c("a","b","c")))
-    expect_warning(runEISA(rbind(1:2, 3:4), rbind(1:2, 3:4), c("a","b"), effects = "Gaidatzis2015"))
-    expect_warning(runEISA(cntEx, cntIn, cond, geneSelection = "Gaidatzis2015", pscnt = 4))
+    expect_error(runEISA(rbind(1L:2L, 3L:4L), "b"))
+    expect_error(runEISA(rbind(1L:2L, 3L:4L), rbind(1L:2L, 3L:4L), c("a", "b", "c")))
+    expect_warning(runEISA(rbind(1L:2L, 3L:4L), rbind(1L:2L, 3L:4L), c("a", "b"),
+                           effects = "Gaidatzis2015"))
+    expect_warning(runEISA(cntEx, cntIn, cond, geneSelection = "Gaidatzis2015", pscnt = 4L))
     expect_error(runEISA(SummarizedExperiment(assays = list(exon = cntEx))))
 
     # expected results
-    res0 <- runEISA(cntEx[1:1000,], cntIn[1:1000,], cond,
+    res0 <- runEISA(cntEx[seq.int(1000L), ], cntIn[seq.int(1000L), ], cond,
                     modelSamples = TRUE, geneSelection = "none", statFramework = "LRT")
-    res0se <- runEISA(cntEx = cntSE2[1:1000,], cntIn = NULL, cond,
+    res0se <- runEISA(cntEx = cntSE2[seq.int(1000L), ], cntIn = NULL, cond,
                       modelSamples = TRUE, geneSelection = "none", legacyQLF = TRUE)
     res1 <- runEISA(cntEx, cntIn, cond, method = "Gaidatzis2015")
     res1se <- runEISA(cntEx = cntSE1, cntIn = NULL, cond, method = "Gaidatzis2015")
-    res2 <- runEISA(cntEx, cntIn, cond, method = NULL, modelSamples = FALSE, 
+    res2 <- runEISA(cntEx, cntIn, cond, method = NULL, modelSamples = FALSE,
                     sizeFactor = "individual", legacyQLF = TRUE)
-    res3 <- runEISA(cntEx, cntIn, cond, recalcLibSizeAfterFilt = TRUE, 
+    res3 <- runEISA(cntEx, cntIn, cond, recalcLibSizeAfterFilt = TRUE,
                     sizeFactor = "intron", legacyQLF = TRUE)
     expect_is(res0, "list")
     expect_is(res0se, "list")
-    expect_equal(res0$contrasts, res0se$contrasts)
+    expect_identical(res0$contrasts, res0se$contrasts)
     expect_is(res1, "list")
     expect_is(res1se, "list")
-    expect_equal(res1, res1se)
+    expect_identical(res1, res1se)
     expect_is(res2, "list")
     expect_is(res3, "list")
     expect_length(res1, 8L)
     expect_true(all(rownames(res1$DGEList) %in% rownames(cntEx)))
     ids <- intersect(rownames(res1$DGEList), rownames(res2$DGEList))
-    expect_gt(cor(res1$contrasts[ids,"Dex"], res2$contrasts[ids,"Dex"]), 0.99)
-    expect_gt(cor(res1$contrasts[ids,"Din"], res2$contrasts[ids,"Din"]), 0.99)
-    expect_gt(cor(res1$contrasts[ids,"Dex.Din"], res2$contrasts[ids,"Dex.Din"]), 0.97)
-    expect_gt(cor(res2$contrasts[ids,"Dex"], res3$contrasts[ids,"Dex"]), 0.99)
-    
+    expect_gt(cor(res1$contrasts[ids, "Dex"], res2$contrasts[ids, "Dex"]), 0.99)
+    expect_gt(cor(res1$contrasts[ids, "Din"], res2$contrasts[ids, "Din"]), 0.99)
+    expect_gt(cor(res1$contrasts[ids, "Dex.Din"], res2$contrasts[ids, "Dex.Din"]), 0.97)
+    expect_gt(cor(res2$contrasts[ids, "Dex"], res3$contrasts[ids, "Dex"]), 0.99)
+
     # one replicate per condition
-    expect_warning(res1 <- runEISA(cntEx[, c(1, 3)], cntIn[, c(1, 3)],
-                                   cond[c(1, 3)], method = "Gaidatzis2015"))
+    expect_warning(res1 <- runEISA(cntEx[, c(1L, 3L)], cntIn[, c(1L, 3L)],
+                                   cond[c(1L, 3L)], method = "Gaidatzis2015"))
     expect_is(res1, "list")
     expect_length(res1, 8L)
     expect_named(res1, c("fracIn", "contrastName", "contrasts", "DGEList",
                          "tab.ExIn", "contr.ExIn", "designMatrix", "params"))
     expect_is(res1$tab.ExIn, "data.frame")
-    expect_equal(nrow(res1$tab.ExIn), 0)
+    expect_identical(nrow(res1$tab.ExIn), 0L)
     expect_error(plotEISA(res1))
-    expect_error(suppressWarnings(runEISA(cntEx[, c(1, 3)], cntIn[, c(1, 3)],
-                                          cond[c(1, 3)], method = NULL, 
+    expect_error(suppressWarnings(runEISA(cntEx[, c(1L, 3L)], cntIn[, c(1L, 3L)],
+                                          cond[c(1L, 3L)], method = NULL,
                                           legacyQLF = TRUE)))
 })
 
@@ -60,29 +65,31 @@ context("runEISA gives expected results")
 test_that("runEISA() gives expected results", {
     # construct artificial example
     fracIntron <- 0.2
-    ngenes <- 3000
-    nsig <- 80
-    nsig2 <- 20
-    set.seed(5)
+    ngenes <- 3000L
+    nsig <- 80L
+    nsig2 <- 20L
+    set.seed(5L)
 
     # ... 2 conditions (ES, TN),
     #     2 replicates (exon counts, constant library size, just sampling noise)
-    cond <- factor(c("ES","ES","TN","TN"))
+    cond <- factor(c("ES", "ES", "TN", "TN"))
     tmp <- readRDS(system.file("extdata", "Fig3abc_GSE33252_rawcounts_exonic.rds",
-                               package = "eisaR"))[,-1]
-    cntEx <- cbind(rmultinom(2, round(sum(tmp) / 4), rowMeans(tmp[, 1:2])),
-                   rmultinom(2, round(sum(tmp) / 4), rowMeans(tmp[, 3:4])))
+                               package = "eisaR"))[, -1L]
+    cntEx <- cbind(rmultinom(2L, round(sum(tmp) / 4.0), rowMeans(tmp[, 1L:2L])),
+                   rmultinom(2L, round(sum(tmp) / 4.0), rowMeans(tmp[, 3L:4L])))
     colnames(cntEx) <- colnames(tmp)
 
     # ... select ngenes expressed genes
-    selgenes <- sample(x = which(rowMeans(log2(cntEx + 1)) > 5.0),
+    selgenes <- sample(x = which(rowMeans(log2(cntEx + 1L)) > 5.0),
                        size = ngenes, replace = FALSE)
     cntEx <- cntEx[selgenes, ]
 
     # ... intron counts as sub-sampled exon counts with fracIntron total counts
     nEx <- colSums(cntEx)
-    cntIn <- cbind(rmultinom(2, round(sum(nEx[1:2]) / 2 * fracIntron), rowMeans(cntEx[, 1:2])),
-                   rmultinom(2, round(sum(nEx[3:4]) / 2 * fracIntron), rowMeans(cntEx[, 3:4])))
+    cntIn <- cbind(rmultinom(2L, round(sum(nEx[1L:2L]) / 2.0 * fracIntron),
+                             rowMeans(cntEx[, 1L:2L])),
+                   rmultinom(2L, round(sum(nEx[3L:4L]) / 2.0 * fracIntron),
+                             rowMeans(cntEx[, 3L:4L])))
     dimnames(cntIn) <- dimnames(cntEx)
 
     # ... nsig genes with significant a interaction
@@ -90,31 +97,33 @@ test_that("runEISA() gives expected results", {
     #       and n_intron/N_total ratios the same
     #     - half applied to ES and NP, each (in order to get both directions)
     selsig <- rownames(cntEx)[sample(x = nrow(cntEx), size = nsig, replace = FALSE)]
-    lfcsig <- sample(x = 2:5, size = nsig, replace = TRUE)
+    lfcsig <- sample(x = 2L:5L, size = nsig, replace = TRUE)
     names(lfcsig) <- selsig
-    i <- seq(1, round(nsig / 2))
-    cntEx[selsig[i],   1:2] <- round(cntEx[selsig[i],   1:2] * 2^lfcsig[i])
-    cntEx[selsig[-i],  3:4] <- round(cntEx[selsig[-i],  3:4] * 2^lfcsig[-i])
+    i <- seq(1L, round(nsig / 2.0))
+    cntEx[selsig[i],  1L:2L] <- round(cntEx[selsig[i],  1L:2L] * 2.0^lfcsig[i])
+    cntEx[selsig[-i], 3L:4L] <- round(cntEx[selsig[-i], 3L:4L] * 2.0^lfcsig[-i])
 
     # ... nsig2 genes with a sample specific effect
     #     - re-adjust counts of one replicate only, both for exons and introns
     #       (keeps the effect constant, but gives a sample-specific offset)
     selsig2 <- sample(x = selsig, size = nsig2, replace = FALSE)
-    cntEx[selsig2,  4] <- round(cntEx[selsig2,  4] / 2^(lfcsig[match(selsig2, selsig)] / 2))
-    cntIn[selsig2,  4] <- round(cntIn[selsig2,  4] / 2^(lfcsig[match(selsig2, selsig)] / 2))
+    cntEx[selsig2, 4L] <- round(cntEx[selsig2, 4L] / 2.0^(lfcsig[match(selsig2, selsig)] / 2.0))
+    cntIn[selsig2, 4L] <- round(cntIn[selsig2, 4L] / 2.0^(lfcsig[match(selsig2, selsig)] / 2.0))
 
     # run EISA (use gene filtering that is independent of model)
     res1 <- runEISA(cntEx, cntIn, cond, geneSelection = "Gaidatzis2015",
-                    pscnt = 8, sizeFactor = "individual", modelSamples = FALSE,
+                    pscnt = 8L, sizeFactor = "individual", modelSamples = FALSE,
                     legacyQLF = TRUE)
     res2 <- runEISA(cntEx, cntIn, cond, geneSelection = "Gaidatzis2015",
-                    pscnt = 8, sizeFactor = "individual", modelSamples = TRUE, 
+                    pscnt = 8L, sizeFactor = "individual", modelSamples = TRUE,
                     legacyQLF = TRUE)
 
     # account for filtered genes
     ngenes <- nrow(res1$tab.ExIn)
-    selsig <- intersect(selsig, rownames(res1$tab.ExIn)); nsig <- length(selsig)
-    selsig2 <- intersect(selsig2, selsig); nsig2 <- length(selsig2)
+    selsig <- intersect(selsig, rownames(res1$tab.ExIn))
+    nsig <- length(selsig)
+    selsig2 <- intersect(selsig2, selsig)
+    nsig2 <- length(selsig2)
     lfcsig <- lfcsig[selsig]
 
     # look at results
@@ -134,10 +143,14 @@ test_that("runEISA() gives expected results", {
                 test.sig = res2$tab.ExIn$FDR < 0.01) # close to 1/nsig -> one false positive
 
     # no false positives or false negatives (except for selsig2 genes in t1)
-    nmissed1 <- t1["FALSE", "TRUE", "FALSE"] # these are now missed after updated df calculation in limma (https://code.bioconductor.org/browse/limma/commit/e8ff47777e7c25d6dcb9582d9fcb8f9c4fed9da1)
-    nmissed2 <- t1["TRUE", "TRUE", "FALSE"]  # expect to miss some genes with sample-specific effects
+    # these are now missed after updated df calculation in limma
+    # (https://code.bioconductor.org/browse/limma/commit/e8ff47777e7c25d6dcb9582d9fcb8f9c4fed9da1)
+    nmissed1 <- t1["FALSE", "TRUE", "FALSE"]
+    # expect to miss some genes with sample-specific effects
+    nmissed2 <- t1["TRUE", "TRUE", "FALSE"]
     expect_identical(as.vector(t1),
-                     c(ngenes - nsig, 0L, nmissed1, nmissed2, 0L, 0L, nsig - nsig2 - nmissed1, nsig2 - nmissed2))
+                     c(ngenes - nsig, 0L, nmissed1, nmissed2, 0L, 0L,
+                       nsig - nsig2 - nmissed1, nsig2 - nmissed2))
     expect_identical(as.vector(t2),
                      c(ngenes - nsig, 0L, 0L, 0L, 0L, 0L, nsig - nsig2, nsig2))
 })

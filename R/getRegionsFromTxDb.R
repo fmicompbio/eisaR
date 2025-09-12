@@ -49,14 +49,18 @@
 #' @export
 getRegionsFromTxDb <- function(txdb, exonExt = 10L, strandedData = TRUE) {
     # check arguments
-    stopifnot(inherits(txdb, "TxDb") || inherits(txdb, "EnsDb"))
-    stopifnot(is.numeric(exonExt) && length(exonExt) == 1L)
-    stopifnot(is.logical(strandedData) && length(strandedData) == 1L)
+    stopifnot(exprs = {
+        inherits(txdb, "TxDb") || inherits(txdb, "EnsDb")
+        is.numeric(exonExt)
+        length(exonExt) == 1L
+        is.logical(strandedData)
+        length(strandedData) == 1L
+    })
     if (!requireNamespace("GenomicFeatures", quietly = TRUE)) {
         stop("getRegionsFromTxDb() requires installing the Bioconductor package 'GenomicFeatures'",
              " using BiocManager::install(\"GenomicFeatures\")")
     }
-    
+
     # get exons and extend by exonExt on both sides
     message("extracting exon coordinates")
     exL <- GenomicFeatures::exonsBy(txdb, by = "gene")
@@ -67,15 +71,17 @@ getRegionsFromTxDb <- function(txdb, exonExt = 10L, strandedData = TRUE) {
 
     # identify genes with single exon
     nEx <- S4Vectors::elementNROWS(exL)
-    severalExons <- nEx > 1
+    severalExons <- nEx > 1L
 
     # identify genes with exons on multiple chromosomes
-    suppressWarnings(nChr <- S4Vectors::elementNROWS(S4Vectors::runLength(GenomicRanges::seqnames(exL))))
-    singleChr <- nChr == 1
+    suppressWarnings(nChr <- S4Vectors::elementNROWS(
+        S4Vectors::runLength(GenomicRanges::seqnames(exL))))
+    singleChr <- nChr == 1L
 
     ## identify genes with exons on multiple strands
-    suppressWarnings(nStr <- S4Vectors::elementNROWS(S4Vectors::runLength(GenomicRanges::strand(exL))))
-    singleStrand <- nStr == 1
+    suppressWarnings(nStr <- S4Vectors::elementNROWS(
+        S4Vectors::runLength(GenomicRanges::strand(exL))))
+    singleStrand <- nStr == 1L
 
     # get gene body
     ex <- suppressWarnings(GenomicRanges::trim(unlist(exL)))
@@ -86,19 +92,18 @@ getRegionsFromTxDb <- function(txdb, exonExt = 10L, strandedData = TRUE) {
 
     ## identify overlapping genes
     nov <- GenomicRanges::countOverlaps(gbody, gbody, ignore.strand = !strandedData)
-    noOverlaps <- nov == 1 # only self-overlaps
+    noOverlaps <- nov == 1L # only self-overlaps
 
     ## filter regions
     sel <- severalExons & singleChr & singleStrand & noOverlaps
     selex <- names(ex) %in% names(gbody[sel])
     message("total number of genes/exons: ", length(sel), "/", length(ex))
     message("removing overlapping/single-exon/ambiguous genes (", length(sel) - sum(sel), ")")
-    message("creating filtered regions for ", sum(sel), " genes (", round(mean(sel)*100, 1),
-            "%) with ", sum(selex), " exons (", round(mean(selex) * 100, 1), "%)")
+    message("creating filtered regions for ", sum(sel), " genes (", round(mean(sel) * 100.0, 1L),
+            "%) with ", sum(selex), " exons (", round(mean(selex) * 100.0, 1L), "%)")
     gbody <- gbody[sel]
     ex <- ex[selex]
 
     ## return results
     return(list(exons = ex, genebodies = gbody))
 }
-
