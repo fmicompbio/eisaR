@@ -6,9 +6,11 @@ test_that("runEISA() runs", {
                                  package = "eisaR"))[, -1L]
     cond <- factor(c("ES", "ES", "TN", "TN"))
     cntSE1 <- SummarizedExperiment::SummarizedExperiment(
-        assays = list(exon = cntEx, intron = cntIn))
+        assays = list(exon = cntEx, intron = cntIn)
+    )
     cntSE2 <- SummarizedExperiment::SummarizedExperiment(
-        assays = list(spliced = cntEx, unspliced = cntIn))
+        assays = list(spliced = cntEx, unspliced = cntIn)
+    )
 
     # arguments
     expect_error(runEISA(data.frame("a")))

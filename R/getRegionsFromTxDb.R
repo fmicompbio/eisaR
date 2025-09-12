@@ -75,12 +75,14 @@ getRegionsFromTxDb <- function(txdb, exonExt = 10L, strandedData = TRUE) {
 
     # identify genes with exons on multiple chromosomes
     suppressWarnings(nChr <- S4Vectors::elementNROWS(
-        S4Vectors::runLength(GenomicRanges::seqnames(exL))))
+        S4Vectors::runLength(GenomicRanges::seqnames(exL))
+    ))
     singleChr <- nChr == 1L
 
     ## identify genes with exons on multiple strands
     suppressWarnings(nStr <- S4Vectors::elementNROWS(
-        S4Vectors::runLength(GenomicRanges::strand(exL))))
+        S4Vectors::runLength(GenomicRanges::strand(exL))
+    ))
     singleStrand <- nStr == 1L
 
     # get gene body

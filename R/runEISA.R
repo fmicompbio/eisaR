@@ -278,7 +278,7 @@ runEISA <- function(cntEx, cntIn, cond, method = NULL,
                                     design = dsgn[seq.int(nsmpls), ]) &
                     edgeR::filterByExpr(y[, nsmpls + seq.int(nsmpls)],
                                         design = dsgn[nsmpls + seq.int(nsmpls), ])
-                ]
+            ]
             logcpmEx <- edgeR::cpm(y[, seq.int(nsmpls)], log = TRUE,
                                    prior.count = pscnt)
             logcpmIn <- edgeR::cpm(y[, nsmpls + seq.int(nsmpls)], log = TRUE,
@@ -310,16 +310,20 @@ runEISA <- function(cntEx, cntIn, cond, method = NULL,
         # expressed genes
         if (recalcNormFactAfterFilt) {
             y$samples$norm.factors.exons <- rep(
-                edgeR::calcNormFactors(y$counts[, seq.int(nsmpls)]), 2L)
+                edgeR::calcNormFactors(y$counts[, seq.int(nsmpls)]), 2L
+            )
             y$samples$norm.factors.introns <- rep(
-                edgeR::calcNormFactors(y$counts[, nsmpls + seq.int(nsmpls)]), 2L)
+                edgeR::calcNormFactors(y$counts[, nsmpls + seq.int(nsmpls)]), 2L
+            )
             y$samples$norm.factors.individual <- edgeR::calcNormFactors(y$counts)
         }
         if (recalcLibSizeAfterFilt) {
             y$samples$lib.size.exons <- rep(
-                colSums(y$counts[, seq.int(nsmpls)]), 2L)
+                colSums(y$counts[, seq.int(nsmpls)]), 2L
+            )
             y$samples$lib.size.introns <- rep(
-                colSums(y$counts[, nsmpls + seq.int(nsmpls)]), 2L)
+                colSums(y$counts[, nsmpls + seq.int(nsmpls)]), 2L
+            )
             y$samples$lib.size.individual <- colSums(y$counts)
         }
         # y <- edgeR::calcNormFactors(y)

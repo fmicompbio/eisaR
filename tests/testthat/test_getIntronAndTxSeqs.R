@@ -660,10 +660,12 @@ test_that("feature sequence extraction works", {
                      as.character(Biostrings::substr(genomeseq[["chr1"]], 61L, 90L)))
     expect_identical(as.character(seqs[["tx2.1-I-U"]]),
                      as.character(Biostrings::reverseComplement(
-                         Biostrings::substr(genomeseq[["chr1"]], 11L, 70L))))
+                         Biostrings::substr(genomeseq[["chr1"]], 11L, 70L)
+                     )))
     expect_identical(as.character(seqs[["tx2.2-U-U"]]),
                      as.character(Biostrings::reverseComplement(
-                         Biostrings::substr(genomeseq[["chr1"]], 11L, 80L))))
+                         Biostrings::substr(genomeseq[["chr1"]], 11L, 80L)
+                     )))
     expect_identical(as.character(seqs[["tx3.1-U"]]),
                      as.character(Biostrings::substr(genomeseq[["chr2"]], 61L, 160L)))
     expect_identical(as.character(seqs[["tx3.2-U"]]),
@@ -680,13 +682,16 @@ test_that("feature sequence extraction works", {
                      as.character(Biostrings::substr(genomeseq[["chr1"]], 118L, 143L)))
     expect_identical(as.character(seqs[["tx2.1-I-I"]]),
                      as.character(Biostrings::reverseComplement(
-                         Biostrings::substr(genomeseq[["chr1"]], 28L, 53L))))
+                         Biostrings::substr(genomeseq[["chr1"]], 28L, 53L)
+                     )))
     expect_identical(as.character(seqs[["tx2.2-U-I"]]),
                      as.character(Biostrings::reverseComplement(
-                         Biostrings::substr(genomeseq[["chr1"]], 18L, 38L))))
+                         Biostrings::substr(genomeseq[["chr1"]], 18L, 38L)
+                     )))
     expect_identical(as.character(seqs[["tx2.2-U-I1"]]),
                      as.character(Biostrings::reverseComplement(
-                         Biostrings::substr(genomeseq[["chr1"]], 43L, 63L))))
+                         Biostrings::substr(genomeseq[["chr1"]], 43L, 63L)
+                     )))
     expect_identical(as.character(seqs[["tx3.1-I"]]),
                      as.character(Biostrings::substr(genomeseq[["chr2"]], 88L, 143L)))
     expect_identical(as.character(seqs[["tx3.2-I"]]),
@@ -730,10 +735,12 @@ test_that("feature sequence extraction works", {
                      as.character(Biostrings::substr(genomeseq[["chr1"]], 61L, 90L)))
     expect_identical(as.character(seqs[["tx2.1-I-U"]]),
                      as.character(Biostrings::reverseComplement(
-                         Biostrings::substr(genomeseq[["chr1"]], 11L, 70L))))
+                         Biostrings::substr(genomeseq[["chr1"]], 11L, 70L)
+                     )))
     expect_identical(as.character(seqs[["tx2.2-U-U"]]),
                      as.character(Biostrings::reverseComplement(
-                         Biostrings::substr(genomeseq[["chr1"]], 11L, 80L))))
+                         Biostrings::substr(genomeseq[["chr1"]], 11L, 80L)
+                     )))
     expect_identical(as.character(seqs[["tx3.1-U"]]),
                      as.character(Biostrings::substr(genomeseq[["chr2"]], 61L, 160L)))
     expect_identical(as.character(seqs[["tx3.2-U"]]),
@@ -748,10 +755,12 @@ test_that("feature sequence extraction works", {
                      as.character(Biostrings::substr(genomeseq[["chr1"]], 118L, 143L)))
     expect_identical(as.character(seqs[["g2-I-I"]]),
                      as.character(Biostrings::reverseComplement(
-                         Biostrings::substr(genomeseq[["chr1"]], 28L, 38L))))
+                         Biostrings::substr(genomeseq[["chr1"]], 28L, 38L)
+                     )))
     expect_identical(as.character(seqs[["g2-I-I1"]]),
                      as.character(Biostrings::reverseComplement(
-                         Biostrings::substr(genomeseq[["chr1"]], 43L, 53L))))
+                         Biostrings::substr(genomeseq[["chr1"]], 43L, 53L)
+                     )))
     expect_identical(as.character(seqs[["g3-U-I"]]),
                      as.character(Biostrings::substr(genomeseq[["chr2"]], 88L, 103L)))
     expect_identical(as.character(seqs[["g3-U-I1"]]),
@@ -789,12 +798,14 @@ test_that("gtf export works", {
         as.character(
             seqnames(subset(rb, transcript_id == "tx1.3" & type == "transcript"))
         ),
-        "chr1")
+        "chr1"
+    )
     expect_identical(
         as.character(
             strand(subset(rb, transcript_id == "tx1.3" & type == "transcript"))
-            ),
-        "+")
+        ),
+        "+"
+    )
 })
 
 test_that("gtf export fails if required packages are missing", {

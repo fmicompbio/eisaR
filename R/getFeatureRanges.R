@@ -260,7 +260,8 @@ getFeatureRanges <- function(gtf,
             grl <- GenomicRanges::restrict(
                 grl,
                 start = BiocGenerics::start(unlist(grlrange)),
-                end = BiocGenerics::end(unlist(grlrange)))
+                end = BiocGenerics::end(unlist(grlrange))
+            )
         }
 
         if (joinOverlappingIntrons) {
@@ -305,7 +306,8 @@ getFeatureRanges <- function(gtf,
             S4Vectors::mcols(gr)[, c("exon_id", "exon_rank",
                                      "transcript_id", "gene_id", "type")]
         grl <- BiocGenerics::relist(gr, lapply(
-            setNames(seq_along(gr), gr$transcript_id), function(i) i))
+            setNames(seq_along(gr), gr$transcript_id), function(i) i
+        ))
 
         featurelist$intron <- names(grl)
 
