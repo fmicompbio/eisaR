@@ -33,6 +33,9 @@ test_that("getRegionsFromTxDb() runs", {
     regL1 <- getRegionsFromTxDb(edb)
     regL2 <- getRegionsFromTxDb(txdb)
     expect_identical(regL1, regL2)
+
+    # clean up
+    AnnotationDbi::dbFileDisconnect(AnnotationDbi::dbconn(txdb))
 })
 
 test_that("getRegionsFromTbx() fails when required packages are missing", {
