@@ -3,21 +3,21 @@ title: "Using eisaR for Exon-Intron Split Analysis (EISA)"
 author: "Michael Stadler"
 date: "`r Sys.Date()`"
 bibliography: refs.bib
-output: 
+output:
   BiocStyle::html_document:
     toc_float: true
 vignette: >
   %\VignetteIndexEntry{Using eisaR for Exon-Intron Split Analysis (EISA)}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
-editor_options: 
+editor_options:
   chunk_output_type: console
 ---
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
+    collapse = TRUE,
+    comment = "#>"
 )
 ```
 
@@ -26,14 +26,14 @@ Exon-Intron Split Analysis has been described by @eisa. It consists of separatel
 quantifying exonic and intronic alignments in RNA-seq data, in order to measure
 changes in mature RNA and pre-mRNA reads across different experimental conditions.
 We have shown that this allows quantification of transcriptional and post-transcriptional
-regulation of gene expression. 
+regulation of gene expression.
 
 The `eisaR` package contains convenience functions to facilitate the steps in an
-exon-intron split analysis, which consists of:  
-1. preparing the annotation (exonic and gene body coordinate ranges, section \@ref(annotation))  
-2. quantifying RNA-seq alignments in exons and introns (sections \@ref(align) and \@ref(count))  
-3. calculating and comparing exonic and intronic changes across conditions (section \@ref(convenient))  
-4. visualizing the results (section \@ref(plot))  
+exon-intron split analysis, which consists of:
+1. preparing the annotation (exonic and gene body coordinate ranges, section \@ref(annotation))
+2. quantifying RNA-seq alignments in exons and introns (sections \@ref(align) and \@ref(count))
+3. calculating and comparing exonic and intronic changes across conditions (section \@ref(convenient))
+4. visualizing the results (section \@ref(plot))
 
 For the steps 1. and 2. above, this vignette makes use of Bioconductor annotation and
 the `r Biocpkg("QuasR")` package. It is also possible to obtain count tables for exons and
@@ -55,10 +55,10 @@ BiocManager::install("eisaR")
 # Preparing the annotation{#annotation}
 As mentioned, `eisaR` uses gene annotations from Bioconductor.
 They are provided in the form of `TxDb` or `EnsDb` objects, e.g. via packages such as `r Biocpkg("TxDb.Mmusculus.UCSC.mm10.knownGene")` or `r Biocpkg("EnsDb.Hsapiens.v86")`.
-You can see available annotations using the following code:  
+You can see available annotations using the following code:
 
 ```{r availableOnline, eval=FALSE}
-pkgs <- c(BiocManager::available("TxDb")
+pkgs <- c(BiocManager::available("TxDb"),
           BiocManager::available("EnsDb"))
 ```
 
@@ -81,7 +81,7 @@ txdbFile <- system.file("extdata", "hg19sub.sqlite", package = "eisaR")
 txdb <- AnnotationDbi::loadDb(txdbFile)
 ```
 
-Exon and gene body regions are then extracted from the `TxDb`:  
+Exon and gene body regions are then extracted from the `TxDb`:
 
 ```{r regions}
 # extract filtered exonic and gene body regions
@@ -100,7 +100,7 @@ they reside on opposite strands.
 
 You can also export the obtained regions into files. This may be useful if
 you plan to align and/or quantify reads outside of R. For example, you can use
-`r Biocpkg("rtracklayer")` to export the regions in `regS` into `.gtf` files: 
+`r Biocpkg("rtracklayer")` to export the regions in `regS` into `.gtf` files:
 
 ```{r exportregions}
 library(rtracklayer)
@@ -112,14 +112,14 @@ export(regS$genebodies, "hg19sub_genebodies_stranded.gtf")
 For this example we will use the `r Biocpkg("QuasR")` package for indexing and
 alignment of short reads, and a small RNA-seq dataset that is contained in that
 package. As mentioned, it is also possible to align or also quantify your reads
-using an alternative aligner/counter, and skip over these steps. For more 
-details about the syntax, we refer to the documentation and vignette of the 
-`r Biocpkg("QuasR")` package. 
+using an alternative aligner/counter, and skip over these steps. For more
+details about the syntax, we refer to the documentation and vignette of the
+`r Biocpkg("QuasR")` package.
 
 
 ## Align reads{#align}
 Let's first copy the sample data from the `r Biocpkg("QuasR")` package to the
-current working directory, all contained in a folder named `extdata`:  
+current working directory, all contained in a folder named `extdata`:
 
 ```{r extdata}
 library(QuasR)
@@ -127,17 +127,17 @@ file.copy(system.file(package = "QuasR", "extdata"), ".", recursive = TRUE)
 ```
 
 We next align the reads to a mini-genome (fasta file `extdata/hg19sub.fa`) using
-`qAlign`. The `sampleFile` specifies the samples we want to use, and the paths 
-to the respective fastq files. 
+`qAlign`. The `sampleFile` specifies the samples we want to use, and the paths
+to the respective fastq files.
 
 ```{r align}
-sampleFile <- "extdata/samples_rna_single.txt"
+sampleFile <- file.path("extdata", "samples_rna_single.txt")
 ## Display the structure of the sampleFile
 read.delim(sampleFile)
 
 ## Perform the alignment
-proj <- qAlign(sampleFile = sampleFile, 
-               genome = "extdata/hg19sub.fa",
+proj <- qAlign(sampleFile = sampleFile,
+               genome = file.path("extdata", "hg19sub.fa"),
                aligner = "Rhisat2", splicedAlignment = TRUE)
 alignmentStats(proj)
 ```
@@ -146,7 +146,7 @@ alignmentStats(proj)
 Alignments in exons and gene bodies can now be counted using `qCount` and the
 `regU` that we have generated earlier (assuming that the data is unstranded).
 Intronic counts can then be obtained from the difference between gene bodies and
-exons:  
+exons:
 
 ```{r count}
 cntEx <- qCount(proj, regU$exons, orientation = "any")
@@ -165,7 +165,7 @@ rows and columns in both tables).
 The above example only contains very few genes. For the rest of the vignette,
 we will use count tables from a real RNA-seq experiment that are provided in the
 `eisaR` package. The counts correspond to the raw data used in Figure 3a of @eisa
-and are also available online from the [supplementary material](https://fmicompbio.github.io/projects/EISA/EISA.html): 
+and are also available online from the [supplementary material](https://fmicompbio.github.io/projects/EISA/EISA.html):
 
 ```{r loadcounts}
 cntEx <- readRDS(system.file("extdata",
@@ -183,75 +183,75 @@ you can skip now to section \@ref(stepwise).
 
 ```{r runEISA}
 # remove "width" column
-Rex <- cntEx[, colnames(cntEx) != "width"]
-Rin <- cntIn[, colnames(cntIn) != "width"]
+rEx <- cntEx[, colnames(cntEx) != "width"]
+rIn <- cntIn[, colnames(cntIn) != "width"]
 
 # create condition factor (contrast will be TN - ES)
 cond <- factor(c("ES", "ES", "TN", "TN"))
 
 # run EISA
-res <- runEISA(Rex, Rin, cond)
+res <- runEISA(rEx, rIn, cond)
 ```
 
 ## Alternative implementations of EISA
 There are six arguments in `runEISA` (`modelSamples`, `geneSelection`, `effects`,
-`statFramework`, `pscnt` and `sizeFactor`) that control gene filtering, 
-calculation of contrasts and the statistical method used, summarized in the 
+`statFramework`, `pscnt` and `sizeFactor`) that control gene filtering,
+calculation of contrasts and the statistical method used, summarized in the
 bullet list below.
 
 The default values of these arguments correspond to the currently recommended way
 of running EISA. You can also run EISA exactly as it was described by @eisa, by
 setting `method = "Gaidatzis2015"`. This will override the values of the six
 other arguments and set them according to the published algorithm (as indicated
-below). 
+below).
 
-* `modelSamples`: Account for individual samples in statistical model? Possible values are:  
-  - `FALSE` (`method="Gaidatzis2015"`): use a model of the form `~ condition * region`  
-  - `TRUE` (default): use a model adjusting for the baseline differences among samples, and with condition-specific region effects (similar to the model described in section 3.5 of the `r Biocpkg("edgeR")` user guide)  
+* `modelSamples`: Account for individual samples in statistical model? Possible values are:
+  - `FALSE` (`method="Gaidatzis2015"`): use a model of the form `~ condition * region`
+  - `TRUE` (default): use a model adjusting for the baseline differences among samples, and with condition-specific region effects (similar to the model described in section 3.5 of the `r Biocpkg("edgeR")` user guide)
 
-* `geneSelection`: How to select detected genes. Possible values are:  
+* `geneSelection`: How to select detected genes. Possible values are:
   - `"filterByExpr"` (default): First, counts are normalized using `edgeR::calcNormFactors`,
-    treating intronic and exonic counts as individual samples. Then, the 
+    treating intronic and exonic counts as individual samples. Then, the
     `edgeR::filterByExpr` function is used with default parameters to select
     quantifiable genes.
   - `"none"`: This will use all the genes provided in the count tables, assuming
-    that an appropriate selection of quantifiable genes has already been done.  
+    that an appropriate selection of quantifiable genes has already been done.
   - `"Gaidatzis2015"` (`method="Gaidatzis2015"`): First, intronic and exonic counts
     are linearly scaled to the mean library size (estimated as the sum of all intronic
     or exonic counts, respectively). Then, quantifiable genes are selected as the
-    genes with counts `x` that fulfill `log2(x + 8) > 5` in both exons and introns.  
-    
+    genes with counts `x` that fulfill `log2(x + 8) > 5` in both exons and introns.
+
 * `statFramework`: The framework within `edgeR` that is used for the statistical analysis.
-  Possible values are:  
+  Possible values are:
   - `"QLF"` (default): quasi-likelihood F-test using `edgeR::glmQLFit` and
     `edgeR::glmQLFTest`. This framework is highly recommended as it gives stricter
-    error rate control by accounting for the uncertainty in dispersion estimation.  
+    error rate control by accounting for the uncertainty in dispersion estimation.
   - `"LRT"` (`method="Gaidatzis2015"`): likelihood ratio test using `edgeR::glmFit`
-    and `edgeR::glmLRT`.  
-  
-* `effects`: How the effects (log2 fold-changes) are calculated. Possible values are:  
+    and `edgeR::glmLRT`.
+
+* `effects`: How the effects (log2 fold-changes) are calculated. Possible values are:
   - `"predFC"` (default): Fold-changes are calculated using the fitted model with
     `edgeR::predFC` and the value provided to `pscnt`. Please note that if a
-    sample factor is included in the statistical model (`modelSamples=TRUE`), 
+    sample factor is included in the statistical model (`modelSamples=TRUE`),
     effects cannot be obtained from that model. In that case, effects are obtained
     from a simpler model without sample effects.
   - `"Gaidatzis2015"` (`method="Gaidatzis2015"`): Fold-changes are calculated
     using the formula `log2((x + pscnt)/(y + pscnt))`. If `pscnt` is not set to 8,
     `runEISA` will warn that this deviates from the method used in Gaidatzis et al., 2015.
-    
+
 * `pscnt`: The pseudocount that is added to normalized counts before log transformation.
   For `geneSelection="Gaidatzis2015"`, `pscnt` is used both in gene selection as well as
   in the calculation of log2 fold-changes. Otherwise, `pscnt` is only used in the calculation
   of log2 fold-changes in `edgeR::predFC(, prior.count = pscnt)`.
 
-* `sizeFactor`: How size factors (TMM normalization factors and library sizes) 
+* `sizeFactor`: How size factors (TMM normalization factors and library sizes)
 are calculated and used within `eisaR`:
-  - `"exon"` (default): Size factors are calculated for exonic counts and 
+  - `"exon"` (default): Size factors are calculated for exonic counts and
   reused for the corresponding intronic counts.
-  - `"intron"`: Size factors are calculated for intronic counts and 
+  - `"intron"`: Size factors are calculated for intronic counts and
   reused for the corresponding exonic counts.
-  - `"individual"` (`method="Gaidatzis2015"`): Size factors are calculated 
-  independently for exonic and intronic counts. 
+  - `"individual"` (`method="Gaidatzis2015"`): Size factors are calculated
+  independently for exonic and intronic counts.
 
 While different values for these arguments typically yield similar results,
 the defaults are often less stringent compared to `method="Gaidatzis2015"` when
@@ -259,11 +259,11 @@ selecting quantifiable genes, but more stringent when calling significant change
 (especially with low numbers of replicates).
 
 Here is an illustration of how the results differ between `method="Gaidatzis2015"` and
-the defaults:  
+the defaults:
 
 ```{r compare}
-res1 <- runEISA(Rex, Rin, cond, method = "Gaidatzis2015")
-res2 <- runEISA(Rex, Rin, cond)
+res1 <- runEISA(rEx, rIn, cond, method = "Gaidatzis2015")
+res2 <- runEISA(rEx, rIn, cond)
 
 # number of quantifiable genes
 nrow(res1$DGEList)
@@ -279,10 +279,10 @@ summary(rownames(res2$contrasts)[res2$tab.ExIn$FDR < 0.05] %in%
 
 # comparison of deltas
 ids <- intersect(rownames(res1$DGEList), rownames(res2$DGEList))
-cor(res1$contrasts[ids,"Dex"], res2$contrasts[ids,"Dex"])
-cor(res1$contrasts[ids,"Din"], res2$contrasts[ids,"Din"])
-cor(res1$contrasts[ids,"Dex.Din"], res2$contrasts[ids,"Dex.Din"])
-plot(res1$contrasts[ids,"Dex.Din"], res2$contrasts[ids,"Dex.Din"], pch = "*",
+cor(res1$contrasts[ids, "Dex"], res2$contrasts[ids, "Dex"])
+cor(res1$contrasts[ids, "Din"], res2$contrasts[ids, "Din"])
+cor(res1$contrasts[ids, "Dex.Din"], res2$contrasts[ids, "Dex.Din"])
+plot(res1$contrasts[ids, "Dex.Din"], res2$contrasts[ids, "Dex.Din"], pch = "*",
      xlab = expression(paste(Delta, "exon", -Delta, "intron for method='Gaidatzis2015'")),
      ylab = expression(paste(Delta, "exon", -Delta, "intron for default parameters")))
 ```
@@ -301,23 +301,23 @@ design, and a recommended way to analyze interactions in such experiments would
 be to use a mixed effect model with the plot (in our case, the sample) as a random
 effect. The disadvantage here however would be that available packages for mixed
 effect models are not designed for count data, and we therefore use an alternative
-approach to explicitly model the sample dependency, by introducing sample-specific 
+approach to explicitly model the sample dependency, by introducing sample-specific
 columns into the design matrix (for `modelSamples=TRUE`). That sample factor is
-nested in the condition factor (no sample can belong to more than one condition). 
-Thus, we are in the situation described in section 3.5 ('Comparisons both between and 
-within subjects') of the `r Biocpkg("edgeR")` user guide, and we use the approach 
-described there to define a design matrix with sample-specific baseline effects 
+nested in the condition factor (no sample can belong to more than one condition).
+Thus, we are in the situation described in section 3.5 ('Comparisons both between and
+within subjects') of the `r Biocpkg("edgeR")` user guide, and we use the approach
+described there to define a design matrix with sample-specific baseline effects
 as well as condition-specific region effects.
 
 This has no impact on the effects (the log2 fold-changes of `modelSamples=TRUE`
 and `modelSamples=FALSE` are nearly identical). However, in the presence of sample effects,
 `modelSamples=TRUE` increases the sensitivity of detecting genes with significant
 interactions. Here is a comparison of the EISA results with and without accounting
-for the sample in the model:  
+for the sample in the model:
 
 ```{r modelSamples}
-res3 <- runEISA(Rex, Rin, cond, modelSamples = FALSE)
-res4 <- runEISA(Rex, Rin, cond, modelSamples = TRUE)
+res3 <- runEISA(rEx, rIn, cond, modelSamples = FALSE)
+res4 <- runEISA(rEx, rIn, cond, modelSamples = TRUE)
 ids <- intersect(rownames(res3$contrasts), rownames(res4$contrasts))
 
 # number of genes with significant post-transcriptional regulation
@@ -331,7 +331,7 @@ summary(rownames(res3$contrasts)[res3$tab.ExIn$FDR < 0.05] %in%
 
 # comparison of contrasts
 diag(cor(res3$contrasts[ids, ], res4$contrasts[ids, ]))
-plot(res3$contrasts[ids, 3], res4$contrasts[ids, 3], pch = "*",
+plot(res3$contrasts[ids, 3L], res4$contrasts[ids, 3L], pch = "*",
      xlab = "Interaction effects for modelSamples=FALSE",
      ylab = "Interaction effects for modelSamples=TRUE")
 
@@ -339,15 +339,15 @@ plot(res3$contrasts[ids, 3], res4$contrasts[ids, 3], pch = "*",
 plot(-log10(res3$tab.ExIn[ids, "FDR"]), -log10(res4$tab.ExIn[ids, "FDR"]), pch = "*",
      xlab = "-log10(FDR) for modelSamples=FALSE",
      ylab = "-log10(FDR) for modelSamples=TRUE")
-abline(a = 0, b = 1, col = "gray")
-legend("bottomright", "y = x", bty = "n", lty = 1, col = "gray")
+abline(a = 0.0, b = 1.0, col = "gray")
+legend("bottomright", "y = x", bty = "n", lty = 1L, col = "gray")
 ```
 
 
 # Visualize EISA results{#plot}
 We can now visualize the results by plotting intronic changes versus exonic
 changes (genes with significant interactions, which are likely to be post-transcriptionally
-regulated, are color coded):  
+regulated, are color coded):
 ```{r plotEISA}
 plotEISA(res)
 ```
@@ -368,28 +368,28 @@ that varying exon over intron ratios between samples are of technical origin.
 
 ```{r normalization}
 # remove column "width"
-Rex <- cntEx[,colnames(cntEx) != "width"]
-Rin <- cntIn[,colnames(cntIn) != "width"]
-Rall <- Rex + Rin
-fracIn <- colSums(Rin)/colSums(Rall)
+rEx <- cntEx[, colnames(cntEx) != "width"]
+rIn <- cntIn[, colnames(cntIn) != "width"]
+rAll <- rEx + rIn
+fracIn <- colSums(rIn) / colSums(rAll)
 summary(fracIn)
 
 # scale counts to the mean library size,
 # separately for exons and introns
-Nex <- t(t(Rex) / colSums(Rex) * mean(colSums(Rex)))
-Nin <- t(t(Rin) / colSums(Rin) * mean(colSums(Rin)))
+normEx <- t(t(rEx) / colSums(rEx) * mean(colSums(rEx)))
+normIn <- t(t(rIn) / colSums(rIn) * mean(colSums(rIn)))
 
 # log transform (add a pseudocount of 8)
-NLex <- log2(Nex + 8)
-NLin <- log2(Nin + 8)
+lognormEx <- log2(normEx + 8L)
+lognormIn <- log2(normIn + 8L)
 ```
 
 ## Identify quantifiable genes
 Genes with very low counts in either exons or introns are better removed, as
 they will be too noisy to yield useful results. We use here a fixed cut-off
-on the normalized, log-transformed intron and exonic counts:  
+on the normalized, log-transformed intron and exonic counts:
 ```{r quantgenes}
-quantGenes <- rownames(Rex)[ rowMeans(NLex) > 5.0 & rowMeans(NLin) > 5.0 ]
+quantGenes <- rownames(rEx)[rowMeans(lognormEx) > 5.0 & rowMeans(lognormIn) > 5.0]
 length(quantGenes)
 ```
 
@@ -399,27 +399,29 @@ embryonic stem (MmES) cells and derived terminal neurons (MmTN), with two replic
 for each condition.
 
 We will now calculate the changes between neurons and ES cells in introns ($\Delta I$),
-in exons ($\Delta E$), and the difference between the two ($\Delta E - \Delta I$):  
+in exons ($\Delta E$), and the difference between the two ($\Delta E - \Delta I$):
 
 ```{r dIdE}
-Dex <- NLex[,c("MmTN_RNA_total_a","MmTN_RNA_total_b")] - NLex[,c("MmES_RNA_total_a","MmES_RNA_total_b")]
-Din <- NLin[,c("MmTN_RNA_total_a","MmTN_RNA_total_b")] - NLin[,c("MmES_RNA_total_a","MmES_RNA_total_b")]
+Dex <- lognormEx[, c("MmTN_RNA_total_a", "MmTN_RNA_total_b")] -
+    lognormEx[, c("MmES_RNA_total_a", "MmES_RNA_total_b")]
+Din <- lognormIn[, c("MmTN_RNA_total_a", "MmTN_RNA_total_b")] -
+    lognormIn[, c("MmES_RNA_total_a", "MmES_RNA_total_b")]
 Dex.Din <- Dex - Din
 
-cor(Dex[quantGenes,1], Dex[quantGenes,2])
-cor(Din[quantGenes,1], Din[quantGenes,2])
-cor(Dex.Din[quantGenes,1], Dex.Din[quantGenes,2])
+cor(Dex[quantGenes, 1L], Dex[quantGenes, 2L])
+cor(Din[quantGenes, 1L], Din[quantGenes, 2L])
+cor(Dex.Din[quantGenes, 1L], Dex.Din[quantGenes, 2L])
 ```
 Both exonic and intronic changes are correlated across replicates, and so are the
 differences, indicating a reproducible signal for post-transcriptional regulation.
 
 ## Statistical analysis
 Finally, we use the replicate measurement in the `r Biocpkg("edgeR")` framework to
-calculate the significance of the changes:  
+calculate the significance of the changes:
 ```{r sig}
 # create DGEList object with exonic and intronic counts
 library(edgeR)
-cnt <- data.frame(Ex = Rex, In = Rin)
+cnt <- data.frame(Ex = rEx, In = rIn)
 y <- DGEList(counts = cnt, genes = data.frame(ENTREZID = rownames(cnt)))
 
 # select quantifiable genes and normalize
@@ -427,8 +429,9 @@ y <- y[quantGenes, ]
 y <- calcNormFactors(y)
 
 # design matrix with interaction term
-region <- factor(c("ex","ex","ex","ex","in","in","in","in"), levels = c("in", "ex"))
-cond <- rep(factor(c("ES","ES","TN","TN")), 2)
+region <- factor(c("ex", "ex", "ex", "ex", "in", "in", "in", "in"),
+                 levels = c("in", "ex"))
+cond <- rep(factor(c("ES", "ES", "TN", "TN")), 2L)
 design <- model.matrix(~ region * cond)
 rownames(design) <- colnames(cnt)
 design
@@ -448,30 +451,35 @@ head(tt$table[order(tt$table$FDR, decreasing = FALSE), ])
 ## Visualize the results
 Finally, we visualize the results by plotting intronic changes versus exonic
 changes (genes with significant interactions, which are likely to be post-transcriptionally
-regulated, are color coded):  
+regulated, are color coded):
 ```{r plot}
-sig     <- tt$table$FDR < 0.05
+sig <- tt$table$FDR < 0.05
 sum(sig)
-sig.dir <- sign(tt$table$logFC[sig])
-cols <- ifelse(sig, ifelse(tt$table$logFC > 0, "#E41A1CFF", "#497AB3FF"), "#22222244")
+sigDir <- sign(tt$table$logFC[sig])
+cols <- ifelse(sig,
+               ifelse(tt$table$logFC > 0.0, "#E41A1CFF", "#497AB3FF"),
+               "#22222244")
 
 # volcano plot
-plot(tt$table$logFC, -log10(tt$table$FDR), col = cols, pch = 20,
-     xlab = expression(paste("RNA change (log2 ",Delta,"exon/",Delta,"intron)")),
+plot(tt$table$logFC, -log10(tt$table$FDR), col = cols, pch = 20L,
+     xlab = expression(paste("RNA change (log2 ", Delta, "exon/", Delta, "intron)")),
      ylab = "Significance (-log10 FDR)")
-abline(h = -log10(0.05), lty = 2)
-abline(v = 0, lty = 2)
-text(x = par("usr")[1] + 3 * par("cxy")[1], y = par("usr")[4], adj = c(0,1),
-     labels = sprintf("n=%d", sum(sig.dir == -1)), col = "#497AB3FF")
-text(x = par("usr")[2] - 3 * par("cxy")[1], y = par("usr")[4], adj = c(1,1),
-     labels = sprintf("n=%d", sum(sig.dir ==  1)), col = "#E41A1CFF")
+abline(h = -log10(0.05), lty = 2L)
+abline(v = 0.0, lty = 2L)
+ppar <- par("usr")
+text(x = ppar[1L] + 3.0 * par("cxy")[1L],
+     y = ppar[4L], adj = c(0.0, 1.0),
+     labels = sprintf("n=%d", sum(sigDir == -1L)), col = "#497AB3FF")
+text(x = ppar[2L] - 3.0 * par("cxy")[1L],
+     y = ppar[4L], adj = c(1.0, 1.0),
+     labels = sprintf("n=%d", sum(sigDir ==  1L)), col = "#E41A1CFF")
 
 # Delta I vs. Delta E
-plot(rowMeans(Din)[quantGenes], rowMeans(Dex)[quantGenes], pch = 20, col = cols,
-     xlab = expression(paste(Delta,"intron (log2 TN/ES)")),
-     ylab = expression(paste(Delta,"exon (log2 TN/ES)")))
-legend(x = "bottomright", bty = "n", pch = 20, col = c("#E41A1CFF","#497AB3FF"),
-       legend = sprintf("%s (%d)", c("Up","Down"), c(sum(sig.dir == 1), sum(sig.dir == -1))))
+plot(rowMeans(Din)[quantGenes], rowMeans(Dex)[quantGenes], pch = 20L, col = cols,
+     xlab = expression(paste(Delta, "intron (log2 TN/ES)")),
+     ylab = expression(paste(Delta, "exon (log2 TN/ES)")))
+legend(x = "bottomright", bty = "n", pch = 20L, col = c("#E41A1CFF", "#497AB3FF"),
+       legend = sprintf("%s (%d)", c("Up", "Down"), c(sum(sigDir == 1L), sum(sigDir == -1L))))
 ```
 
 # Session information

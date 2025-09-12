@@ -1,3 +1,7 @@
+# eisaR 1.21.1
+
+* various code improvements detected by lintr
+
 # eisaR 1.15.1
 
 * Add legacyQLF argument to runEISA (will be passed to edgeR::glmQLFit)
