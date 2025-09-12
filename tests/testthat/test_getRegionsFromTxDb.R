@@ -44,18 +44,17 @@ test_that("getRegionsFromTbx() fails when required packages are missing", {
     skip_on_bioc()
 
     # set new lib paths
+    # ... unload ns
+    unloadNamespace("ensembldb")
+    unloadNamespace("txdbmaker")
+    unloadNamespace("GenomicFeatures")
     withr::with_temp_libpaths({
-        # unload ns
-        unloadNamespace("ensembldb")
-        unloadNamespace("txdbmaker")
-        unloadNamespace("GenomicFeatures")
-        # test
         dummy <- list()
         class(dummy) <- "TxDb"
         expect_error(getRegionsFromTxDb(dummy))
-        # clean up
-        requireNamespace("GenomicFeatures")
-        requireNamespace("txdbmaker")
-        requireNamespace("ensembldb")
-    }, action = "prefix")
+    }, action = "replace")
+    # ... reload ns
+    requireNamespace("GenomicFeatures")
+    requireNamespace("txdbmaker")
+    requireNamespace("ensembldb")
 })

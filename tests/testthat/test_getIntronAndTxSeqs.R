@@ -124,18 +124,17 @@ test_that("feature extraction fails if there are missing required packages", {
     skip_on_bioc()
 
     # set new lib paths
+    # ... unload ns
+    unloadNamespace("ensembldb")
+    unloadNamespace("txdbmaker")
+    unloadNamespace("GenomicFeatures")
     withr::with_temp_libpaths({
-        # unload ns
-        unloadNamespace("ensembldb")
-        unloadNamespace("txdbmaker")
-        unloadNamespace("GenomicFeatures")
-        # test
         expect_error(getFeatureRanges(gtf = gtf))
-        # reload ns
-        loadNamespace("GenomicFeatures")
-        loadNamespace("txdbmaker")
-        loadNamespace("ensembldb")
-    }, action = "prefix")
+    }, action = "replace")
+    # ... reload ns
+    loadNamespace("GenomicFeatures")
+    loadNamespace("txdbmaker")
+    loadNamespace("ensembldb")
 
 })
 
@@ -813,22 +812,21 @@ test_that("gtf export fails if required packages are missing", {
                             verbose = FALSE)
 
     # set new lib paths
+    # ... unload ns
+    unloadNamespace("ensembldb")
+    unloadNamespace("txdbmaker")
+    unloadNamespace("GenomicFeatures")
+    unloadNamespace("BSgenome")
+    unloadNamespace("rtracklayer")
     withr::with_temp_libpaths({
-        # unload ns
-        unloadNamespace("ensembldb")
-        unloadNamespace("txdbmaker")
-        unloadNamespace("GenomicFeatures")
-        unloadNamespace("BSgenome")
-        unloadNamespace("rtracklayer")
-        # test
         expect_error(exportToGtf(frs, tempfile()))
-        # load ns
-        loadNamespace("rtracklayer")
-        loadNamespace("GenomicFeatures")
-        loadNamespace("BSgenome")
-        loadNamespace("txdbmaker")
-        loadNamespace("ensembldb")
-    }, action = "prefix")
+    }, action = "replace")
+    # ... load ns
+    loadNamespace("rtracklayer")
+    loadNamespace("GenomicFeatures")
+    loadNamespace("BSgenome")
+    loadNamespace("txdbmaker")
+    loadNamespace("ensembldb")
 })
 
 test_that("tx2gene generation works", {
