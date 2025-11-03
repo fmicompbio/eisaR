@@ -122,6 +122,8 @@ test_that("feature extraction fails if there are missing required packages", {
     # these tests assume that all non-base packages are installed in
     # .Library.site and will fail if this is not the case (e.g. on BioC builders)
     skip_on_bioc()
+    # also skip on r-universe (https://docs.r-universe.dev/publish/troubleshoot-build.html#how-to-know-whether-tests-are-run-on-r-universe)
+    skip_if_not(identical(Sys.getenv("MY_UNIVERSE"), ""))
 
     # set new lib paths
     # ... unload ns
@@ -812,6 +814,8 @@ test_that("gtf export fails if required packages are missing", {
     # these tests assume that all non-base packages are installed in
     # .Library.site and will fail if this is not the case (e.g. on BioC builders)
     skip_on_bioc()
+    # also skip on r-universe (https://docs.r-universe.dev/publish/troubleshoot-build.html#how-to-know-whether-tests-are-run-on-r-universe)
+    skip_if_not(identical(Sys.getenv("MY_UNIVERSE"), ""))
 
     frs <- getFeatureRanges(gtf = gtf,
                             featureType = c("spliced", "intron"),
