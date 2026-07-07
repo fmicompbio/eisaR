@@ -66,28 +66,28 @@ spliced transcripts, unspliced transcripts and introns.
     collapseIntronsByGene = FALSE,
     verbose = TRUE
   )
-  
+
   ## GRangesList
   grl
-  
+
   ## Corresponding transcript/gene IDs
   S4Vectors::metadata(grl)$corrtx
   S4Vectors::metadata(grl)$corrgene
-  
+
   ## List of features of different types
   S4Vectors::metadata(grl)$featurelist
-  
+
   ## Get feature sequences
   if (requireNamespace("BSgenome", quietly = TRUE) &&
       requireNamespace("GenomicFeatures", quietly = TRUE)) {
     library(BSgenome)
     genome <- Biostrings::readDNAStringSet(
       system.file("extdata/small_example_genome.fa", package = "eisaR"))
-    seqs <- GenomicFeatures::extractTranscriptSeqs(x = genome, 
+    seqs <- GenomicFeatures::extractTranscriptSeqs(x = genome,
                                                    transcripts = grl)
     seqs
   }
- 
+
 }
 \author{
 Charlotte Soneson

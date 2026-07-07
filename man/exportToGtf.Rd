@@ -32,7 +32,7 @@ the GTF file.
     joinOverlappingIntrons = FALSE,
     verbose = TRUE
   )
-  
+
   ## Export GTF
   exportToGtf(grl = grl, filepath = file.path(tempdir(), "exported.gtf"))
 
