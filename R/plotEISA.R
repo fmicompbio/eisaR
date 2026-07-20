@@ -1,52 +1,56 @@
 #' @title Visualize the results from an exon-intron split analysis.
 #'
 #' @description \code{plotEISA} takes the return value from \code{\link{runEISA}}
-#'   and generates a scatterplot of intronic versus exonic changes.
+#'     and generates a scatterplot of intronic versus exonic changes.
 #'
-#' @author Michael Stadler
+#' @author Michael Stadler, Charlotte Soneson
 #'
-#' @param x \code{list} with EISA results, typically the return value from \code{\link{runEISA}}
+#' @param x \code{list} with EISA results, typically the return value from 
+#'     \code{\link{runEISA}}
 #' @param contrast one of \code{"ExIn"} or \code{"none"}. If \code{"ExIn"}
-#'   (the default), genes that significantly differ between exonic and intronic changes
-#'   are highlighted. \code{"none"} turns off gene highlighting.
+#'     (the default), genes that significantly differ between exonic and 
+#'     intronic changes are highlighted. \code{"none"} turns off gene 
+#'     highlighting.
 #' @param minLfc \code{NULL} or \code{numeric(1)} with the minimal absolute log2
-#'   fold change to color a gene. If \code{NULL} (the default), no fold changes
-#'   are not used to select genes for highlighting.
+#'     fold change to color a gene. If \code{NULL} (the default), no fold changes
+#'     are not used to select genes for highlighting.
 #' @param maxFDR \code{numeric(1)} with maximal false discovery rate for gene
-#'   highlighting.
+#'     highlighting.
 #' @param genecolors Vector of length three specifying the colors to use for
-#'   genes that are significantly up, down or unchanged.
-#' @param ... further arguments past to \code{plot()}. Parameters that will be set
-#'   automatically unless given in the arguments are:\describe{
-#'     \item{pch}{: plot symbol (default: \code{"."})}
-#'     \item{cex}{: plot symbol expansion factor (default: \code{2})}
-#'     \item{col}{: plot symbol color (default: according to \code{contrast} and \code{genecolors})}
-#'     \item{xlab/ylab}{: axis labels}
-#'   }
+#'     genes that are significantly up, down or unchanged.
 #'
-#' @return `NULL` (invisibly)
+#' @return A \code{ggplot} object.
 #'
 #' @examples
 #'   # see the help for runEISA() for a full example
 #'
-#' @importFrom graphics plot legend points
+#' @importFrom ggplot2 ggplot aes geom_abline geom_point coord_fixed 
+#' @importFrom ggplot2 scale_color_manual labs theme_bw theme element_blank
+#' @importFrom rlang .data
 #'
 #' @export
 plotEISA <- function(x, contrast = c("ExIn", "none"),
                      minLfc = NULL, maxFDR = 0.05,
-                     genecolors = c("#E41A1C", "#497AB3", "#222222"), ...) {
+                     genecolors = c("#E41A1C", "#497AB3", "#222222")) {
     # check arguments
     contrast <- match.arg(contrast)
     contrastName <- ifelse("contrastName" %in% names(x),
                            paste0(" (", x$contrastName, ")"), "")
     sigtab <- switch(contrast, ExIn = x$tab.ExIn, none = data.frame())
-    if (nrow(sigtab) == 0L && contrast != "none")
-        stop("'x' does not contain the requested statistics and can only ",
-             "be plotted using contrast = 'none'. Note that at least two ",
-             "replicates per condition are required to run the statistical ",
-             "testing.")
-    if (is.null(minLfc))
+    if (contrast != "none") {
+        if (nrow(sigtab) == 0L) {
+            stop("'x' does not contain the requested statistics and can only ",
+                 "be plotted using contrast = 'none'. Note that at least two ",
+                 "replicates per condition are required to run the statistical ",
+                 "testing.")
+        }
+        if (nrow(sigtab) != nrow(x$contrasts)) {
+            stop("x$tab.ExIn and x$contrasts have different numbers of rows.")
+        }
+    }
+    if (is.null(minLfc)) {
         minLfc <- 0.0
+    }
     stopifnot(exprs = {
         is.numeric(minLfc)
         length(minLfc) == 1L
@@ -58,47 +62,32 @@ plotEISA <- function(x, contrast = c("ExIn", "none"),
         length(genecolors) == 3L
     })
 
-    # identify gene to highlight
-    if (contrast == "none") {
-        sig <- rep(FALSE, nrow(x$contrasts))
-        sigDir <- 0.0
-    } else {
-        sig <- abs(sigtab$logFC) >= minLfc & sigtab$FDR <= maxFDR
-        sigDir <- sign(sigtab$logFC[sig])
-        message("identified ", sum(sig), " genes to highlight")
-    }
-
-    # set graphical parameters (user-defined colors take precedence)
-    dotsL <- list(...)
-    dotsL$x <- x$contrasts[, "Din"]
-    dotsL$y <- x$contrasts[, "Dex"]
-    if (!"pch" %in% names(dotsL))
-        dotsL$pch <- "."
-    if (!"cex" %in% names(dotsL))
-        dotsL$cex <- 2L
-    if (!"col" %in% names(dotsL))
-        dotsL$col <- ifelse(sig,
-                            ifelse(sigtab$logFC > 0.0,
-                                   genecolors[1L], genecolors[2L]),
-                            genecolors[3L])
-    if (!"xlab" %in% names(dotsL))
-        dotsL$xlab <- substitute(expression(paste(Delta, "intron", cn)),
-                                 list(cn = contrastName))
-    if (!"ylab" %in% names(dotsL))
-        dotsL$ylab <- substitute(expression(paste(Delta, "exon", cn)),
-                                 list(cn = contrastName))
-
-    # Delta I vs. Delta E
-    do.call(plot, dotsL)
+    # identify genes to highlight
+    plotdf <- as.data.frame(x$contrasts)
+    plotdf$sig <- ""
     if (contrast != "none") {
-        if (length(dotsL$col) == 1L)
-            dotsL$col <- rep(dotsL$col, length(dotsL$x))
-        points(dotsL$x[sig], dotsL$y[sig], pch = 20L, col = dotsL$col[sig])
-        legend(x = "bottomright", bty = "n", pch = 20L, col = genecolors[c(1L, 2L)],
-               legend = sprintf("%s (%d)",
-                                c("Up", "Down"),
-                                c(sum(sigDir == 1.0), sum(sigDir == -1.0))))
+        plotdf$sig <- ifelse(
+            sigtab$logFC >= minLfc & sigtab$FDR <= maxFDR, 
+            paste0("Up (", sum(sigtab$logFC >= minLfc & sigtab$FDR <= maxFDR), ")"), 
+            ifelse(sigtab$logFC <= -minLfc & sigtab$FDR <= maxFDR, 
+                   paste0("Down (", sum(sigtab$logFC <= -minLfc & sigtab$FDR <= maxFDR), ")"),
+                   ""))
+        plotdf$sig <- factor(plotdf$sig, levels = rev(sort(unique(plotdf$sig))))
+        message("identified ", sum(plotdf$sig != ""), " genes to highlight")
     }
-
-    return(invisible(NULL))
+    
+    ggplot(plotdf, aes(x = .data$Din, y = .data$Dex)) + 
+        geom_abline(slope = 1, intercept = 0, linetype = "dashed", 
+                    color = "grey") + 
+        geom_point(size = 0.1, color = genecolors[3L]) + 
+        geom_point(data = plotdf[plotdf$sig != "", ], aes(color = .data$sig)) + 
+        coord_fixed() + 
+        scale_color_manual(values = genecolors[seq_len(2)], name = "") + 
+        labs(x = substitute(Delta * "intron" ~ x, list(x = contrastName)),
+             y = substitute(Delta * "exon" ~ x, list(x = contrastName))) + 
+        theme_bw(base_size = 14) + 
+        theme(panel.grid = element_blank(), 
+              legend.position = "inside", 
+              legend.position.inside = c(0.97, 0.03), 
+              legend.justification = c(1, 0))
 }

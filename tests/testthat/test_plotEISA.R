@@ -13,8 +13,10 @@ test_that("plotEISA() runs", {
     tf <- tempfile(fileext = ".pdf")
     pdf(file = tf)
 
-    expect_null(plotEISA(res1, col = "purple"))
-    expect_null(plotEISA(res1, contrast = "none"))
+    expect_true(ggplot2::is_ggplot(
+        plotEISA(res1, genecolors = c("orange", "yellow", "purple"))))
+    expect_true(ggplot2::is_ggplot(
+        plotEISA(res1, contrast = "none")))
     expect_error(plotEISA(res2))
 
     dev.off()

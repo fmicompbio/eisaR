@@ -9,16 +9,17 @@ plotEISA(
   contrast = c("ExIn", "none"),
   minLfc = NULL,
   maxFDR = 0.05,
-  genecolors = c("#E41A1C", "#497AB3", "#222222"),
-  ...
+  genecolors = c("#E41A1C", "#497AB3", "#222222")
 )
 }
 \arguments{
-\item{x}{\code{list} with EISA results, typically the return value from \code{\link{runEISA}}}
+\item{x}{\code{list} with EISA results, typically the return value from
+\code{\link{runEISA}}}
 
 \item{contrast}{one of \code{"ExIn"} or \code{"none"}. If \code{"ExIn"}
-(the default), genes that significantly differ between exonic and intronic changes
-are highlighted. \code{"none"} turns off gene highlighting.}
+(the default), genes that significantly differ between exonic and
+intronic changes are highlighted. \code{"none"} turns off gene
+highlighting.}
 
 \item{minLfc}{\code{NULL} or \code{numeric(1)} with the minimal absolute log2
 fold change to color a gene. If \code{NULL} (the default), no fold changes
@@ -29,17 +30,9 @@ highlighting.}
 
 \item{genecolors}{Vector of length three specifying the colors to use for
 genes that are significantly up, down or unchanged.}
-
-\item{...}{further arguments past to \code{plot()}. Parameters that will be set
-automatically unless given in the arguments are:\describe{
-\item{pch}{: plot symbol (default: \code{"."})}
-\item{cex}{: plot symbol expansion factor (default: \code{2})}
-\item{col}{: plot symbol color (default: according to \code{contrast} and \code{genecolors})}
-\item{xlab/ylab}{: axis labels}
-}}
 }
 \value{
-\code{NULL} (invisibly)
+A \code{ggplot} object.
 }
 \description{
 \code{plotEISA} takes the return value from \code{\link{runEISA}}
@@ -50,5 +43,5 @@ and generates a scatterplot of intronic versus exonic changes.
 
 }
 \author{
-Michael Stadler
+Michael Stadler, Charlotte Soneson
 }

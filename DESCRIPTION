@@ -41,7 +41,6 @@ Suggests:
     withr
 VignetteBuilder: knitr
 Imports: 
-    graphics,
     stats,
     GenomicRanges,
     S4Vectors,
@@ -51,7 +50,9 @@ Imports:
     methods,
     SummarizedExperiment,
     BiocGenerics,
-    utils
+    utils,
+    ggplot2,
+    rlang
 URL: https://github.com/fmicompbio/eisaR
 BugReports: https://github.com/fmicompbio/eisaR/issues
 Config/roxygen2/version: 8.0.0
