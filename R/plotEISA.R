@@ -18,6 +18,7 @@
 #'     highlighting.
 #' @param genecolors Vector of length three specifying the colors to use for
 #'     genes that are significantly up, down or unchanged.
+#' @param ... Currently not used, provided for backward compatibility. 
 #'
 #' @return A \code{ggplot} object.
 #'
@@ -31,7 +32,7 @@
 #' @export
 plotEISA <- function(x, contrast = c("ExIn", "none"),
                      minLfc = NULL, maxFDR = 0.05,
-                     genecolors = c("#E41A1C", "#497AB3", "#222222")) {
+                     genecolors = c("#E41A1C", "#497AB3", "#222222"), ...) {
     # check arguments
     contrast <- match.arg(contrast)
     contrastName <- ifelse("contrastName" %in% names(x),
@@ -61,6 +62,10 @@ plotEISA <- function(x, contrast = c("ExIn", "none"),
         is.character(genecolors)
         length(genecolors) == 3L
     })
+    l <- list(...)
+    if (length(l) > 0) {
+        warning("Ignoring unknown arguments ", paste(names(l), collapse = ", "))
+    }
 
     # identify genes to highlight
     plotdf <- as.data.frame(x$contrasts)

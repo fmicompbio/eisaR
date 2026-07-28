@@ -9,7 +9,8 @@ plotEISA(
   contrast = c("ExIn", "none"),
   minLfc = NULL,
   maxFDR = 0.05,
-  genecolors = c("#E41A1C", "#497AB3", "#222222")
+  genecolors = c("#E41A1C", "#497AB3", "#222222"),
+  ...
 )
 }
 \arguments{
@@ -30,6 +31,8 @@ highlighting.}
 
 \item{genecolors}{Vector of length three specifying the colors to use for
 genes that are significantly up, down or unchanged.}
+
+\item{...}{Currently not used, provided for backward compatibility.}
 }
 \value{
 A \code{ggplot} object.

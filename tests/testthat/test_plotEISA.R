@@ -17,6 +17,8 @@ test_that("plotEISA() runs", {
         plotEISA(res1, genecolors = c("orange", "yellow", "purple"))))
     expect_true(ggplot2::is_ggplot(
         plotEISA(res1, contrast = "none")))
+    expect_warning(plotEISA(res1, contrast = "none", cex = 2), 
+                   "Ignoring unknown arguments cex")
     expect_error(plotEISA(res2))
 
     dev.off()
