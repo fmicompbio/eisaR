@@ -18,7 +18,7 @@ spliced transcripts, unspliced transcripts and introns."><!-- mathjax --><script
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">eisaR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.23.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.25.1</span>
       </span>
     </div>
 
@@ -165,7 +165,7 @@ different feature types, as well as a list of all features for each type.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 'select()' returned 1:1 mapping between keys and columns</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Extracting spliced transcript features</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Extracting introns using the separate approach</span>
-<span class="r-in"><span>  </span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span>  <span class="co">## GRangesList</span></span></span>
 <span class="r-in"><span>  <span class="va">grl</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GRangesList object of length 17:</span>
@@ -210,7 +210,7 @@ different feature types, as well as a list of all features for each type.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;14 more elements&gt;</span>
-<span class="r-in"><span>  </span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span>  <span class="co">## Corresponding transcript/gene IDs</span></span></span>
 <span class="r-in"><span>  <span class="fu">S4Vectors</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Annotated-class.html" class="external-link">metadata</a></span><span class="op">(</span><span class="va">grl</span><span class="op">)</span><span class="op">$</span><span class="va">corrtx</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   spliced</span>
@@ -227,7 +227,7 @@ different feature types, as well as a list of all features for each type.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1      g1   g1-I</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2    g2-I g2-I-I</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3    g3-U g3-U-I</span>
-<span class="r-in"><span>  </span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span>  <span class="co">## List of features of different types</span></span></span>
 <span class="r-in"><span>  <span class="fu">S4Vectors</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Annotated-class.html" class="external-link">metadata</a></span><span class="op">(</span><span class="va">grl</span><span class="op">)</span><span class="op">$</span><span class="va">featurelist</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $spliced</span>
@@ -238,14 +238,14 @@ different feature types, as well as a list of all features for each type.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "tx1.2-I"    "tx1.2-I1"   "tx1.1-I"    "tx2.1-I-I"  "tx2.2-U-I" </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [6] "tx2.2-U-I1" "tx3.1-I"    "tx3.2-I"    "tx3.2-I1"  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span>  </span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span>  <span class="co">## Get feature sequences</span></span></span>
 <span class="r-in"><span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"BSgenome"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">&amp;&amp;</span></span></span>
 <span class="r-in"><span>      <span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"GenomicFeatures"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span>    <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/BSgenome" class="external-link">BSgenome</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span>    <span class="va">genome</span> <span class="op">&lt;-</span> <span class="fu">Biostrings</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Biostrings/man/XStringSet-io.html" class="external-link">readDNAStringSet</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>      <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/small_example_genome.fa"</span>, package <span class="op">=</span> <span class="st">"eisaR"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span>    <span class="va">seqs</span> <span class="op">&lt;-</span> <span class="fu">GenomicFeatures</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/GenomicFeatures/man/extractTranscriptSeqs.html" class="external-link">extractTranscriptSeqs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">genome</span>, </span></span>
+<span class="r-in"><span>    <span class="va">seqs</span> <span class="op">&lt;-</span> <span class="fu">GenomicFeatures</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/GenomicFeatures/man/extractTranscriptSeqs.html" class="external-link">extractTranscriptSeqs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">genome</span>,</span></span>
 <span class="r-in"><span>                                                   transcripts <span class="op">=</span> <span class="va">grl</span><span class="op">)</span></span></span>
 <span class="r-in"><span>    <span class="va">seqs</span></span></span>
 <span class="r-in"><span>  <span class="op">}</span></span></span>
@@ -262,14 +262,17 @@ different feature types, as well as a list of all features for each type.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> The following objects are masked from ‘package:stats’:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     IQR, mad, sd, var, xtabs</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The following object is masked from ‘package:utils’:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     data</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> The following objects are masked from ‘package:base’:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     Filter, Find, Map, Position, Reduce, anyDuplicated, aperm, append,</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     as.data.frame, basename, cbind, colnames, dirname, do.call,</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     duplicated, eval, evalq, get, grep, grepl, is.unsorted, lapply,</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     mapply, match, mget, order, paste, pmax, pmax.int, pmin, pmin.int,</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     rank, rbind, rownames, sapply, saveRDS, table, tapply, unique,</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     unsplit, which.max, which.min</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     rank, rbind, rownames, sapply, saveRDS, scale, sequence, table,</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     tapply, transform, unique, unsplit, which.max, which.min</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: S4Vectors</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: stats4</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
@@ -305,7 +308,7 @@ different feature types, as well as a list of all features for each type.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [15]    60 <span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">TT</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">TT</span><span style="color: #000000; background-color: #AFFFFF;">GG</span>...<span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">TT</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">TTTT</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">TT</span><span style="color: #000000; background-color: #AFFFFF;">G</span> tx3.1-I</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [16]    30 <span style="color: #000000; background-color: #AFFFAF;">CCC</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">TT</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">TT</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">T</span>                   tx3.2-I</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [17]    30 <span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">TT</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">TTTT</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">TT</span><span style="color: #000000; background-color: #AFFFFF;">G</span>                   tx3.2-I1</span>
-<span class="r-in"><span> </span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -320,7 +323,7 @@ different feature types, as well as a list of all features for each type.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.9000.</p>
 </div>
 
       </footer></div>

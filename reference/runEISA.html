@@ -19,7 +19,7 @@ quantifyable genes, calculate contrasts and their significance)."><!-- mathjax -
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">eisaR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.23.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.25.1</span>
       </span>
     </div>
 
@@ -83,7 +83,7 @@ quantifyable genes, calculate contrasts and their significance).</p>
 <span>  statFramework <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"QLF"</span>, <span class="st">"LRT"</span><span class="op">)</span>,</span>
 <span>  legacyQLF <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  effects <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"predFC"</span>, <span class="st">"Gaidatzis2015"</span><span class="op">)</span>,</span>
-<span>  pscnt <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  pscnt <span class="op">=</span> <span class="fl">2L</span>,</span>
 <span>  sizeFactor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"exon"</span>, <span class="st">"intron"</span>, <span class="st">"individual"</span><span class="op">)</span>,</span>
 <span>  recalcNormFactAfterFilt <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  recalcLibSizeAfterFilt <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -307,14 +307,20 @@ analysis.</p></div>
 <span class="r-in"><span>                             package <span class="op">=</span> <span class="st">"eisaR"</span><span class="op">)</span><span class="op">)</span><span class="op">[</span>,<span class="op">-</span><span class="fl">1</span><span class="op">]</span></span></span>
 <span class="r-in"><span><span class="va">cond</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ES"</span>,<span class="st">"ES"</span>,<span class="st">"TN"</span>,<span class="st">"TN"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">runEISA</span><span class="op">(</span><span class="va">cntEx</span>, <span class="va">cntIn</span>, <span class="va">cond</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> calcNormFactors has been renamed to normLibSizes</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> calcNormFactors has been renamed to normLibSizes</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> calcNormFactors has been renamed to normLibSizes</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> filtering quantifyable genes...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> keeping 11759 from 20288 (58%)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> calcNormFactors has been renamed to normLibSizes</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> calcNormFactors has been renamed to normLibSizes</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> calcNormFactors has been renamed to normLibSizes</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> fitting statistical model...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> done</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> calculating log-fold changes...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> done</span>
 <span class="r-in"><span><span class="fu"><a href="plotEISA.html">plotEISA</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> identified 139 genes to highlight</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> identified 138 genes to highlight</span>
 <span class="r-plt img"><img src="runEISA-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
@@ -331,7 +337,7 @@ analysis.</p></div>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.9000.</p>
 </div>
 
       </footer></div>
