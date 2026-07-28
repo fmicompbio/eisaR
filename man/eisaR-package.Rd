@@ -21,6 +21,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Michael Stadler \email{michael.stadler@fmi.ch}
   \item Dimos Gaidatzis \email{dimosthenis.gaidatzis@fmi.ch}
   \item Lukas Burger \email{lukas.burger@fmi.ch}
   \item Charlotte Soneson \email{charlotte.soneson@fmi.ch}

@@ -37,6 +37,7 @@
 #' @importFrom GenomicRanges GRangesList reduce
 #' @importFrom BiocGenerics unlist relist setdiff start end
 #' @importFrom S4Vectors mcols metadata
+#' @importFrom stats setNames
 #'
 #' @examples
 #'   ## Get feature ranges

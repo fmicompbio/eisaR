@@ -6,3 +6,4 @@
 _pkgdown.yml
 .git
 ^\.github$
+.lintr

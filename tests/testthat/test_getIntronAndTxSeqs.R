@@ -162,7 +162,8 @@ test_that("feature range extraction works", {
     ## Spliced transcripts
     splicedIds <- metadata(frs)$corrtx$spliced
     expect_identical(sort(splicedIds), sort(tx2gene$V1))
-    txgtf <- subset(rtracklayer::import(gtf), type == "exon")
+    allgtf <- rtracklayer::import(gtf)
+    txgtf <- allgtf[allgtf$type == "exon"]
     txgtfl <- as(split(txgtf, f = txgtf$transcript_id), "GRangesList")
     txfrs <- frs[names(txgtfl)]
     expect_named(txfrs, splicedIds, ignore.order = TRUE)
@@ -253,7 +254,8 @@ test_that("feature range extraction works", {
     ## Spliced transcripts
     splicedIds <- metadata(frs)$corrtx$spliced
     expect_identical(sort(splicedIds), sort(tx2gene$V1))
-    txgtf <- subset(rtracklayer::import(gtf), type == "exon")
+    allgtf <- rtracklayer::import(gtf)
+    txgtf <- allgtf[allgtf$type == "exon"]
     txgtfl <- as(split(txgtf, f = txgtf$transcript_id), "GRangesList")
     txfrs <- frs[names(txgtfl)]
     expect_named(txfrs, splicedIds, ignore.order = TRUE)
@@ -312,7 +314,8 @@ test_that("feature range extraction works", {
     ## Spliced transcripts
     splicedIds <- metadata(frs)$corrtx$spliced
     expect_identical(sort(splicedIds), sort(tx2gene$V1))
-    txgtf <- subset(rtracklayer::import(gtf), type == "exon")
+    allgtf <- rtracklayer::import(gtf)
+    txgtf <- allgtf[allgtf$type == "exon"]
     txgtfl <- as(split(txgtf, f = txgtf$transcript_id), "GRangesList")
     txfrs <- frs[names(txgtfl)]
     expect_named(txfrs, splicedIds, ignore.order = TRUE)
@@ -382,7 +385,8 @@ test_that("feature range extraction works", {
     ## Spliced transcripts
     splicedIds <- metadata(frs)$corrtx$spliced
     expect_identical(sort(splicedIds), sort(tx2gene$V1))
-    txgtf <- subset(rtracklayer::import(gtf), type == "exon")
+    allgtf <- rtracklayer::import(gtf)
+    txgtf <- allgtf[allgtf$type == "exon"]
     txgtfl <- as(split(txgtf, f = txgtf$transcript_id), "GRangesList")
     txfrs <- frs[names(txgtfl)]
     expect_named(txfrs, splicedIds, ignore.order = TRUE)
@@ -473,7 +477,8 @@ test_that("feature range extraction works", {
     ## Spliced transcripts
     splicedIds <- metadata(frs)$corrtx$spliced
     expect_identical(sort(splicedIds), sort(tx2gene$V1))
-    txgtf <- subset(rtracklayer::import(gtf), type == "exon")
+    allgtf <- rtracklayer::import(gtf)
+    txgtf <- allgtf[allgtf$type == "exon"]
     txgtfl <- as(split(txgtf, f = txgtf$transcript_id), "GRangesList")
     txfrs <- frs[names(txgtfl)]
     expect_named(txfrs, splicedIds, ignore.order = TRUE)
@@ -564,7 +569,8 @@ test_that("feature range extraction works", {
     ## Spliced transcripts
     splicedIds <- metadata(frs)$corrtx$spliced
     expect_identical(sort(splicedIds), sort(tx2gene$V1))
-    txgtf <- subset(rtracklayer::import(gtf), type == "exon")
+    allgtf <- rtracklayer::import(gtf)
+    txgtf <- allgtf[allgtf$type == "exon"]
     txgtfl <- as(split(txgtf, f = txgtf$transcript_id), "GRangesList")
     txfrs <- frs[names(txgtfl)]
     expect_named(txfrs, splicedIds, ignore.order = TRUE)
@@ -787,24 +793,24 @@ test_that("gtf export works", {
 
     # expected results
     expect_length(rb, 17L + 6L + 8L + 6L + 3L + 3L)
-    expect_identical(ranges(subset(rb, gene_id == "g1" & type == "gene")),
+    expect_identical(ranges(rb[rb$gene_id == "g1" & rb$type == "gene"]),
                      IRanges(start = 61L, end = 160L))
-    expect_identical(as.character(seqnames(subset(rb, gene_id == "g1" & type == "gene"))),
+    expect_identical(as.character(seqnames(rb[rb$gene_id == "g1" & rb$type == "gene"])),
                      "chr1")
-    expect_identical(as.character(strand(subset(rb, gene_id == "g1" & type == "gene"))),
+    expect_identical(as.character(strand(rb[rb$gene_id == "g1" & rb$type == "gene"])),
                      "+")
 
-    expect_identical(ranges(subset(rb, transcript_id == "tx1.3" & type == "transcript")),
+    expect_identical(ranges(rb[rb$transcript_id == "tx1.3" & rb$type == "transcript"]),
                      IRanges(start = 61L, end = 90L))
     expect_identical(
         as.character(
-            seqnames(subset(rb, transcript_id == "tx1.3" & type == "transcript"))
+            seqnames(rb[rb$transcript_id == "tx1.3" & rb$type == "transcript"])
         ),
         "chr1"
     )
     expect_identical(
         as.character(
-            strand(subset(rb, transcript_id == "tx1.3" & type == "transcript"))
+            strand(rb[rb$transcript_id == "tx1.3" & rb$type == "transcript"])
         ),
         "+"
     )

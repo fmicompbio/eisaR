@@ -14,7 +14,7 @@ runEISA(
   statFramework = c("QLF", "LRT"),
   legacyQLF = FALSE,
   effects = c("predFC", "Gaidatzis2015"),
-  pscnt = 2,
+  pscnt = 2L,
   sizeFactor = c("exon", "intron", "individual"),
   recalcNormFactAfterFilt = TRUE,
   recalcLibSizeAfterFilt = FALSE,
@@ -148,8 +148,8 @@ quantifyable genes, calculate contrasts and their significance).
 Setting \code{method = "Gaidatzis2015"} has precedence over other
 argument values and corresponds to setting:
 \code{modelSamples = FALSE, geneSelection = "Gaidatzis2015",
-  statFramework = "LRT", effects = "Gaidatzis2015", pscnt = 8, 
-  sizeFactor = "individual", recalcNormFactAfterFilt = TRUE, 
+  statFramework = "LRT", effects = "Gaidatzis2015", pscnt = 8,
+  sizeFactor = "individual", recalcNormFactAfterFilt = TRUE,
   recalcLibSizeAfterFilt = FALSE}.
 }
 \examples{
