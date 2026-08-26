@@ -11,14 +11,16 @@ jobs:
   R-CMD-check-devel:
     runs-on: ${{ matrix.config.os }}
 
-    name: ${{ matrix.config.os }} (${{ matrix.config.bioc }})
+    name: ${{ matrix.config.os }} (${{ matrix.config.r }} - ${{ matrix.config.bioc }})
 
     strategy:
       fail-fast: false
       matrix:
         config:
-          - { os: windows-latest, r: 'devel', bioc: 'devel', deploy: 'no'}
-          - { os: macOS-latest, r: 'devel', bioc: 'devel', deploy: 'yes', curlConfigPath: '/usr/bin/'}
+          - { os: windows-latest, r: 'devel', bioc: 'devel'}
+          - { os: macOS-latest, r: 'devel', bioc: 'devel', curlConfigPath: '/usr/bin/'}
+          - { os: ubuntu-latest, r: 'devel', bioc: 'devel'}
+          - { os: windows-latest, r: 'release', bioc: 'devel'}
           # - { os: ubuntu-16.04, r: 'devel', bioc: 'devel', cran: "https://demo.rstudiopm.com/all/__linux__/xenial/latest", deploy = 'no'}
           # - { os: ubuntu-latest, r: 'devel', image: 'bioconductor/bioconductor_docker:devel', deploy: 'no'}
 
@@ -43,12 +45,6 @@ jobs:
       - name: R version
         run: Rscript -e 'R.version'
 
-      # - name: Set up R and install BiocManager
-      #   uses: grimbough/bioc-actions/setup-bioc@v1
-      #   if: matrix.config.image == null
-      #   with:
-      #     bioc-version: ${{ matrix.config.bioc }}
-
       - name: Set up pandoc
         uses: r-lib/actions/setup-pandoc@v2
         if: matrix.config.image == null
@@ -56,7 +52,7 @@ jobs:
       - name: Install BiocManager, remotes and RCurl
         run: |
           install.packages(c('BiocManager', 'remotes', 'RCurl'))
-          BiocManager::install(version = "${{ matrix.config.bioc }}", ask = FALSE)
+          BiocManager::install(version = "${{ matrix.config.bioc }}", ask = FALSE, update = FALSE)
         shell: Rscript {0}
 
       - name: Query dependencies
@@ -69,8 +65,8 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ env.R_LIBS_USER }}
-          key: ${{ env.cache-version }}-${{ runner.os }}-bioc-${{ matrix.config.bioc }}-${{ hashFiles('depends.Rds') }}
-          restore-keys: ${{ env.cache-version }}-${{ runner.os }}-bioc-${{ matrix.config.bioc }}-
+          key: ${{ env.cache-version }}-${{ runner.os }}-r-${{ matrix.config.r }}-bioc-${{ matrix.config.bioc }}-${{ hashFiles('depends.Rds') }}
+          restore-keys: ${{ env.cache-version }}-${{ runner.os }}-r-${{ matrix.config.r }}-bioc-${{ matrix.config.bioc }}-
 
       - name: Install Linux system dependencies
         if: runner.os == 'Linux'
