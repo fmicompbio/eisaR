@@ -65,6 +65,8 @@ test_that("runEISA() runs", {
 
 context("runEISA gives expected results")
 test_that("runEISA() gives expected results", {
+    expect_warning(RNGversion("4.6"))
+    
     # construct artificial example
     fracIntron <- 0.2
     ngenes <- 3000L
