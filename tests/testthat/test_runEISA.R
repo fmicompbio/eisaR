@@ -65,6 +65,10 @@ test_that("runEISA() runs", {
 
 context("runEISA gives expected results")
 test_that("runEISA() gives expected results", {
+    # rbinom was fixed in R 4.7 - fix to 4.6 behavior to get reproducible
+    # simulated data across R versions
+    suppressWarnings(RNGversion("4.6"))
+    
     # construct artificial example
     fracIntron <- 0.2
     ngenes <- 3000L
