@@ -1,5 +1,8 @@
 on:
   workflow_dispatch: # enable "run workflow" button
+  pull_request:
+    branches:
+      - devel
 
 name: R-CMD-check-devel
 
